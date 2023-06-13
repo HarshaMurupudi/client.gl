@@ -42,6 +42,7 @@ export const fetchPDF = (partID) => async (dispatch) => {
     const fileUrl = URL.createObjectURL(blob);
     window.open(fileUrl);
   } catch (error) {
+    alert('no file');
   } finally {
     dispatch(setJobsLoading(false));
   }
