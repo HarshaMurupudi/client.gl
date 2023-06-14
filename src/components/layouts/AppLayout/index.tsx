@@ -33,11 +33,6 @@ const Index = ({ children }: Props) => {
       navbarOffsetBreakpoint='sm'
       asideOffsetBreakpoint='sm'
       navbar={<NavbarMinimal />}
-      footer={
-        <Footer height={60} p='md'>
-          Application footer
-        </Footer>
-      }
       header={
         <Header height={{ base: 50, md: 70 }} p='md'>
           <div
