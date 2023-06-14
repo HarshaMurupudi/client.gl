@@ -190,6 +190,14 @@ function Jobs({ jobs, fetchJobs, fetchPDF }) {
       sortable: true,
     },
     {
+      accessor: 'On_Hand_Qty',
+      sortable: true,
+    },
+    {
+      accessor: 'Location_ID',
+      sortable: true,
+    },
+    {
       accessor: 'Customer',
       filter: (
         <TextInput
