@@ -1,18 +1,24 @@
 import React, { lazy, Suspense } from 'react';
 
-// import Home from '../pages/home';
-
 import AppLayout from '../components/layouts/AppLayout';
+import PrivateRoute from '../components/Utils/PrivateRoute';
 
 const Home = lazy(() => import('../pages/home'));
+const Login = lazy(() => import('../pages/login'));
 
 export const publicRoutes = [
   {
     path: '/',
     element: (
-      <AppLayout>
-        <Home />
-      </AppLayout>
+      <PrivateRoute>
+        <AppLayout>
+          <Home />
+        </AppLayout>
+      </PrivateRoute>
     ),
+  },
+  {
+    path: '/login',
+    element: <Login />,
   },
 ];

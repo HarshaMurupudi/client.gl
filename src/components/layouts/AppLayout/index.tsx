@@ -3,21 +3,24 @@ import {
   AppShell,
   Navbar,
   Header,
-  Footer,
-  Aside,
   Text,
   MediaQuery,
   Burger,
   useMantineTheme,
+  Button,
+  Flex,
 } from '@mantine/core';
+import { connect } from 'react-redux';
 
 import { NavbarMinimal } from '../../sidebar';
+import { logout } from '../../../pages/login/store/actions';
 
 interface Props {
   children?: React.ReactNode;
+  logout: () => void;
 }
 
-const Index = ({ children }: Props) => {
+const Index = ({ children, logout }: Props) => {
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
   return (
@@ -28,6 +31,7 @@ const Index = ({ children }: Props) => {
             theme.colorScheme === 'dark'
               ? theme.colors.dark[8]
               : theme.colors.gray[0],
+          // minHeight: '95vh',
         },
       }}
       navbarOffsetBreakpoint='sm'
@@ -48,7 +52,17 @@ const Index = ({ children }: Props) => {
               />
             </MediaQuery>
 
-            <Text>Application header</Text>
+            <Flex
+              direction={{ base: 'column', sm: 'row' }}
+              gap={{ base: 'sm', sm: 'lg' }}
+              justify={{ sm: 'space-between' }}
+              style={{ width: '100%' }}
+            >
+              <Text>Application header</Text>
+              <Button variant='outline' onClick={() => logout()}>
+                Logout
+              </Button>
+            </Flex>
           </div>
         </Header>
       }
@@ -58,4 +72,6 @@ const Index = ({ children }: Props) => {
   );
 };
 
-export default Index;
+export default connect(null, {
+  logout,
+})(Index);
