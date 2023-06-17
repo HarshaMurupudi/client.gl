@@ -10,11 +10,13 @@ export const publicRoutes = [
   {
     path: '/',
     element: (
-      <PrivateRoute>
-        <AppLayout>
-          <Home />
-        </AppLayout>
-      </PrivateRoute>
+      <Suspense fallback={<div>Loading</div>}>
+        <PrivateRoute>
+          <AppLayout>
+            <Home />
+          </AppLayout>
+        </PrivateRoute>
+      </Suspense>
     ),
   },
   {

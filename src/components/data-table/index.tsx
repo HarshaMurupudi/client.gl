@@ -6,6 +6,7 @@ interface Props {
   onRowClick: any;
   sortStatus: any;
   onSortStatusChange: any;
+  onCellClick: any;
 }
 
 export const BasicUsageExample = ({
@@ -14,8 +15,8 @@ export const BasicUsageExample = ({
   onRowClick,
   sortStatus,
   onSortStatusChange,
+  onCellClick,
 }: Props) => {
-  console.log(sortStatus, onSortStatusChange);
   return (
     <DataTable
       columns={columns}
@@ -23,6 +24,7 @@ export const BasicUsageExample = ({
       onRowClick={onRowClick}
       sortStatus={sortStatus}
       onSortStatusChange={onSortStatusChange}
+      onCellClick={onCellClick}
     />
   );
 };

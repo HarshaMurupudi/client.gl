@@ -154,6 +154,10 @@ function Jobs({ jobs, fetchJobs, fetchPDF }) {
     setRecords(sortStatus.direction === 'desc' ? data.reverse() : data);
   }, [sortStatus]);
 
+  const handlePartClick = (Part_Number) => {
+    // fetchPDF(Part_Number);
+  };
+
   const columns = [
     {
       accessor: 'Job',
@@ -188,6 +192,15 @@ function Jobs({ jobs, fetchJobs, fetchPDF }) {
       ),
       filtering: partNumber !== '',
       sortable: true,
+      render: ({ Part_Number }) => (
+        <p
+          style={{
+            textDecoration: 'underline',
+          }}
+        >
+          {Part_Number}
+        </p>
+      ),
     },
     {
       accessor: 'On_Hand_Qty',
@@ -302,11 +315,16 @@ function Jobs({ jobs, fetchJobs, fetchPDF }) {
       <BasicUsageExample
         columns={columns}
         rows={records}
-        onRowClick={(company, rowIndex, event) => {
-          fetchPDF(company.Part_Number);
-        }}
+        // onRowClick={(company, rowIndex, event) => {
+        //   fetchPDF(company.Part_Number);
+        // }}
         sortStatus={sortStatus}
         onSortStatusChange={setSortStatus}
+        onCellClick={({ event, record, recordIndex, column, columnIndex }) => {
+          if (column.accessor === 'Part_Number') {
+            fetchPDF(record.Part_Number);
+          }
+        }}
       />
     </div>
   );
