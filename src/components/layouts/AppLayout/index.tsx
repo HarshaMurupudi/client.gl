@@ -9,8 +9,11 @@ import {
   useMantineTheme,
   Button,
   Flex,
+  Image,
 } from '@mantine/core';
 import { connect } from 'react-redux';
+import logoImg from '../../../assets/logo.jpg';
+import { Navigate, useLocation } from 'react-router-dom';
 
 import { NavbarMinimal } from '../../sidebar';
 import { logout } from '../../../pages/login/store/actions';
@@ -22,7 +25,14 @@ interface Props {
 
 const Index = ({ children, logout }: Props) => {
   const theme = useMantineTheme();
+  let location = useLocation();
+
   const [opened, setOpened] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    <Navigate to={'/login'} state={{ to: null }} />;
+  };
   return (
     <AppShell
       styles={{
@@ -58,8 +68,14 @@ const Index = ({ children, logout }: Props) => {
               justify={{ sm: 'space-between' }}
               style={{ width: '100%' }}
             >
-              <Text>Application header</Text>
-              <Button variant='outline' onClick={() => logout()}>
+              <Image
+                maw={120}
+                // mx='auto'
+                // radius='md'
+                src={logoImg}
+                alt='Random image'
+              />
+              <Button variant='outline' onClick={handleLogout}>
                 Logout
               </Button>
             </Flex>

@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, TextInput, Center } from '@mantine/core';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { connect } from 'react-redux';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 
 import { login } from './store/actions';
 
@@ -19,25 +19,27 @@ const validationSchema = yup.object({
 
 function Login({ login, isAuthenticated, authLoading }) {
   let location = useLocation();
+  const navigate = useNavigate();
+  const hasVisited = localStorage.getItem('visitedMission');
   const formik = useFormik({
     initialValues: {
       employeeID: '',
       password: '',
     },
     validationSchema: validationSchema,
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
       const { employeeID, password } = values;
-      login(employeeID, password);
+      await login(employeeID, password);
+
+      navigate('/mission');
     },
   });
 
-  if (isAuthenticated) {
-    if (location.state) {
-      return <Navigate to={location.state.from} />;
-    } else {
-      return <Navigate to='/' />;
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/');
     }
-  }
+  }, []);
 
   return (
     <Center maw={400} h={'100vh'} mx='auto'>

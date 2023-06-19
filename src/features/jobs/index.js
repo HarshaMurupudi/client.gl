@@ -5,10 +5,13 @@ import { IconSearch } from '@tabler/icons-react';
 import { TextInput } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import sortBy from 'lodash/sortBy';
+import { useNavigate } from 'react-router-dom';
 
 import { fetchJobs, fetchPDF } from './store/actions';
 
 function Jobs({ jobs, fetchJobs, fetchPDF }) {
+  let navigate = useNavigate();
+
   const [sortStatus, setSortStatus] = useState({
     columnAccessor: 'Job',
     direction: 'asc',
@@ -153,10 +156,6 @@ function Jobs({ jobs, fetchJobs, fetchPDF }) {
     const data = sortBy(jobs, sortStatus.columnAccessor);
     setRecords(sortStatus.direction === 'desc' ? data.reverse() : data);
   }, [sortStatus]);
-
-  const handlePartClick = (Part_Number) => {
-    // fetchPDF(Part_Number);
-  };
 
   const columns = [
     {
