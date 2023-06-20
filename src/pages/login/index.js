@@ -18,9 +18,7 @@ const validationSchema = yup.object({
 });
 
 function Login({ login, isAuthenticated, authLoading }) {
-  let location = useLocation();
   const navigate = useNavigate();
-  const hasVisited = localStorage.getItem('visitedMission');
   const formik = useFormik({
     initialValues: {
       employeeID: '',

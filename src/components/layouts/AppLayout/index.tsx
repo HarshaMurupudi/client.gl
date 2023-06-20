@@ -15,7 +15,7 @@ import { connect } from 'react-redux';
 import logoImg from '../../../assets/logo.jpg';
 import { Navigate, useLocation } from 'react-router-dom';
 
-import { NavbarMinimal } from '../../sidebar';
+import { NavbarNested } from '../../sidebar';
 import { logout } from '../../../pages/login/store/actions';
 
 interface Props {
@@ -46,42 +46,42 @@ const Index = ({ children, logout }: Props) => {
       }}
       navbarOffsetBreakpoint='sm'
       asideOffsetBreakpoint='sm'
-      navbar={<NavbarMinimal />}
-      header={
-        <Header height={{ base: 50, md: 70 }} p='md'>
-          <div
-            style={{ display: 'flex', alignItems: 'center', height: '100%' }}
-          >
-            <MediaQuery largerThan='sm' styles={{ display: 'none' }}>
-              <Burger
-                opened={opened}
-                onClick={() => setOpened((o) => !o)}
-                size='sm'
-                color={theme.colors.gray[6]}
-                mr='xl'
-              />
-            </MediaQuery>
+      navbar={<NavbarNested handleLogout={handleLogout} />}
+      // header={
+      //   <Header height={{ base: 50, md: 70 }} p='md'>
+      //     <div
+      //       style={{ display: 'flex', alignItems: 'center', height: '100%' }}
+      //     >
+      //       <MediaQuery largerThan='sm' styles={{ display: 'none' }}>
+      //         <Burger
+      //           opened={opened}
+      //           onClick={() => setOpened((o) => !o)}
+      //           size='sm'
+      //           color={theme.colors.gray[6]}
+      //           mr='xl'
+      //         />
+      //       </MediaQuery>
 
-            <Flex
-              direction={{ base: 'column', sm: 'row' }}
-              gap={{ base: 'sm', sm: 'lg' }}
-              justify={{ sm: 'space-between' }}
-              style={{ width: '100%' }}
-            >
-              <Image
-                maw={120}
-                // mx='auto'
-                // radius='md'
-                src={logoImg}
-                alt='Random image'
-              />
-              <Button variant='outline' onClick={handleLogout}>
-                Logout
-              </Button>
-            </Flex>
-          </div>
-        </Header>
-      }
+      //       <Flex
+      //         direction={{ base: 'column', sm: 'row' }}
+      //         gap={{ base: 'sm', sm: 'lg' }}
+      //         justify={{ sm: 'space-between' }}
+      //         style={{ width: '100%' }}
+      //       >
+      //         <Image
+      //           maw={120}
+      //           // mx='auto'
+      //           // radius='md'
+      //           src={logoImg}
+      //           alt='Random image'
+      //         />
+      //         <Button variant='outline' onClick={handleLogout}>
+      //           Logout
+      //         </Button>
+      //       </Flex>
+      //     </div>
+      //   </Header>
+      // }
     >
       <Text>{children}</Text>
     </AppShell>

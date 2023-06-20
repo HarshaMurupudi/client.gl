@@ -314,9 +314,6 @@ function Jobs({ jobs, fetchJobs, fetchPDF }) {
       <BasicUsageExample
         columns={columns}
         rows={records}
-        // onRowClick={(company, rowIndex, event) => {
-        //   fetchPDF(company.Part_Number);
-        // }}
         sortStatus={sortStatus}
         onSortStatusChange={setSortStatus}
         onCellClick={({ event, record, recordIndex, column, columnIndex }) => {
