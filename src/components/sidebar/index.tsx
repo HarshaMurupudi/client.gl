@@ -129,7 +129,12 @@ export function NavbarNested({ handleLogout }: { handleLogout: any }) {
   };
 
   return (
-    <Navbar height={750} width={{ sm: 300 }} p='md' className={classes.navbar}>
+    <Navbar
+      height={'100vh'}
+      width={{ sm: 300 }}
+      p='md'
+      className={classes.navbar}
+    >
       <Navbar.Section className={classes.header}>
         <Group position='apart'>
           {/* <Logo width={rem(120)} /> */}
