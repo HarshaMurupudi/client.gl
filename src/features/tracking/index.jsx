@@ -5,11 +5,21 @@ import { PoForm } from '../po/components';
 import { BasicUsageExample } from '../../components/data-table';
 import { Box } from '@mantine/core';
 import { fetchTracking } from './store/actions';
+import { fetchPDFByJob } from '../jobs/store/actions';
 
-function Tracking({ tracking, fetchTracking }) {
+function Tracking({ tracking, fetchTracking, fetchPDFByJob }) {
   const columns = [
     {
       accessor: 'Job',
+      render: ({ Job }) => (
+        <p
+          style={{
+            textDecoration: 'underline',
+          }}
+        >
+          {Job}
+        </p>
+      ),
     },
     {
       accessor: 'Packlist',
@@ -39,8 +49,8 @@ function Tracking({ tracking, fetchTracking }) {
             column,
             columnIndex,
           }) => {
-            if (column.accessor === 'Part_Number') {
-              // fetchPDF(record.Part_Number);
+            if (column.accessor === 'Job') {
+              fetchPDFByJob(record.Job);
             }
           }}
         />
@@ -53,4 +63,6 @@ const mapStateToProps = (state) => ({
   tracking: state.getIn(['tracking', 'tracking']),
 });
 
-export default connect(mapStateToProps, { fetchTracking })(Tracking);
+export default connect(mapStateToProps, { fetchTracking, fetchPDFByJob })(
+  Tracking
+);

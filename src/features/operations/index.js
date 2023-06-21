@@ -5,12 +5,22 @@ import { useLocation } from 'react-router-dom';
 
 import { BasicUsageExample } from '../../components/data-table';
 import { fetchOperations } from './store/actions';
+import { fetchPDFByJob } from '../jobs/store/actions';
 
-function Operations({ operations, fetchOperations }) {
+function Operations({ operations, fetchOperations, fetchPDFByJob }) {
   const location = useLocation();
   const columns = [
     {
       accessor: 'Job',
+      render: ({ Job }) => (
+        <p
+          style={{
+            textDecoration: 'underline',
+          }}
+        >
+          {Job}
+        </p>
+      ),
     },
     {
       accessor: 'Work_Center',
@@ -48,8 +58,8 @@ function Operations({ operations, fetchOperations }) {
         sortStatus={null}
         onSortStatusChange={null}
         onCellClick={({ event, record, recordIndex, column, columnIndex }) => {
-          if (column.accessor === 'Part_Number') {
-            // fetchPDF(record.Part_Number);
+          if (column.accessor === 'Job') {
+            fetchPDFByJob(record.Job);
           }
         }}
       />
@@ -61,4 +71,6 @@ const mapStateToProps = (state) => ({
   operations: state.getIn(['operation', 'operations']),
 });
 
-export default connect(mapStateToProps, { fetchOperations })(Operations);
+export default connect(mapStateToProps, { fetchOperations, fetchPDFByJob })(
+  Operations
+);

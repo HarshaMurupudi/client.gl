@@ -13,6 +13,7 @@ import {
   IconGauge,
   IconPresentationAnalytics,
   IconLogout,
+  IconFileAnalytics,
 } from '@tabler/icons-react';
 import { UserButton } from '../UserButton';
 import { LinksGroup } from '../NavbarLinksGroup';
@@ -28,7 +29,7 @@ const mockdata = [
     icon: IconNotes,
     initiallyOpened: true,
     links: [
-      { label: 'Contracts', link: '/contracts' },
+      { label: 'Job Review', link: '/contracts' },
       { label: 'PO', link: '/po' },
       { label: 'Tracking', link: '/tracking' },
     ],
@@ -37,6 +38,12 @@ const mockdata = [
     label: 'Delivery Queue',
     icon: IconPresentationAnalytics,
     link: '/delivery-queue',
+  },
+  {
+    label: 'Job Planning ',
+    icon: IconFileAnalytics,
+    initiallyOpened: false,
+    links: [{ label: 'Pending', link: '/pending-jobs' }],
   },
 ];
 

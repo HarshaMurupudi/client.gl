@@ -7,6 +7,7 @@ import { reducer as contractsReducer } from '../features/contracts/store';
 import { reducer as operationsReducer } from '../features/operations/store';
 import { reducer as opReducer } from '../features/po/store';
 import { reducer as trackingReducer } from '../features/tracking/store';
+import { reducer as pendingJobsReducer } from '../features/pending/store';
 
 export default combineReducers({
   job: jobsReducer,
@@ -15,4 +16,5 @@ export default combineReducers({
   operation: operationsReducer,
   po: opReducer,
   tracking: trackingReducer,
+  pendingJob: pendingJobsReducer,
 });
