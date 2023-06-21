@@ -12,13 +12,12 @@ export const setContractsLoading = (status) => ({
 
 export const fetchContracts = (data) => async (dispatch) => {
   try {
-    const { jobID, partID } = data;
-    console.log(data, data.jobID);
-
     dispatch(setContractsLoading(true));
 
+    // console.log(data);
+
     const response = await baseAxios.get('/jobs', {
-      params: { 'jobID': jobID },
+      params: data,
     });
     dispatch(setContracts(response.data.jobs));
   } catch (error) {

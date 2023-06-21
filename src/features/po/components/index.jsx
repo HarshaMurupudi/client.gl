@@ -2,14 +2,12 @@ import { useState } from 'react';
 import { useForm } from '@mantine/form';
 import { TextInput, Button, Box, Code, Grid, Flex } from '@mantine/core';
 
-export function ContractForm({ handleSubmit }) {
+export function PoForm({ handleSubmit }) {
   const [submittedValues, setSubmittedValues] = useState('');
 
   const form = useForm({
     initialValues: {
-      Job: '',
-      Part_Number: '',
-      Customer_PO: '',
+      jobID: '',
     },
 
     // transformValues: (values) => ({
@@ -24,36 +22,21 @@ export function ContractForm({ handleSubmit }) {
         component='form'
         onSubmit={form.onSubmit((values) =>
           // setSubmittedValues(JSON.stringify(values, null, 2))
-          handleSubmit(values, form)
+          handleSubmit(values)
         )}
       >
-        <Grid gutter={5} gutterXs='md' gutterMd='xl' gutterXl={50}>
+        <Grid gutter={5} gutterXs='md' gutterMd='xl' gutterXl={50} align='end'>
           <Grid.Col span={4}>
             <TextInput
               label='Job'
               placeholder='Job'
-              {...form.getInputProps('Job')}
+              {...form.getInputProps('jobID')}
             />
           </Grid.Col>
           <Grid.Col span={4}>
-            <TextInput
-              label='Part Number'
-              placeholder='Part Number'
-              {...form.getInputProps('Part_Number')}
-            />
-          </Grid.Col>
-          <Grid.Col span={4}>
-            <TextInput
-              type='text'
-              label='PO Number'
-              placeholder='PO'
-              {...form.getInputProps('Customer_PO')}
-            />
+            <Button type='submit'>Submit</Button>
           </Grid.Col>
         </Grid>
-        <Flex justify='center' my={32}>
-          <Button type='submit'>Submit</Button>
-        </Flex>
       </form>
 
       {submittedValues && <Code block>{submittedValues}</Code>}

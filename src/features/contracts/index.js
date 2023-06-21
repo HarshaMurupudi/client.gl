@@ -12,9 +12,17 @@ import { fetchPDF } from '../jobs/store/actions';
 
 function Contracts({ contracts, fetchContracts, fetchPDF }) {
   const navigate = useNavigate();
-  const handleSubmit = async (data) => {
-    // await fetchContracts();
-    fetchContracts(data);
+  const handleSubmit = async (data, form) => {
+    let selectedParam = null;
+
+    Object.entries(data).forEach(([key, value]) => {
+      if (value) {
+        selectedParam = { [key]: value };
+      }
+    });
+
+    await fetchContracts(selectedParam);
+    form.reset();
   };
 
   const columns = [
@@ -63,7 +71,8 @@ function Contracts({ contracts, fetchContracts, fetchPDF }) {
           items: (record) => [
             {
               key: 'operations',
-              onClick: () => navigate('/operations'),
+              onClick: () =>
+                navigate('/operations', { state: { jobID: record.Job } }),
             },
           ],
         }}

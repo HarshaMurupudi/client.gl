@@ -8,6 +8,9 @@ const Login = lazy(() => import('../pages/login'));
 const Mission = lazy(() => import('../pages/mission'));
 const Contracts = lazy(() => import('../pages/contracts'));
 const Operations = lazy(() => import('../pages/operations'));
+const PO = lazy(() => import('../pages/po'));
+const Tracking = lazy(() => import('../pages/tracking'));
+const Dashboard = lazy(() => import('../pages/dashboard'));
 
 export const publicRoutes = [
   {
@@ -16,7 +19,7 @@ export const publicRoutes = [
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
           <AppLayout>
-            <div>Dashboard</div>
+            <Dashboard />
           </AppLayout>
         </PrivateRoute>
       </Suspense>
@@ -53,6 +56,30 @@ export const publicRoutes = [
         <PrivateRoute>
           <AppLayout>
             <Operations />
+          </AppLayout>
+        </PrivateRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: '/po',
+    element: (
+      <Suspense fallback={<div>Loading</div>}>
+        <PrivateRoute>
+          <AppLayout>
+            <PO />
+          </AppLayout>
+        </PrivateRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: '/tracking',
+    element: (
+      <Suspense fallback={<div>Loading</div>}>
+        <PrivateRoute>
+          <AppLayout>
+            <Tracking />
           </AppLayout>
         </PrivateRoute>
       </Suspense>

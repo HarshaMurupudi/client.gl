@@ -19,6 +19,7 @@ import { LinksGroup } from '../NavbarLinksGroup';
 // import { Logo } from './Logo';
 import Logo from '../../assets/logo.jpg';
 import { useNavigate } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 const mockdata = [
   { label: 'Dashboard', icon: IconGauge, link: '/' },
@@ -28,8 +29,8 @@ const mockdata = [
     initiallyOpened: true,
     links: [
       { label: 'Contracts', link: '/contracts' },
-      { label: 'PO', link: '/' },
-      { label: 'Tracking', link: '/' },
+      { label: 'PO', link: '/po' },
+      { label: 'Tracking', link: '/tracking' },
     ],
   },
   {
@@ -110,7 +111,13 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export function NavbarNested({ handleLogout }: { handleLogout: any }) {
+function NavbarNestedBasic({
+  handleLogout,
+  user,
+}: {
+  handleLogout: any;
+  user: any;
+}) {
   const navigate = useNavigate();
 
   const { classes } = useStyles();
@@ -162,10 +169,16 @@ export function NavbarNested({ handleLogout }: { handleLogout: any }) {
 
         <UserButton
           image='https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80'
-          name='Ann Nullpointer'
-          email='anullpointer@yahoo.com'
+          name={`${user.First_Name} ${user.Last_Name}`}
+          email={user.Employee}
         />
       </Navbar.Section>
     </Navbar>
   );
 }
+
+const mapStateToProps = (state: any) => ({
+  user: state.getIn(['user', 'user']),
+});
+
+export const NavbarNested = connect(mapStateToProps, null)(NavbarNestedBasic);
