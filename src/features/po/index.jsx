@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { format } from 'date-fns';
 
 import { PoForm } from './components';
 import { BasicUsageExample } from '../../components/data-table';
@@ -43,9 +44,27 @@ function Po({ pos, fetchPos, fetchPDF }) {
     },
     {
       accessor: 'Requested_Date',
+      render: ({ Requested_Date: value }) => (
+        <p
+          style={{
+            textDecoration: 'underline',
+          }}
+        >
+          {format(new Date(value), 'MM/dd/yyyy')}
+        </p>
+      ),
     },
     {
       accessor: 'Promised_Date',
+      render: ({ Promised_Date: value }) => (
+        <p
+          style={{
+            textDecoration: 'underline',
+          }}
+        >
+          {format(new Date(value), 'MM/dd/yyyy')}
+        </p>
+      ),
     },
     {
       accessor: 'Shipped_Quantity',
