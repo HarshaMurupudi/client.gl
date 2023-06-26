@@ -287,7 +287,6 @@ function Jobs({ jobs, fetchJobs, fetchPDF }) {
     },
     {
       accessor: 'Promised_Date',
-      // format(new Date(lastReceipt), 'MM/dd/yyyy')
       filter: (
         <TextInput
           label='Released Date'
@@ -301,39 +300,21 @@ function Jobs({ jobs, fetchJobs, fetchPDF }) {
       filtering: releasedDate !== '',
       sortable: true,
       render: ({ Promised_Date: value }) => (
-        <p
-          style={{
-            textDecoration: 'underline',
-          }}
-        >
-          {format(new Date(value), 'MM/dd/yyyy')}
-        </p>
+        <p>{format(new Date(value), 'MM/dd/yyyy')}</p>
       ),
     },
     {
       accessor: 'Requested_Date',
       sortable: true,
       render: ({ Requested_Date: value }) => (
-        <p
-          style={{
-            textDecoration: 'underline',
-          }}
-        >
-          {format(new Date(value), 'MM/dd/yyyy')}
-        </p>
+        <p>{format(new Date(value), 'MM/dd/yyyy')}</p>
       ),
     },
     {
       accessor: 'Ship_By_Date',
       sortable: true,
       render: ({ Ship_By_Date: value }) => (
-        <p
-          style={{
-            textDecoration: 'underline',
-          }}
-        >
-          {format(new Date(value), 'MM/dd/yyyy')}
-        </p>
+        <p>{format(new Date(value), 'MM/dd/yyyy')}</p>
       ),
     },
   ];

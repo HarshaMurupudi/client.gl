@@ -41,29 +41,20 @@ function Po({ pos, fetchPos, fetchPDF }) {
     },
     {
       accessor: 'Sched_End',
+      render: ({ Requested_Date: value }) => (
+        <p>{format(new Date(value), 'MM/dd/yyyy')}</p>
+      ),
     },
     {
       accessor: 'Requested_Date',
       render: ({ Requested_Date: value }) => (
-        <p
-          style={{
-            textDecoration: 'underline',
-          }}
-        >
-          {format(new Date(value), 'MM/dd/yyyy')}
-        </p>
+        <p>{format(new Date(value), 'MM/dd/yyyy')}</p>
       ),
     },
     {
       accessor: 'Promised_Date',
       render: ({ Promised_Date: value }) => (
-        <p
-          style={{
-            textDecoration: 'underline',
-          }}
-        >
-          {format(new Date(value), 'MM/dd/yyyy')}
-        </p>
+        <p>{format(new Date(value), 'MM/dd/yyyy')}</p>
       ),
     },
     {
