@@ -8,6 +8,7 @@ interface Props {
   onSortStatusChange: any;
   onCellClick: any;
   rowContextMenu: any;
+  rowExpansion: any;
 }
 
 export const BasicUsageExample = ({
@@ -18,6 +19,7 @@ export const BasicUsageExample = ({
   onSortStatusChange,
   onCellClick,
   rowContextMenu,
+  rowExpansion,
 }: Props) => {
   return (
     <DataTable
@@ -28,6 +30,7 @@ export const BasicUsageExample = ({
       onSortStatusChange={onSortStatusChange}
       onCellClick={onCellClick}
       rowContextMenu={rowContextMenu}
+      rowExpansion={rowExpansion}
     />
   );
 };
