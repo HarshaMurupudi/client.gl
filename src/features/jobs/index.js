@@ -19,7 +19,7 @@ function Jobs({ jobs, fetchJobs, fetchPDF }) {
     const from = (page - 1) * PAGE_SIZE;
     const to = from + PAGE_SIZE;
     setRecords(jobs.slice(from, to));
-  }, [page]);
+  }, [page, jobs]);
 
   const [sortStatus, setSortStatus] = useState({
     columnAccessor: 'Job',
@@ -28,9 +28,9 @@ function Jobs({ jobs, fetchJobs, fetchPDF }) {
   // const [records, setRecords] = useState(sortBy(jobs, 'Job'));
   const [records, setRecords] = useState(jobs.slice(0, PAGE_SIZE));
 
-  useEffect(() => {
-    setRecords(jobs);
-  }, [jobs]);
+  // useEffect(() => {
+  //   setRecords(jobs);
+  // }, [jobs]);
 
   const [query, setQuery] = useState('');
   const [partNumber, setPartNumber] = useState('');
