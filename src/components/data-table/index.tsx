@@ -9,6 +9,10 @@ interface Props {
   onCellClick: any;
   rowContextMenu: any;
   rowExpansion: any;
+  totalRecords: any;
+  recordsPerPage: any;
+  page: any;
+  onPageChange: any;
 }
 
 export const BasicUsageExample = ({
@@ -20,6 +24,10 @@ export const BasicUsageExample = ({
   onCellClick,
   rowContextMenu,
   rowExpansion,
+  totalRecords,
+  recordsPerPage,
+  page,
+  onPageChange,
 }: Props) => {
   return (
     <DataTable
@@ -31,6 +39,10 @@ export const BasicUsageExample = ({
       onCellClick={onCellClick}
       rowContextMenu={rowContextMenu}
       rowExpansion={rowExpansion}
+      totalRecords={totalRecords}
+      recordsPerPage={recordsPerPage}
+      page={page}
+      onPageChange={onPageChange}
     />
   );
 };

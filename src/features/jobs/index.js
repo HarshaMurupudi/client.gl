@@ -9,15 +9,24 @@ import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 
 import { fetchJobs, fetchPDF } from './store/actions';
+const PAGE_SIZE = 15;
 
 function Jobs({ jobs, fetchJobs, fetchPDF }) {
   let navigate = useNavigate();
+  const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    const from = (page - 1) * PAGE_SIZE;
+    const to = from + PAGE_SIZE;
+    setRecords(jobs.slice(from, to));
+  }, [page]);
 
   const [sortStatus, setSortStatus] = useState({
     columnAccessor: 'Job',
     direction: 'asc',
   });
-  const [records, setRecords] = useState(sortBy(jobs, 'Job'));
+  // const [records, setRecords] = useState(sortBy(jobs, 'Job'));
+  const [records, setRecords] = useState(jobs.slice(0, PAGE_SIZE));
 
   useEffect(() => {
     setRecords(jobs);
@@ -300,21 +309,21 @@ function Jobs({ jobs, fetchJobs, fetchPDF }) {
       filtering: releasedDate !== '',
       sortable: true,
       render: ({ Promised_Date: value }) => (
-        <p>{format(new Date(value), 'MM/dd/yyyy')}</p>
+        <p>{value ? format(new Date(value), 'MM/dd/yyyy') : '-'}</p>
       ),
     },
     {
       accessor: 'Requested_Date',
       sortable: true,
       render: ({ Requested_Date: value }) => (
-        <p>{format(new Date(value), 'MM/dd/yyyy')}</p>
+        <p>{value ? format(new Date(value), 'MM/dd/yyyy') : '-'}</p>
       ),
     },
     {
       accessor: 'Ship_By_Date',
       sortable: true,
       render: ({ Ship_By_Date: value }) => (
-        <p>{format(new Date(value), 'MM/dd/yyyy')}</p>
+        <p>{value ? format(new Date(value), 'MM/dd/yyyy') : '-'}</p>
       ),
     },
   ];
@@ -331,6 +340,10 @@ function Jobs({ jobs, fetchJobs, fetchPDF }) {
             fetchPDF(record.Part_Number);
           }
         }}
+        totalRecords={jobs.length}
+        recordsPerPage={PAGE_SIZE}
+        page={page}
+        onPageChange={(p) => setPage(p)}
       />
     </div>
   );
