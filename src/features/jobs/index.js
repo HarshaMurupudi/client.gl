@@ -41,117 +41,103 @@ function Jobs({ jobs, fetchJobs, fetchPDF }) {
   const [completedQuantity, setCompletedQuantity] = useState('');
   const [releasedDate, setReleasedDate] = useState('');
 
-  const [debouncedQuery] = useDebouncedValue(query, 200);
-  const [debouncedPartQuery] = useDebouncedValue(partNumber, 200);
-  const [debouncedCustomerQuery] = useDebouncedValue(customer, 200);
-  const [debouncedStatusQuery] = useDebouncedValue(status, 200);
-  const [debouncedDescriptionQuery] = useDebouncedValue(description, 200);
-  const [debouncedOrderQuantityQuery] = useDebouncedValue(orderQuantity, 200);
-  const [debouncedCompletedQuantityQuery] = useDebouncedValue(
-    completedQuantity,
-    200
-  );
-  const [debouncedReleasedDateQuery] = useDebouncedValue(releasedDate, 200);
-
   useEffect(() => {
     setRecords(
-      jobs.filter(
-        ({
-          Job,
-          Part_Number,
-          Customer,
-          Status,
-          Description,
-          Order_Quantity,
-          Completed_Quantity,
-          Released_Date,
-        }) => {
-          if (
-            debouncedQuery !== '' &&
-            !`${Job}`
-              .toLowerCase()
-              .includes(debouncedQuery.trim().toLowerCase())
-          ) {
-            return false;
-          }
+      jobs
+        .filter(
+          ({
+            Job,
+            Part_Number,
+            Customer,
+            Status,
+            Description,
+            Order_Quantity,
+            Completed_Quantity,
+            Released_Date,
+          }) => {
+            if (
+              query !== '' &&
+              !`${Job}`.toLowerCase().includes(query.trim().toLowerCase())
+            ) {
+              return false;
+            }
 
-          if (
-            debouncedPartQuery !== '' &&
-            !`${Part_Number}`
-              .toLowerCase()
-              .includes(debouncedPartQuery.trim().toLowerCase())
-          ) {
-            return false;
-          }
+            if (
+              partNumber !== '' &&
+              !`${Part_Number}`
+                .toLowerCase()
+                .includes(partNumber.trim().toLowerCase())
+            ) {
+              return false;
+            }
 
-          if (
-            debouncedCustomerQuery !== '' &&
-            !`${Customer}`
-              .toLowerCase()
-              .includes(debouncedCustomerQuery.trim().toLowerCase())
-          ) {
-            return false;
-          }
+            if (
+              customer !== '' &&
+              !`${Customer}`
+                .toLowerCase()
+                .includes(customer.trim().toLowerCase())
+            ) {
+              return false;
+            }
 
-          if (
-            debouncedStatusQuery !== '' &&
-            !`${Status}`
-              .toLowerCase()
-              .includes(debouncedStatusQuery.trim().toLowerCase())
-          ) {
-            return false;
-          }
+            if (
+              status !== '' &&
+              !`${Status}`.toLowerCase().includes(status.trim().toLowerCase())
+            ) {
+              return false;
+            }
 
-          if (
-            debouncedDescriptionQuery !== '' &&
-            !`${Description}`
-              .toLowerCase()
-              .includes(debouncedDescriptionQuery.trim().toLowerCase())
-          ) {
-            return false;
-          }
+            if (
+              description !== '' &&
+              !`${Description}`
+                .toLowerCase()
+                .includes(description.trim().toLowerCase())
+            ) {
+              return false;
+            }
 
-          if (
-            debouncedOrderQuantityQuery !== '' &&
-            !`${Order_Quantity}`
-              .toLowerCase()
-              .includes(debouncedOrderQuantityQuery.trim().toLowerCase())
-          ) {
-            return false;
-          }
+            if (
+              orderQuantity !== '' &&
+              !`${Order_Quantity}`
+                .toLowerCase()
+                .includes(orderQuantity.trim().toLowerCase())
+            ) {
+              return false;
+            }
 
-          if (
-            debouncedCompletedQuantityQuery !== '' &&
-            !`${Completed_Quantity}`
-              .toLowerCase()
-              .includes(debouncedCompletedQuantityQuery.trim().toLowerCase())
-          ) {
-            return false;
-          }
+            if (
+              completedQuantity !== '' &&
+              !`${Completed_Quantity}`
+                .toLowerCase()
+                .includes(completedQuantity.trim().toLowerCase())
+            ) {
+              return false;
+            }
 
-          if (
-            debouncedReleasedDateQuery !== '' &&
-            !`${Released_Date}`
-              .toLowerCase()
-              .includes(debouncedReleasedDateQuery.trim().toLowerCase())
-          ) {
-            return false;
-          }
+            if (
+              releasedDate !== '' &&
+              !`${Released_Date}`
+                .toLowerCase()
+                .includes(releasedDate.trim().toLowerCase())
+            ) {
+              return false;
+            }
 
-          return true;
-        }
-      )
+            return true;
+          }
+        )
+        .slice(0, PAGE_SIZE)
     );
   }, [
     // jobs,
-    debouncedQuery,
-    debouncedPartQuery,
-    debouncedCustomerQuery,
-    debouncedStatusQuery,
-    debouncedDescriptionQuery,
-    debouncedOrderQuantityQuery,
-    debouncedCompletedQuantityQuery,
-    debouncedReleasedDateQuery,
+    query,
+    partNumber,
+    customer,
+    status,
+    description,
+    orderQuantity,
+    completedQuantity,
+    releasedDate,
   ]);
 
   useEffect(() => {
@@ -163,7 +149,7 @@ function Jobs({ jobs, fetchJobs, fetchPDF }) {
   }, []);
 
   useEffect(() => {
-    const data = sortBy(jobs, sortStatus.columnAccessor);
+    const data = sortBy(jobs, sortStatus.columnAccessor).slice(0, PAGE_SIZE);
     setRecords(sortStatus.direction === 'desc' ? data.reverse() : data);
   }, [sortStatus]);
 
