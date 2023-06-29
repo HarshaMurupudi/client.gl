@@ -206,6 +206,11 @@ function Jobs({ jobs, fetchJobs, fetchPDF }) {
       sortable: true,
     },
     {
+      accessor: 'Work_Center',
+      title: 'Now At',
+      sortable: true,
+    },
+    {
       accessor: 'Customer',
       filter: (
         <TextInput
