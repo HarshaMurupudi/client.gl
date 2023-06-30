@@ -14,6 +14,7 @@ import {
   IconPresentationAnalytics,
   IconLogout,
   IconFileAnalytics,
+  IconCalendarStats,
 } from '@tabler/icons-react';
 import { UserButton } from '../UserButton';
 import { LinksGroup } from '../NavbarLinksGroup';
@@ -35,15 +36,21 @@ const mockdata = [
     ],
   },
   {
-    label: 'Delivery Queue',
-    icon: IconPresentationAnalytics,
-    link: '/delivery-queue',
-  },
-  {
-    label: 'Job Planning ',
+    label: 'Job Planning',
     icon: IconFileAnalytics,
     initiallyOpened: false,
     links: [{ label: 'Pending', link: '/pending-jobs' }],
+  },
+  {
+    label: 'Engineering',
+    icon: IconCalendarStats,
+    initiallyOpened: false,
+    links: [{ label: 'A-ART', link: '/a-art' }],
+  },
+  {
+    label: 'Delivery Queue',
+    icon: IconPresentationAnalytics,
+    link: '/delivery-queue',
   },
 ];
 

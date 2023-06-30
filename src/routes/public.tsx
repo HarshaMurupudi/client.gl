@@ -12,6 +12,7 @@ const PO = lazy(() => import('../pages/po'));
 const Tracking = lazy(() => import('../pages/tracking'));
 const Dashboard = lazy(() => import('../pages/dashboard'));
 const PendingJobs = lazy(() => import('../pages/pending'));
+const Aart = lazy(() => import('../pages/a-art'));
 
 export const publicRoutes = [
   {
@@ -93,6 +94,18 @@ export const publicRoutes = [
         <PrivateRoute>
           <AppLayout>
             <PendingJobs />
+          </AppLayout>
+        </PrivateRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: '/a-art',
+    element: (
+      <Suspense fallback={<div>Loading</div>}>
+        <PrivateRoute>
+          <AppLayout>
+            <Aart />
           </AppLayout>
         </PrivateRoute>
       </Suspense>
