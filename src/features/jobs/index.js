@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { BasicUsageExample } from '../../components/data-table';
 import { connect } from 'react-redux';
 import { IconSearch } from '@tabler/icons-react';
-import { TextInput } from '@mantine/core';
+import { TextInput, Skeleton } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import sortBy from 'lodash/sortBy';
 import { useNavigate } from 'react-router-dom';
@@ -11,7 +11,7 @@ import { format } from 'date-fns';
 import { fetchJobs, fetchPDF } from './store/actions';
 const PAGE_SIZE = 15;
 
-function Jobs({ jobs, fetchJobs, fetchPDF }) {
+function Jobs({ jobs, jobsLoading, fetchJobs, fetchPDF }) {
   let navigate = useNavigate();
   const [page, setPage] = useState(1);
 
@@ -206,7 +206,7 @@ function Jobs({ jobs, fetchJobs, fetchPDF }) {
       sortable: true,
     },
     {
-      accessor: 'Work_Center',
+      accessor: 'Now At',
       title: 'Now At',
       sortable: true,
     },
@@ -321,27 +321,36 @@ function Jobs({ jobs, fetchJobs, fetchPDF }) {
 
   return (
     <div>
-      <BasicUsageExample
-        columns={columns}
-        rows={records}
-        sortStatus={sortStatus}
-        onSortStatusChange={setSortStatus}
-        onCellClick={({ event, record, recordIndex, column, columnIndex }) => {
-          if (column.accessor === 'Part_Number') {
-            fetchPDF(record.Part_Number);
-          }
-        }}
-        totalRecords={jobs.length}
-        recordsPerPage={PAGE_SIZE}
-        page={page}
-        onPageChange={(p) => setPage(p)}
-      />
+      <Skeleton visible={jobsLoading}>
+        <BasicUsageExample
+          columns={columns}
+          rows={records}
+          sortStatus={sortStatus}
+          onSortStatusChange={setSortStatus}
+          onCellClick={({
+            event,
+            record,
+            recordIndex,
+            column,
+            columnIndex,
+          }) => {
+            if (column.accessor === 'Part_Number') {
+              fetchPDF(record.Part_Number);
+            }
+          }}
+          totalRecords={jobs.length}
+          recordsPerPage={PAGE_SIZE}
+          page={page}
+          onPageChange={(p) => setPage(p)}
+        />
+      </Skeleton>
     </div>
   );
 }
 
 const mapStateToProps = (state) => ({
   jobs: state.getIn(['job', 'jobs']),
+  jobsLoading: state.getIn(['job', 'jobsLoading']),
 });
 
 export default connect(mapStateToProps, { fetchJobs, fetchPDF })(Jobs);
