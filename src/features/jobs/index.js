@@ -198,12 +198,18 @@ function Jobs({ jobs, jobsLoading, fetchJobs, fetchPDF }) {
       ),
     },
     {
-      accessor: 'On_Hand_Qty',
+      accessor: 'Distinct_On_Hand_Qty',
+      title: 'On Hand Qty',
       sortable: true,
-    },
-    {
-      accessor: 'Location_ID',
-      sortable: true,
+      render: ({ Distinct_On_Hand_Qty }) => (
+        <p
+          style={{
+            textDecoration: 'underline',
+          }}
+        >
+          {Distinct_On_Hand_Qty}
+        </p>
+      ),
     },
     {
       accessor: 'Now At',
@@ -336,6 +342,9 @@ function Jobs({ jobs, jobsLoading, fetchJobs, fetchPDF }) {
           }) => {
             if (column.accessor === 'Part_Number') {
               fetchPDF(record.Part_Number);
+            } else if(column.accessor === 'Distinct_On_Hand_Qty'){
+              // navigate('/delivery-queue-details', { state: { jobID: record.Job }});
+              window.open(`/delivery-queue-details/${record.Job}`, '_blank', 'rel=noopener noreferrer')
             }
           }}
           totalRecords={jobs.length}

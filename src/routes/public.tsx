@@ -13,6 +13,7 @@ const Tracking = lazy(() => import('../pages/tracking'));
 const Dashboard = lazy(() => import('../pages/dashboard'));
 const PendingJobs = lazy(() => import('../pages/pending'));
 const Aart = lazy(() => import('../pages/a-art'));
+const DeliveryQueueDetails = lazy(() => import('../features/delivery-queue-details'));
 
 export const publicRoutes = [
   {
@@ -123,6 +124,18 @@ export const publicRoutes = [
           {/* <AppLayout> */}
           <Mission />
           {/* </AppLayout> */}
+        </PrivateRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: '/delivery-queue-details/:jobID',
+    element: (
+      <Suspense fallback={<div>Loading</div>}>
+        <PrivateRoute>
+          <AppLayout>
+          <DeliveryQueueDetails />
+          </AppLayout>
         </PrivateRoute>
       </Suspense>
     ),

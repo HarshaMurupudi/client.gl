@@ -19,6 +19,7 @@ const validationSchema = yup.object({
 
 function Login({ login, isAuthenticated, authLoading }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const formik = useFormik({
     initialValues: {
       employeeID: '',
@@ -35,7 +36,11 @@ function Login({ login, isAuthenticated, authLoading }) {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/');
+      if(location.state){
+        navigate(location.state.from);
+      } else {
+        navigate('/');
+      }
     }
   }, []);
 
