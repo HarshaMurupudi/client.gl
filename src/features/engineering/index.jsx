@@ -5,6 +5,7 @@ import { createStyles, rem, Select, TextInput } from '@mantine/core';
 import { useLocation } from 'react-router-dom';
 import { format } from 'date-fns';
 import { IconSearch } from '@tabler/icons-react';
+import sortBy from 'lodash/sortBy';
 
 import { BasicUsageExample } from '../../components/data-table';
 import { fetchOpenJobs, fetchReadyJobs } from './store/actions';
@@ -48,6 +49,10 @@ function Engineering({
   const location = useLocation();
   const pathName = location.pathname;
   const [query, setQuery] = useState('');
+  const [sortStatus, setSortStatus] = useState({
+    columnAccessor: 'Job',
+    direction: 'asc',
+  });
 
   const columns = [
     {
@@ -164,6 +169,13 @@ function Engineering({
     setRecords(getTableData().slice(from, to));
   }, [page, getTableData()]);
   const [records, setRecords] = useState(getTableData().slice(0, PAGE_SIZE));
+  useEffect(() => {
+    const data = sortBy(getTableData(), sortStatus.columnAccessor).slice(
+      0,
+      PAGE_SIZE
+    );
+    setRecords(sortStatus.direction === 'desc' ? data.reverse() : data);
+  }, [sortStatus]);
 
   return (
     <Box>
@@ -187,8 +199,8 @@ function Engineering({
         <BasicUsageExample
           columns={columns}
           rows={records}
-          sortStatus={null}
-          onSortStatusChange={null}
+          sortStatus={sortStatus}
+          onSortStatusChange={setSortStatus}
           onCellClick={({
             event,
             record,
