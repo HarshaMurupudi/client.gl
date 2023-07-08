@@ -4,11 +4,11 @@ import { connect } from 'react-redux';
 import { createStyles, rem, Select, TextInput } from '@mantine/core';
 import { useLocation } from 'react-router-dom';
 import { format } from 'date-fns';
+import { IconSearch } from '@tabler/icons-react';
 
 import { BasicUsageExample } from '../../components/data-table';
 import { fetchOpenJobs, fetchReadyJobs } from './store/actions';
 import { fetchPDF } from '../jobs/store/actions';
-
 
 const useStyles = createStyles((theme) => ({
   root: {
@@ -47,10 +47,23 @@ function Engineering({
   const { classes } = useStyles();
   const location = useLocation();
   const pathName = location.pathname;
+  const [query, setQuery] = useState('');
 
   const columns = [
     {
       accessor: 'Job',
+      sortable: true,
+      filter: (
+        <TextInput
+          label='Job'
+          description='Show Job whose names include the specified text'
+          placeholder='Search Jobs...'
+          icon={<IconSearch size={16} />}
+          value={query}
+          onChange={(e) => setQuery(e.currentTarget.value)}
+        />
+      ),
+      filtering: query !== '',
     },
     {
       accessor: 'Part_Number',
@@ -67,56 +80,72 @@ function Engineering({
     },
     {
       accessor: 'Customer',
+      sortable: true,
     },
     {
       accessor: 'Sched_Start',
+      sortable: true,
       render: ({ Sched_Start: value }) => (
         <p>{value ? format(new Date(value), 'MM/dd/yyyy') : '-'}</p>
       ),
     },
     {
       accessor: 'Make_Quantity',
+      sortable: true,
     },
     {
       accessor: 'Note_Text',
+      sortable: true,
     },
     {
       accessor: 'Sales_Code',
+      sortable: true,
     },
     {
       accessor: 'Work_Center',
+      sortable: true,
     },
     {
       accessor: 'Now At',
+      sortable: true,
       render: (job) => {
-        if(pathName === '/a-art'){
-          if(value === 'Open'){
-            return (
-              <p>
-                {job['Now At']}
-              </p>
-            )
+        if (pathName === '/a-art') {
+          if (value === 'Open') {
+            return <p>{job['Now At']}</p>;
           } else {
-            return (
-              <p>
-                {'A-ART'}
-              </p>
-            )
+            return <p>{'A-ART'}</p>;
           }
         } else {
-          return (
-            <p>{job['Now At']}</p>
-          )
+          return <p>{job['Now At']}</p>;
         }
       },
     },
     {
       accessor: 'Status',
+      sortable: true,
     },
     {
       accessor: 'Description',
+      sortable: true,
     },
   ];
+
+  useEffect(() => {
+    setRecords(
+      getTableData()
+        .filter(({ Job }) => {
+          if (
+            query !== '' &&
+            !`${Job}`.toLowerCase().includes(query.trim().toLowerCase())
+          ) {
+            return false;
+          }
+
+          return true;
+        })
+        .slice(0, PAGE_SIZE)
+    );
+  }, [query]);
 
   const [value, setValue] = useState('Open');
   useEffect(() => {
@@ -160,7 +189,13 @@ function Engineering({
           rows={records}
           sortStatus={null}
           onSortStatusChange={null}
-          onCellClick={({ event, record, recordIndex, column, columnIndex }) => {
+          onCellClick={({
+            event,
+            record,
+            recordIndex,
+            column,
+            columnIndex,
+          }) => {
             if (column.accessor === 'Part_Number') {
               fetchPDF(record.Part_Number);
             }
@@ -170,7 +205,7 @@ function Engineering({
           recordsPerPage={PAGE_SIZE}
           page={page}
           onPageChange={(p) => setPage(p)}
-      />
+        />
       </Skeleton>
     </Box>
   );
