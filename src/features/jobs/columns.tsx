@@ -84,9 +84,7 @@ export const getColumns = (fetchPDF: any) => {
       header: 'Completed Quantity',
     },
     {
-      // accessorKey: 'Promised_Date',
       accessorFn: (row: any) => {
-        //convert to Date for sorting and filtering
         const sDay = new Date(row.Promised_Date);
         sDay.setHours(0, 0, 0, 0); // remove time from date (useful if filter by equals exact date)
         return sDay;
@@ -95,16 +93,34 @@ export const getColumns = (fetchPDF: any) => {
       header: 'Promised Date',
       filterVariant: 'date-range',
       sortingFn: 'datetime',
-      enableColumnFilterModes: false, //keep this as only date-range filter with between inclusive filterFn
+      enableColumnFilterModes: false,
       Cell: ({ cell }: { cell: any }) => cell.getValue()?.toLocaleDateString(),
     },
     {
-      accessorKey: 'Requested_Date',
+      id: 'requestedDate',
+      accessorFn: (row: any) => {
+        const sDay = new Date(row.Requested_Date);
+        sDay.setHours(0, 0, 0, 0); // remove time from date (useful if filter by equals exact date)
+        return sDay;
+      },
       header: 'Requested Date',
+      filterVariant: 'date-range',
+      sortingFn: 'datetime',
+      enableColumnFilterModes: false,
+      Cell: ({ cell }: { cell: any }) => cell.getValue()?.toLocaleDateString(),
     },
     {
-      accessorKey: 'Ship_By_Date',
+      id: 'shipBayDateDate',
+      accessorFn: (row: any) => {
+        const sDay = new Date(row.Ship_By_Date);
+        sDay.setHours(0, 0, 0, 0); // remove time from date (useful if filter by equals exact date)
+        return sDay;
+      },
       header: 'Ship By Date',
+      filterVariant: 'date-range',
+      sortingFn: 'datetime',
+      enableColumnFilterModes: false,
+      Cell: ({ cell }: { cell: any }) => cell.getValue()?.toLocaleDateString(),
     },
   ];
 
