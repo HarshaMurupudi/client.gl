@@ -19,7 +19,7 @@ export const MantineDataTable = ({ columns, data }: Props) => {
     columns,
     data, //must be memoized or stable (useState, useMemo, defined outside of this component, etc.)
     enableRowSelection: false, //enable some features
-    // enableColumnOrdering: true,
+    enableColumnOrdering: true,
     enableGlobalFilter: false, //turn off a feature
     enableDensityToggle: false,
     enableFullScreenToggle: false,
