@@ -152,7 +152,7 @@ function NavbarNestedBasic({
   return (
     <Navbar
       height={'100vh'}
-      width={{ sm: 300 }}
+      width={{ sm: 200 }}
       p='md'
       className={classes.navbar}
     >
