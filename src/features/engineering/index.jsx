@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Box, Grid, Skeleton } from '@mantine/core';
 import { connect } from 'react-redux';
 import { createStyles, rem, Select, TextInput } from '@mantine/core';
@@ -11,6 +11,7 @@ import { BasicUsageExample } from '../../components/data-table';
 import { MantineDataTable } from '../../components/mantine-data-table';
 import { fetchOpenJobs, fetchReadyJobs } from './store/actions';
 import { fetchPDF } from '../jobs/store/actions';
+import { getColumns } from './columns';
 
 const useStyles = createStyles((theme) => ({
   root: {
@@ -35,7 +36,6 @@ const dropDownData = [
   { value: 'Open', label: 'Open' },
   { value: 'Ready', label: 'Ready' },
 ];
-const PAGE_SIZE = 15;
 
 function Engineering({
   openJobs,
@@ -45,113 +45,9 @@ function Engineering({
   fetchReadyJobs,
   fetchPDF,
 }) {
-  const [page, setPage] = useState(1);
   const { classes } = useStyles();
   const location = useLocation();
   const pathName = location.pathname;
-  const [query, setQuery] = useState('');
-  const [sortStatus, setSortStatus] = useState({
-    columnAccessor: 'Job',
-    direction: 'asc',
-  });
-
-  const columns = [
-    {
-      accessor: 'Job',
-      sortable: true,
-      filter: (
-        <TextInput
-          label='Job'
-          description='Show Job whose names include the specified text'
-          placeholder='Search Jobs...'
-          icon={<IconSearch size={16} />}
-          value={query}
-          onChange={(e) => setQuery(e.currentTarget.value)}
-        />
-      ),
-      filtering: query !== '',
-    },
-    {
-      accessor: 'Part_Number',
-      sortable: true,
-      render: ({ Part_Number }) => (
-        <p
-          style={{
-            textDecoration: 'underline',
-          }}
-        >
-          {Part_Number}
-        </p>
-      ),
-    },
-    {
-      accessor: 'Customer',
-      sortable: true,
-    },
-    {
-      accessor: 'Sched_Start',
-      sortable: true,
-      render: ({ Sched_Start: value }) => (
-        <p>{value ? format(new Date(value), 'MM/dd/yyyy') : '-'}</p>
-      ),
-    },
-    {
-      accessor: 'Make_Quantity',
-      sortable: true,
-    },
-    {
-      accessor: 'Note_Text',
-      sortable: true,
-    },
-    {
-      accessor: 'Sales_Code',
-      sortable: true,
-    },
-    {
-      accessor: 'Work_Center',
-      sortable: true,
-    },
-    {
-      accessor: 'Now At',
-      sortable: true,
-      render: (job) => {
-        if (pathName === '/a-art') {
-          if (value === 'Open') {
-            return <p>{job['Now At']}</p>;
-          } else {
-            return <p>{'A-ART'}</p>;
-          }
-        } else {
-          return <p>{job['Now At']}</p>;
-        }
-      },
-    },
-    {
-      accessor: 'Status',
-      sortable: true,
-    },
-    {
-      accessor: 'Description',
-      sortable: true,
-    },
-  ];
-
-  useEffect(() => {
-    setRecords(
-      getTableData()
-        .filter(({ Job }) => {
-          if (
-            query !== '' &&
-            !`${Job}`.toLowerCase().includes(query.trim().toLowerCase())
-          ) {
-            return false;
-          }
-
-          return true;
-        })
-        .slice(0, PAGE_SIZE)
-    );
-  }, [query]);
 
   const [value, setValue] = useState('Open');
   useEffect(() => {
@@ -161,24 +57,11 @@ function Engineering({
     };
     fetchPageData();
   }, []);
+
+  const columns = useMemo(() => getColumns(fetchPDF, pathName, value), []);
   const getTableData = () => {
     return value === 'Open' ? openJobs : readyJobs;
   };
-  useEffect(() => {
-    const from = (page - 1) * PAGE_SIZE;
-    const to = from + PAGE_SIZE;
-    setRecords(getTableData().slice(from, to));
-  }, [page, getTableData()]);
-  const [records, setRecords] = useState(getTableData().slice(0, PAGE_SIZE));
-  useEffect(() => {
-    const data = sortBy(getTableData(), sortStatus.columnAccessor).slice(
-      0,
-      PAGE_SIZE
-    );
-    setRecords(sortStatus.direction === 'desc' ? data.reverse() : data);
-  }, [sortStatus]);
-  // const columns = useMemo(() => getColumns(fetchPDF, editedUsers, setEditedUsers), [editedUsers]);
-
 
   return (
     <Box>
@@ -199,7 +82,7 @@ function Engineering({
       </Grid>
 
       <Skeleton visible={engineeringLoading}>
-        <BasicUsageExample
+        {/* <BasicUsageExample
           columns={columns}
           rows={records}
           sortStatus={sortStatus}
@@ -220,17 +103,17 @@ function Engineering({
           recordsPerPage={PAGE_SIZE}
           page={page}
           onPageChange={(p) => setPage(p)}
-        />
+        /> */}
 
-        {/* <MantineDataTable 
-          columns={columns} 
-          data={jobs}
+        <MantineDataTable
+          columns={columns}
+          data={getTableData()}
           tableProps={{
             editingMode: 'cell',
             enableEditing: true,
             getRowId: (row, index) => row.Job + index,
           }}
-        /> */}
+        />
       </Skeleton>
     </Box>
   );
