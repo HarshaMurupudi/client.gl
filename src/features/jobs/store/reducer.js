@@ -1,6 +1,7 @@
 const INITIAL_STATE = {
   jobs: [],
   jobsLoading: true,
+  editedUsers: {}
 };
 
 const jobsReducer = (state = INITIAL_STATE, action) => {
@@ -15,6 +16,11 @@ const jobsReducer = (state = INITIAL_STATE, action) => {
         ...state,
         jobsLoading: action.payload,
       };
+    case 'SET_EDITED_USERS':
+      return {
+          ...state,
+          editedUsers: action.payload,
+        };
     default:
       return state;
   }

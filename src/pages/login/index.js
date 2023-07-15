@@ -17,7 +17,7 @@ const validationSchema = yup.object({
     .required('Password is required'),
 });
 
-function Login({ login, isAuthenticated, authLoading }) {
+function Login({ login, isAuthenticated, authLoading, loading }) {
   const navigate = useNavigate();
   const location = useLocation();
   const formik = useFormik({
@@ -34,46 +34,47 @@ function Login({ login, isAuthenticated, authLoading }) {
     },
   });
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      if(location.state){
-        navigate(location.state.from);
-      } else {
-        navigate('/');
-      }
+  if (isAuthenticated) {
+    if(location.state){
+      return <Navigate to={location.state.from}/>
+    } else {
+      return <Navigate to='/'/>
     }
-  }, []);
+  }
 
-  return (
-    <Center maw={400} h={'100vh'} mx='auto'>
-      <form onSubmit={formik.handleSubmit}>
-        <TextInput
-          id='employeeID'
-          name='employeeID'
-          label='ID'
-          placeholder='Employee ID'
-          inputWrapperOrder={['label', 'input', 'description', 'error']}
-          value={formik.values.employeeID}
-          onChange={formik.handleChange}
-          error={formik.errors.employeeID}
-        />
-        <TextInput
-          id='password'
-          name='password'
-          label='Password'
-          placeholder='Password'
-          value={formik.values.password}
-          onChange={formik.handleChange}
-          error={formik.errors.password}
-        />
-        <Center>
-          <Button type='submit' mt={{ sm: '1rem' }}>
-            Login
-          </Button>
-        </Center>
-      </form>
-    </Center>
-  );
+    return (
+      <Center maw={400} h={'100vh'} mx='auto'>
+       <form onSubmit={formik.handleSubmit}>
+         <TextInput
+           id='employeeID'
+           name='employeeID'
+           label='ID'
+           placeholder='Employee ID'
+           inputWrapperOrder={['label', 'input', 'description', 'error']}
+           value={formik.values.employeeID}
+           onChange={formik.handleChange}
+           error={formik.errors.employeeID}
+         />
+         <TextInput
+           id='password'
+           name='password'
+           label='Password'
+           placeholder='Password'
+           value={formik.values.password}
+           onChange={formik.handleChange}
+           error={formik.errors.password}
+         />
+         <Center>
+           <Button type='submit' mt={{ sm: '1rem' }}>
+             Login
+           </Button>
+         </Center>
+       </form>
+     </Center>
+   );
+  
+
+
 }
 
 const mapStateToProps = (state) => ({
@@ -82,6 +83,7 @@ const mapStateToProps = (state) => ({
   isLoginSnackbarVisible: state.getIn(['user', 'isLoginSnackbarVisible']),
   loginSnackbarMessage: state.getIn(['user', 'loginSnackbarMessage']),
   loginSnackbarType: state.getIn(['user', 'loginSnackbarType']),
+  loading: state.getIn(['user', 'loading'])
 });
 
 export default connect(mapStateToProps, {

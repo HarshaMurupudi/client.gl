@@ -1,4 +1,9 @@
-export const getColumns = (fetchPDF: any) => {
+import { format, addMinutes } from "date-fns";
+
+import { GLSelect } from "../../components/select";
+
+export const getColumns = (fetchPDF: any, editedUsers: any, setEditedUsers: any) => {
+  console.log(editedUsers)
   const onQtyClick = (job: any) => {
     window.open(
       `/delivery-queue-details/${job}`,
@@ -10,23 +15,127 @@ export const getColumns = (fetchPDF: any) => {
     fetchPDF(partNumber);
   };
 
+  function formatDate(date: any) {
+    return format(addMinutes(date, date.getTimezoneOffset()), 'MM/dd/yyyy');
+  }
+
+  const onSelect = (e: any, cell: any, column: any,) => {
+    const{row} = cell;
+
+    if(editedUsers[row.id]){
+      setEditedUsers({
+        ...editedUsers,
+        [row.id]: { ...editedUsers[row.id], ...{Job_Plan: e} },
+      })
+    } else {
+      setEditedUsers({
+        ...editedUsers,
+        [row.id]: { ...row.original, ...{Job_Plan: e} },
+      })
+    }      
+  }
+
+  const planCodes = [
+    {
+      label: '01',
+      value: '01',
+      description: 'Ready (Packlist Created)',
+    },
+    {
+      label: '02',
+      value: '02',
+      description: 'Ready (Product Confirmed)',
+    },
+    {
+      label: '03',
+      value: '03',
+      description: 'Ready (Ship from Job)',
+    },
+    {
+      label: '04',
+      value: '04',
+      description: 'Ready (Ship from Stock)',
+    },
+    {
+      label: '05',
+      value: '05',
+      description: 'Default Priority',
+    },
+    {
+      label: '30',
+      value: '30',
+      description: 'Remake Required',
+    },
+    {
+      label: '40',
+      value: '40',
+      description: 'Customer Called',
+    },
+    {
+      label: '50',
+      value: '50',
+      description: 'Coming from another Job',
+    },
+    {
+      label: '51',
+      value: '51',
+      description: 'Stock from another Job',
+    },
+    {
+      label: '53',
+      value: '53',
+      description: 'Replenish from Ship',
+    },
+    {
+      label: '54',
+      value: '54',
+      description: 'Replenish from Stock',
+    },
+    {
+      label: '70',
+      value: '70',
+      description: 'Requires Purchasing Attention',
+    },
+    {
+      label: '77',
+      value: '77',
+      description: 'Requires Engineering Attention',
+    },
+    {
+      label: '96',
+      value: '96',
+      description: 'Requires Sales Attention',
+    },
+  ];
+
   const columns = [
+    {
+      accessorKey: 'Job_Plan',
+      header: 'Job Plan',
+      Edit: ({ cell, column, table }: {cell: any, column: any, table: any}) => {
+        return (
+          <GLSelect data={planCodes} 
+            cell={cell}
+            table={table}
+            onSelect={ (e: any) => onSelect(e, cell, column)}
+          />
+        )
+      } 
+    },
     {
       accessorKey: 'Job',
       header: 'Job',
-    },
-    {
-      accessorKey: 'Notes',
-      header: 'Notes',
+      enableEditing: false
     },
     {
       accessorKey: 'Part_Number',
       header: 'Part Number',
-      // mantineTableBodyCellProps: ({ cell }: { cell: any }) => ({
-      //   onClick: () => {
-      //     onFetchPDFClick(cell.getValue());
-      //   },
-      // }),
+      enableEditing: false,
+      mantineTableBodyCellProps: ({ cell }: { cell: any }) => ({
+        onClick: () => {
+          onFetchPDFClick(cell.getValue());
+        },
+      }),
       Cell: ({ cell, row }: { cell: any; row: any }) => (
         <p
           style={{
@@ -40,11 +149,106 @@ export const getColumns = (fetchPDF: any) => {
       ),
     },
     {
-      accessorKey: 'Distinct_On_Hand_Qty',
+      id: 'shipBayDateDate',
+      enableEditing: false,
+      accessorFn: (row: any) => {
+        const sDay = new Date(row.Ship_By_Date);
+        return sDay;
+      },
+      header: 'Ship By Date',
+      filterVariant: 'date-range',
+      sortingFn: 'datetime',
+      enableColumnFilterModes: false,
+      Cell: ({ cell }: { cell: any }) => {
+        const dayOfWeekTZOffset = addMinutes(cell.getValue(), cell.getValue().getTimezoneOffset());
+        const dayOfWeek =  dayOfWeekTZOffset.getDay();
+        // 6 = Saturday, 0 = Sunday
+        const isWeekend = (dayOfWeek === 6) || (dayOfWeek  === 0);
+        const currentDate =dayOfWeekTZOffset;
+        if(isWeekend){
+          if(dayOfWeek === 6){
+            const nDate = new Date(currentDate);
+            nDate.setDate(nDate.getDate() - 1)
+            return <strong>{nDate.toLocaleDateString()}</strong>
+          } else if(dayOfWeek  === 0){
+            const nDate = new Date(currentDate);
+            nDate.setDate(nDate.getDate() - 2)
+            return <strong>{nDate.toLocaleDateString()}</strong>
+          }
+        } else {
+          return formatDate(cell.getValue())
+        }
+      }
+    },
+    {
+      accessorKey: 'Production_Notes',
+      header: 'Production Notes',
+      mantineEditTextInputProps: ({ cell, row }: {cell: any, row: any}) => ({
+        type: 'test',
+        onBlur: (event: any) => {
+            if(editedUsers[row.id]){
+              setEditedUsers({
+                ...editedUsers,
+                [row.id]: { ...editedUsers[row.id], ...{Production_Notes: event.currentTarget.value} },
+              })
+            } else {
+              setEditedUsers({
+                ...editedUsers,
+                [row.id]: { ...row.original, ...{Production_Notes: event.currentTarget.value} },
+              })
+            }      
+        }
+      })
+    },
+    {
+      accessorKey: 'Engineering_Notes',
+      header: 'Engineering Notes',
+      mantineEditTextInputProps: ({ cell, row }: {cell: any, row: any}) => ({
+        type: 'email',
+        onBlur: (event: any) =>         
+        {
+          if(editedUsers[row.id]){
+            setEditedUsers({
+              ...editedUsers,
+              [row.id]: { ...editedUsers[row.id], ...{Engineering_Notes: event.currentTarget.value} },
+            })
+          } else {
+            setEditedUsers({
+              ...editedUsers,
+              [row.id]: { ...row.original, ...{Engineering_Notes: event.currentTarget.value} },
+            })
+          }      
+      }
+      })
+    },
+    {
+      accessorKey: 'Sales_Notes',
+      header: 'Sales Notes',
+      mantineEditTextInputProps: ({ cell, row }: {cell: any, row: any}) => ({
+        type: 'email',
+        onBlur: (event: any) => {
+          if(editedUsers[row.id]){
+            setEditedUsers({
+              ...editedUsers,
+              [row.id]: { ...editedUsers[row.id], ...{Sales_Notes: event.currentTarget.value} },
+            })
+          } else {
+            setEditedUsers({
+              ...editedUsers,
+              [row.id]: { ...row.original, ...{Sales_Notes: event.currentTarget.value} },
+            })
+          }      
+      }
+      })
+    },
+    {
+      accessorKey: 'On_Hand_Qty',
+      // accessorKey: 'Distinct_On_Hand_Qty',
       header: 'On Hand Qty',
-      mantineTableBodyCellProps: ({ cell }: { cell: any }) => ({
+      enableEditing: false,
+      mantineTableBodyCellProps: ({ cell, row }: { cell: any, row: any }) => ({
         onClick: () => {
-          onQtyClick(cell.getValue());
+          onQtyClick(row.original?.Job);
         },
       }),
       Cell: ({ cell, row }: { cell: any; row: any }) => (
@@ -62,239 +266,65 @@ export const getColumns = (fetchPDF: any) => {
     {
       accessorKey: 'Now At',
       header: 'Now At',
+      enableEditing: false,
     },
     {
       accessorKey: 'Customer',
       header: 'Customer',
+      enableEditing: false,
     },
     {
       accessorKey: 'Status',
       header: 'Status',
+      enableEditing: false,
     },
     {
       accessorKey: 'Description',
       header: 'Description',
+      enableEditing: false,
     },
     {
       accessorKey: 'Order_Quantity',
       header: 'Order Quantity',
+      enableEditing: false,
     },
     {
       accessorKey: 'Completed_Quantity',
       header: 'Completed Quantity',
+      enableEditing: false,
+    },
+    {
+      accessorKey: 'Lead_Days',
+      header: 'Lead Days',
+      enableEditing: false,
     },
     {
       accessorFn: (row: any) => {
         const sDay = new Date(row.Promised_Date);
-        sDay.setHours(0, 0, 0, 0); // remove time from date (useful if filter by equals exact date)
         return sDay;
       },
+      enableEditing: false,
       id: 'promisedDate',
       header: 'Promised Date',
       filterVariant: 'date-range',
       sortingFn: 'datetime',
       enableColumnFilterModes: false,
-      Cell: ({ cell }: { cell: any }) => cell.getValue()?.toLocaleDateString(),
+      Cell: ({ cell }: { cell: any }) => formatDate(cell.getValue())
     },
     {
       id: 'requestedDate',
+      enableEditing: false,
       accessorFn: (row: any) => {
         const sDay = new Date(row.Requested_Date);
-        sDay.setHours(0, 0, 0, 0); // remove time from date (useful if filter by equals exact date)
         return sDay;
       },
       header: 'Requested Date',
       filterVariant: 'date-range',
       sortingFn: 'datetime',
       enableColumnFilterModes: false,
-      Cell: ({ cell }: { cell: any }) => cell.getValue()?.toLocaleDateString(),
-    },
-    {
-      id: 'shipBayDateDate',
-      accessorFn: (row: any) => {
-        const sDay = new Date(row.Ship_By_Date);
-        sDay.setHours(0, 0, 0, 0); // remove time from date (useful if filter by equals exact date)
-        return sDay;
-      },
-      header: 'Ship By Date',
-      filterVariant: 'date-range',
-      sortingFn: 'datetime',
-      enableColumnFilterModes: false,
-      Cell: ({ cell }: { cell: any }) => cell.getValue()?.toLocaleDateString(),
+      Cell: ({ cell }: { cell: any }) => formatDate(cell.getValue()),
     },
   ];
 
   return columns;
 };
-
-// const columns = [
-//   {
-//     accessor: 'Job',
-//     filter: (
-//       <TextInput
-//         label='Job'
-//         description='Show Job whose names include the specified text'
-//         placeholder='Search Jobs...'
-//         icon={<IconSearch size={16} />}
-//         value={query}
-//         onChange={(e) => setQuery(e.currentTarget.value)}
-//       />
-//     ),
-//     filtering: query !== '',
-//     sortable: true,
-//   },
-//   {
-//     accessor: 'Notes',
-//     sortable: true,
-//   },
-//   {
-//     accessor: 'Part_Number',
-//     filter: (
-//       <TextInput
-//         label='Part Number'
-//         description='Show part numbers whose names include the specified text'
-//         placeholder='Search part numbers...'
-//         icon={<IconSearch size={16} />}
-//         value={partNumber}
-//         onChange={(e) => setPartNumber(e.currentTarget.value)}
-//       />
-//     ),
-//     filtering: partNumber !== '',
-//     sortable: true,
-//     render: ({ Part_Number }) => (
-//       <p
-//         style={{
-//           textDecoration: 'underline',
-//         }}
-//       >
-//         {Part_Number}
-//       </p>
-//     ),
-//   },
-//   {
-//     accessor: 'Distinct_On_Hand_Qty',
-//     title: 'On Hand Qty',
-//     sortable: true,
-//     render: ({ Distinct_On_Hand_Qty }) => (
-//       <p
-//         style={{
-//           textDecoration: 'underline',
-//         }}
-//       >
-//         {Distinct_On_Hand_Qty}
-//       </p>
-//     ),
-//   },
-//   {
-//     accessor: 'Now At',
-//     title: 'Now At',
-//     sortable: true,
-//   },
-//   {
-//     accessor: 'Customer',
-//     filter: (
-//       <TextInput
-//         label='Customer'
-//         description='Show customer whose names include the specified text'
-//         placeholder='Search customers...'
-//         icon={<IconSearch size={16} />}
-//         value={customer}
-//         onChange={(e) => setCustomer(e.currentTarget.value)}
-//       />
-//     ),
-//     filtering: customer !== '',
-//     sortable: true,
-//   },
-//   {
-//     accessor: 'Status',
-//     filter: (
-//       <TextInput
-//         label='Status'
-//         description='Show status whose names include the specified text'
-//         placeholder='Search status...'
-//         icon={<IconSearch size={16} />}
-//         value={status}
-//         onChange={(e) => setStatus(e.currentTarget.value)}
-//       />
-//     ),
-//     filtering: status !== '',
-//     sortable: true,
-//   },
-//   {
-//     accessor: 'Description',
-//     filter: (
-//       <TextInput
-//         label='Description'
-//         description='Show description whose names include the specified text'
-//         placeholder='Search description...'
-//         icon={<IconSearch size={16} />}
-//         value={description}
-//         onChange={(e) => setDescription(e.currentTarget.value)}
-//       />
-//     ),
-//     filtering: description !== '',
-//     sortable: true,
-//   },
-//   {
-//     accessor: 'Order_Quantity',
-//     filter: (
-//       <TextInput
-//         label='Order Quantity'
-//         description='Show order quantity whose names include the specified text'
-//         placeholder='Search order quantity...'
-//         icon={<IconSearch size={16} />}
-//         value={orderQuantity}
-//         onChange={(e) => setOrderQuantity(e.currentTarget.value)}
-//       />
-//     ),
-//     filtering: orderQuantity !== '',
-//     sortable: true,
-//   },
-//   {
-//     accessor: 'Completed_Quantity',
-//     filter: (
-//       <TextInput
-//         label='Completed Quantity'
-//         description='Show completed quantity whose names include the specified text'
-//         placeholder='Search completed quantity...'
-//         icon={<IconSearch size={16} />}
-//         value={completedQuantity}
-//         onChange={(e) => setCompletedQuantity(e.currentTarget.value)}
-//       />
-//     ),
-//     filtering: completedQuantity !== '',
-//     sortable: true,
-//   },
-//   {
-//     accessor: 'Promised_Date',
-//     filter: (
-//       <TextInput
-//         label='Released Date'
-//         description='Show released Date whose names include the specified text'
-//         placeholder='Search released date...'
-//         icon={<IconSearch size={16} />}
-//         value={releasedDate}
-//         onChange={(e) => setReleasedDate(e.currentTarget.value)}
-//       />
-//     ),
-//     filtering: releasedDate !== '',
-//     sortable: true,
-//     render: ({ Promised_Date: value }) => (
-//       <p>{value ? format(new Date(value), 'MM/dd/yyyy') : '-'}</p>
-//     ),
-//   },
-//   {
-//     accessor: 'Requested_Date',
-//     sortable: true,
-//     render: ({ Requested_Date: value }) => (
-//       <p>{value ? format(new Date(value), 'MM/dd/yyyy') : '-'}</p>
-//     ),
-//   },
-//   {
-//     accessor: 'Ship_By_Date',
-//     sortable: true,
-//     render: ({ Ship_By_Date: value }) => (
-//       <p>{value ? format(new Date(value), 'MM/dd/yyyy') : '-'}</p>
-//     ),
-//   },
-// ];

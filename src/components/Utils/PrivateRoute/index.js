@@ -9,6 +9,7 @@ const PrivateRoute = ({ children, isAuthenticated, loading, ...props }) => {
     children
   ) : !loading ? (
     <Navigate to={'/login'} state={{ from: location.pathname }} />
+    // <></>
   ) : (
     <div></div>
   );

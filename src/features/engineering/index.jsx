@@ -8,6 +8,7 @@ import { IconSearch } from '@tabler/icons-react';
 import sortBy from 'lodash/sortBy';
 
 import { BasicUsageExample } from '../../components/data-table';
+import { MantineDataTable } from '../../components/mantine-data-table';
 import { fetchOpenJobs, fetchReadyJobs } from './store/actions';
 import { fetchPDF } from '../jobs/store/actions';
 
@@ -176,6 +177,8 @@ function Engineering({
     );
     setRecords(sortStatus.direction === 'desc' ? data.reverse() : data);
   }, [sortStatus]);
+  // const columns = useMemo(() => getColumns(fetchPDF, editedUsers, setEditedUsers), [editedUsers]);
+
 
   return (
     <Box>
@@ -218,6 +221,16 @@ function Engineering({
           page={page}
           onPageChange={(p) => setPage(p)}
         />
+
+        {/* <MantineDataTable 
+          columns={columns} 
+          data={jobs}
+          tableProps={{
+            editingMode: 'cell',
+            enableEditing: true,
+            getRowId: (row, index) => row.Job + index,
+          }}
+        /> */}
       </Skeleton>
     </Box>
   );

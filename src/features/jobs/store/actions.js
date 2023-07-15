@@ -1,4 +1,10 @@
 import baseAxios from '../../../apis/baseAxios';
+import {delay} from '../../../utils';
+
+const headers = {
+  'Content-Type': 'application/json',
+  Accept: 'application/json'
+}
 
 export const setJobs = (status) => ({
   type: 'SET_JOBS',
@@ -10,14 +16,28 @@ export const setJobsLoading = (status) => ({
   payload: status,
 });
 
-export const fetchJobs = (flag) => async (dispatch) => {
+export const setEditedUsers = (status) => ({
+  type: 'SET_EDITED_USERS',
+  payload: status,
+});
+
+export const fetchJobs = (startDate, endDate) => async (dispatch) => {
   try {
     dispatch(setJobsLoading(true));
 
-    const response = await baseAxios.get('/');
+    const response = await baseAxios.get('/', 
+    {
+      params: {
+        startDate, endDate
+      },
+    });
+  
     dispatch(setJobs(response.data.jobs));
+
   } catch (error) {
+    console.log(error);
   } finally {
+    await delay(2000)
     dispatch(setJobsLoading(false));
   }
 };
@@ -56,6 +76,23 @@ export const fetchPDFByJob = (jobID) => async (dispatch) => {
   } catch (error) {
     alert('no file');
   } finally {
+    dispatch(setJobsLoading(false));
+  }
+};
+
+export const saveNotes = (jobs) => async (dispatch) => {
+  try {
+    dispatch(setJobsLoading(true));
+
+   await baseAxios.patch('/notes', 
+      {
+        data: {jobs},
+        headers
+      });
+  } catch (error) {
+    console.log(error);
+  } finally {
+    await delay(1200)
     dispatch(setJobsLoading(false));
   }
 };
