@@ -227,7 +227,6 @@ export const getColumns = (
         }
       },
       Cell: ({ cell, row }: { cell: any; row: any }) => {
-        console.log()
         const textColor = cell.getValue("Text5") === "AO" ? "lightblue" : null;
 
         if (textColor) {
