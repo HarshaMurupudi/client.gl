@@ -1,6 +1,6 @@
 const INITIAL_STATE = {
   tacking: [],
-  trackingLoading: true,
+  trackingLoading: false,
 };
 
 const jobsReducer = (state = INITIAL_STATE, action) => {

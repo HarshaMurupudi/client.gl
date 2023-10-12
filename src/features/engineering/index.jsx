@@ -1,132 +1,90 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { Box, Grid, Skeleton } from '@mantine/core';
-import { connect } from 'react-redux';
-import { createStyles, rem, Select, TextInput } from '@mantine/core';
-import { useLocation } from 'react-router-dom';
-import { format } from 'date-fns';
-import { IconSearch } from '@tabler/icons-react';
-import sortBy from 'lodash/sortBy';
+import React, { useEffect, useState, useMemo } from "react";
+import { connect } from "react-redux";
+import { useLocation } from "react-router-dom";
 
-import { BasicUsageExample } from '../../components/data-table';
-import { MantineDataTable } from '../../components/mantine-data-table';
-import { fetchOpenJobs, fetchReadyJobs } from './store/actions';
-import { fetchPDF } from '../jobs/store/actions';
-import { getColumns } from './columns';
-
-const useStyles = createStyles((theme) => ({
-  root: {
-    position: 'relative',
-  },
-
-  input: {
-    height: rem(54),
-    paddingTop: rem(18),
-  },
-
-  label: {
-    position: 'absolute',
-    pointerEvents: 'none',
-    fontSize: theme.fontSizes.xs,
-    paddingLeft: theme.spacing.sm,
-    paddingTop: `calc(${theme.spacing.sm} / 2)`,
-    zIndex: 1,
-  },
-}));
-const dropDownData = [
-  { value: 'Open', label: 'Open' },
-  { value: 'Ready', label: 'Ready' },
-];
+import { fetchJobs, saveNotes } from "./store/actions";
+import { fetchPDF } from "../jobs/store/actions";
+import { getColumns } from "./columns";
+import WorkCenterQueue from "../../modules/Queue";
 
 function Engineering({
   openJobs,
   readyJobs,
   engineeringLoading,
-  fetchOpenJobs,
-  fetchReadyJobs,
+  wc,
+  title,
+  fetchJobs,
   fetchPDF,
+  saveNotes,
 }) {
-  const { classes } = useStyles();
   const location = useLocation();
   const pathName = location.pathname;
 
-  const [value, setValue] = useState('Open');
+  const [value, setValue] = useState("Ready");
+  const [editedUsers, setEditedUsers] = useState({});
+
+  const getTableData = value === "Open" ? openJobs : readyJobs;
+
+  const fetchPageData = async () => {
+    await fetchJobs(wc);
+  };
+
   useEffect(() => {
-    const fetchPageData = async () => {
-      await fetchOpenJobs();
-      await fetchReadyJobs('aaa');
-    };
     fetchPageData();
   }, []);
 
-  const columns = useMemo(() => getColumns(fetchPDF, pathName, value), []);
-  const getTableData = () => {
-    return value === 'Open' ? openJobs : readyJobs;
+  const totalEstHours = useMemo(() => {
+    const totalPoints = getTableData.reduce(
+      (acc, row) => acc + row.Est_Total_Hrs,
+      0
+    );
+    return totalPoints;
+  }, [getTableData]);
+
+  const columns = useMemo(
+    () =>
+      getColumns(
+        fetchPDF,
+        pathName,
+        value,
+        wc,
+        editedUsers,
+        setEditedUsers,
+        totalEstHours,
+        getTableData
+      ),
+    [value, editedUsers, totalEstHours]
+  );
+
+  const handleSaveUsers = async () => {
+    await saveNotes(Object.values(editedUsers));
+    setEditedUsers({});
   };
 
   return (
-    <Box>
-      <Grid>
-        <Grid.Col span={2}>
-          <Select
-            my='md'
-            size='xs'
-            withinPortal
-            data={dropDownData}
-            placeholder='Pick one'
-            label='Status'
-            classNames={classes}
-            value={value}
-            onChange={setValue}
-          />
-        </Grid.Col>
-      </Grid>
-
-      <Skeleton visible={engineeringLoading}>
-        {/* <BasicUsageExample
-          columns={columns}
-          rows={records}
-          sortStatus={sortStatus}
-          onSortStatusChange={setSortStatus}
-          onCellClick={({
-            event,
-            record,
-            recordIndex,
-            column,
-            columnIndex,
-          }) => {
-            if (column.accessor === 'Part_Number') {
-              fetchPDF(record.Part_Number);
-            }
-          }}
-          rowExpansion={null}
-          totalRecords={getTableData().length}
-          recordsPerPage={PAGE_SIZE}
-          page={page}
-          onPageChange={(p) => setPage(p)}
-        /> */}
-
-        <MantineDataTable
-          columns={columns}
-          data={getTableData()}
-          tableProps={{
-            editingMode: 'cell',
-            enableEditing: true,
-            getRowId: (row, index) => row.Job + index,
-          }}
-        />
-      </Skeleton>
-    </Box>
+    <WorkCenterQueue
+      title={title}
+      loading={engineeringLoading}
+      wc={wc}
+      columns={columns}
+      jobs={getTableData}
+      value={value}
+      editedUsers={editedUsers}
+      handleSaveUsers={handleSaveUsers}
+      setValue={setValue}
+      fetchData={fetchPageData}
+    />
   );
 }
 
 const mapStateToProps = (state) => ({
-  openJobs: state.getIn(['engineering', 'openJobs']),
-  readyJobs: state.getIn(['engineering', 'readyJobs']),
-  engineeringLoading: state.getIn(['engineering', 'engineeringLoading']),
+  openJobs: state.getIn(["engineering", "openJobs"]),
+  readyJobs: state.getIn(["engineering", "readyJobs"]),
+  engineeringLoading: state.getIn(["engineering", "engineeringLoading"]),
 });
 
 export default connect(mapStateToProps, {
-  fetchOpenJobs,
-  fetchReadyJobs,
+  fetchJobs,
   fetchPDF,
+  saveNotes,
 })(Engineering);

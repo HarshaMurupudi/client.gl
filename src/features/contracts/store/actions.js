@@ -14,8 +14,6 @@ export const fetchContracts = (data) => async (dispatch) => {
   try {
     dispatch(setContractsLoading(true));
 
-    // console.log(data);
-
     const response = await baseAxios.get('/jobs', {
       params: data,
     });
@@ -24,5 +22,14 @@ export const fetchContracts = (data) => async (dispatch) => {
     console.log(error);
   } finally {
     dispatch(setContractsLoading(false));
+  }
+};
+
+export const searchCustomers = (data) => async (dispatch) => {
+  try {
+    const response = await baseAxios.get("/customers/search?Customer=" + data + "");
+    return response.data.customers;
+  } catch (error) {
+    console.log(error);
   }
 };

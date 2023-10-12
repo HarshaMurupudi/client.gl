@@ -1,6 +1,7 @@
 const INITIAL_STATE = {
   pos: [],
-  posLoading: true,
+  posLoading: false,
+  poPDF: null
 };
 
 const jobsReducer = (state = INITIAL_STATE, action) => {
@@ -9,6 +10,11 @@ const jobsReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         pos: action.payload,
+      };
+    case 'SET_PO_PDF':
+      return {
+        ...state,
+        poPDF: action.payload,
       };
     case 'SET_POS_LOADING':
       return {

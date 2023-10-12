@@ -1,76 +1,94 @@
-import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
-import { Box } from '@mantine/core';
+import React, { useEffect, useState, useMemo } from "react";
+import { connect } from "react-redux";
+import { Box, Skeleton, Text, Flex, Button } from "@mantine/core";
+import { useNavigate } from "react-router-dom";
 
-import { fetchPendingJobs } from './store/actions';
-import { fetchPDF } from '../jobs/store/actions';
-import { BasicUsageExample } from '../../components/data-table';
+import { fetchPendingJobs, saveNotes } from "./store/actions";
+import { fetchPDF } from "../jobs/store/actions";
+import { MantineDataTable } from "../../components/mantine-data-table";
+import { getColumns } from "./columns";
 
-function PendingJobs({ pendingJob, fetchPendingJobs, fetchPDF }) {
-  const columns = [
-    {
-      accessor: 'Job',
-    },
-    {
-      accessor: 'Part_Number',
-      sortable: true,
-      render: ({ Part_Number }) => (
-        <p
-          style={{
-            textDecoration: 'underline',
-          }}
-        >
-          {Part_Number}
-        </p>
-      ),
-    },
-    {
-      accessor: 'Customer',
-    },
-    {
-      accessor: 'Rev',
-    },
-    {
-      accessor: 'Status',
-    },
-  ];
+function PendingJobs({
+  pendingJob,
+  pendingJobsLoading,
+  fetchPendingJobs,
+  fetchPDF,
+  saveNotes,
+}) {
+  const [editedUsers, setEditedUsers] = useState({});
+  const [selectedJob, setSelectedJob] = useState("");
+  let navigate = useNavigate();
+
+  const columns = useMemo(
+    () => getColumns(fetchPDF, editedUsers, setEditedUsers, pendingJob),
+    [editedUsers, pendingJob]
+  );
+  const fetchData = async () => {
+    await fetchPendingJobs();
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      await fetchPendingJobs();
-    };
-
     fetchData();
   }, []);
 
+  const handleSaveUsers = async (e, table) => {
+    await saveNotes(Object.values(editedUsers));
+    setEditedUsers({});
+  };
+
+  const customOnRowSelection = (value, currentRow) => {
+    if (!currentRow.getIsSelected()) {
+      setSelectedJob(currentRow.getValue("Job"));
+    } else {
+      setSelectedJob("");
+    }
+  };
+  const routeChange = () => {
+    let path = `/po-details/${selectedJob}`;
+    navigate(path);
+  };
+
   return (
-    <div>
-      <Box mt={32}>
-        <BasicUsageExample
+    <Box mt={16}>
+      {/* <Skeleton visible={pendingJobsLoading} mt={16}> */}
+      <Box>
+        <MantineDataTable
+          title={"Pending Jobs"}
+          tableKey={`pending-jobs-queue-data-table`}
           columns={columns}
-          rows={pendingJob}
-          sortStatus={null}
-          onSortStatusChange={null}
-          onCellClick={({
-            event,
-            record,
-            recordIndex,
-            column,
-            columnIndex,
-          }) => {
-            if (column.accessor === 'Part_Number') {
-              fetchPDF(record.Part_Number);
-            }
+          data={pendingJob}
+          tableProps={{
+            editDisplayMode: "table",
+            enableEditing: true,
+            getRowId: (row, index) => `${row.Job}_${index}`,
           }}
-        />
+          loading={pendingJobsLoading}
+          hasRefetch={true}
+          fetchData={fetchData}
+          hasActionColumn={true}
+          enableGrouping={false}
+          isEditable={true}
+          isEdited={Object.keys(editedUsers).length === 0}
+          handleSave={handleSaveUsers}
+          hasCustomActionBtn={true}
+          customOnRowSelection={customOnRowSelection}
+        >
+          <Button onClick={routeChange} variant="filled">
+            Review
+          </Button>
+        </MantineDataTable>
       </Box>
-    </div>
+    </Box>
   );
 }
 
 const mapStateToProps = (state) => ({
-  pendingJob: state.getIn(['pendingJob', 'pendingJobs']),
+  pendingJob: state.getIn(["pendingJob", "pendingJobs"]),
+  pendingJobsLoading: state.getIn(["pendingJob", "pendingJobsLoading"]),
 });
 
-export default connect(mapStateToProps, { fetchPendingJobs, fetchPDF })(
-  PendingJobs
-);
+export default connect(mapStateToProps, {
+  fetchPendingJobs,
+  fetchPDF,
+  saveNotes,
+})(PendingJobs);

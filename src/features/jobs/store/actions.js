@@ -16,6 +16,11 @@ export const setJobsLoading = (status) => ({
   payload: status,
 });
 
+export const setPDFLoading = (status) => ({
+  type: 'SET_PDF_LOADING',
+  payload: status,
+});
+
 export const setEditedUsers = (status) => ({
   type: 'SET_EDITED_USERS',
   payload: status,
@@ -44,6 +49,7 @@ export const fetchJobs = (startDate, endDate) => async (dispatch) => {
 
 export const fetchPDF = (partID) => async (dispatch) => {
   try {
+    dispatch(setPDFLoading(true));
     const { data } = await baseAxios.get(`/part-number/${partID}`, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -57,12 +63,13 @@ export const fetchPDF = (partID) => async (dispatch) => {
   } catch (error) {
     alert('no file');
   } finally {
-    dispatch(setJobsLoading(false));
+    dispatch(setPDFLoading(false));
   }
 };
 
 export const fetchPDFByJob = (jobID) => async (dispatch) => {
   try {
+    dispatch(setPDFLoading(true));
     const { data } = await baseAxios.get(`/job-image/${jobID}`, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -76,7 +83,7 @@ export const fetchPDFByJob = (jobID) => async (dispatch) => {
   } catch (error) {
     alert('no file');
   } finally {
-    dispatch(setJobsLoading(false));
+    dispatch(setPDFLoading(false));
   }
 };
 

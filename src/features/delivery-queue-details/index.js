@@ -1,71 +1,72 @@
-import React, {useEffect} from 'react'
-import { connect } from 'react-redux';
-import { useLocation, useParams } from 'react-router-dom';
+import React, { useEffect, useMemo } from "react";
+import { connect } from "react-redux";
+import { useLocation, useParams } from "react-router-dom";
+import { Box, Skeleton, Text, Flex, Button } from "@mantine/core";
 
-import { fetchDeliveryQueueDetails } from './store/actions';
-import { fetchPDF, fetchPDFByJob } from '../jobs/store/actions';
-import { BasicUsageExample } from '../../components/data-table';
+import { fetchDeliveryQueueDetails } from "./store/actions";
+import { fetchPDF, fetchPDFByJob } from "../jobs/store/actions";
+// import { BasicUsageExample } from '../../components/data-table';
+import { MantineDataTable } from "../../components/mantine-data-table";
+import { getColumns } from "./columns";
 
-const columns = [
-  {
-    accessor: 'Job',
-    render: ({ Job }) => (
-      <p
-        style={{
-          textDecoration: 'underline',
-        }}
-      >
-        {Job}
-      </p>
-    ),
-  },
-  {
-    accessor: 'Location_ID'
-  },
-  {
-    accessor: 'On_Hand_Qty'
-  },
-];
-
-function DeliveryQueueDetails({deliveryQueueDetails, fetchDeliveryQueueDetails, fetchPDFByJob}) {
+function DeliveryQueueDetails({
+  deliveryQueueDetails,
+  fetchDeliveryQueueDetails,
+  deliveryQueueDetailsLoading,
+  fetchPDFByJob,
+}) {
   const params = useParams();
-  const jobID = params.jobID;
+  const partID = params.partID;
+
+  const columns = useMemo(() => getColumns(fetchPDF), []);
 
   useEffect(() => {
     const fetchPageData = async () => {
-      await fetchDeliveryQueueDetails(jobID);
+      await fetchDeliveryQueueDetails(partID);
     };
 
     fetchPageData();
   }, []);
 
   return (
-    <div>
-        <BasicUsageExample
-          columns={columns}
-          rows={deliveryQueueDetails}
-          sortStatus={null}
-          onSortStatusChange={null}
-          onCellClick={({
-            event,
-            record,
-            recordIndex,
-            column,
-            columnIndex,
-          }) => {
-            if (column.accessor === 'Job') {
-              fetchPDFByJob(record.Job);
-            }
-          }}
-        />
-    </div>
-  )
+    <Box>
+      <MantineDataTable
+        title={"Inventory"}
+        tableKey={`inventory-queue-data-table`}
+        columns={columns}
+        data={deliveryQueueDetails}
+        tableProps={{
+          editDisplayMode: "table",
+          enableEditing: false,
+          getRowId: (row, index) => `${row.Job}_${index}`,
+        }}
+        initialState={{
+          sorting: [
+            { id: "Material", desc: false },
+          ],
+        }}
+        loading={deliveryQueueDetailsLoading}
+        hasRefetch={true}
+        hasActionColumn={false}
+        enableGrouping={false}
+        hasCustomActionBtn={true}
+      ></MantineDataTable>
+    </Box>
+  );
 }
 
 const mapStateToProps = (state) => ({
-  deliveryQueueDetails: state.getIn(['deliveryQueueDetail', 'deliveryQueueDetails']),
+  deliveryQueueDetails: state.getIn([
+    "deliveryQueueDetail",
+    "deliveryQueueDetails",
+  ]),
+  deliveryQueueDetailsLoading: state.getIn([
+    "deliveryQueueDetail",
+    "deliveryQueueDetailsLoading",
+  ]),
 });
 
-export default connect(mapStateToProps, { fetchDeliveryQueueDetails, fetchPDFByJob })(
-  DeliveryQueueDetails
-);
+export default connect(mapStateToProps, {
+  fetchDeliveryQueueDetails,
+  fetchPDFByJob,
+})(DeliveryQueueDetails);

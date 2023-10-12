@@ -1,6 +1,6 @@
 const INITIAL_STATE = {
   contracts: [],
-  contractsLoading: true,
+  contractsLoading: false,
 };
 
 const jobsReducer = (state = INITIAL_STATE, action) => {

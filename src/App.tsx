@@ -9,7 +9,6 @@ import store from './store';
 import { loadUser } from './pages/login/store/actions';
 
 import "react-datepicker/dist/react-datepicker.css";
-import './App.css';
 
 function App() {
   const [userAuthLoadStatus, setUserAuthLoadStatus] = useState(false);

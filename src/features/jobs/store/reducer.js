@@ -1,6 +1,7 @@
 const INITIAL_STATE = {
   jobs: [],
   jobsLoading: true,
+  pdfLoading: false,
   editedUsers: {}
 };
 
@@ -16,6 +17,11 @@ const jobsReducer = (state = INITIAL_STATE, action) => {
         ...state,
         jobsLoading: action.payload,
       };
+    case 'SET_PDF_LOADING':
+        return {
+          ...state,
+          pdfLoading: action.payload,
+    };
     case 'SET_EDITED_USERS':
       return {
           ...state,

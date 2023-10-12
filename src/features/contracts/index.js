@@ -1,90 +1,110 @@
-import React from 'react';
-import { ContractForm } from './module';
-import { Box, TextInput } from '@mantine/core';
-import { connect } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { IconSearch } from '@tabler/icons-react';
+import React, { useRef, useState, useMemo } from "react";
+import { ContractForm } from "./module";
+import { Box } from "@mantine/core";
+import { connect } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
-import { BasicUsageExample } from '../../components/data-table';
-import companies from '../../data/companies.json';
-import { fetchContracts } from './store/actions';
-import { fetchPDF } from '../jobs/store/actions';
+import { fetchContracts, searchCustomers } from "./store/actions";
+import { searchJobs } from "../tracking/store/actions";
+import { fetchPDF, fetchPDFByJob } from "../jobs/store/actions";
+import { getColumns } from "./columns";
+import { MantineDataTable } from "../../components/mantine-data-table";
 
-function Contracts({ contracts, fetchContracts, fetchPDF }) {
+function Contracts({
+  contracts,
+  fetchContracts,
+  fetchPDF,
+  searchCustomers,
+  searchJobs,
+  contractsLoading,
+  fetchPDFByJob,
+}) {
   const navigate = useNavigate();
-  const handleSubmit = async (data, form) => {
-    let selectedParam = null;
+  const columns = useMemo(() => getColumns(fetchPDF), []);
+  const timeoutRef = useRef(-1);
+  const [value, setValue] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState([]);
+  const [currentAutofillSelection, setCurrentAutofillSelection] = useState("");
 
-    Object.entries(data).forEach(([key, value]) => {
-      if (value) {
-        selectedParam = { [key]: value };
+  const handleChange = async (val, key) => {
+    if (key) {
+      setCurrentAutofillSelection(key);
+      window.clearTimeout(timeoutRef.current);
+      setValue(val);
+      setData([]);
+      let jobs = [];
+
+      if (val.trim().length === 0 || val.includes("@")) {
+        setLoading(false);
+      } else {
+        setLoading(true);
+
+        if (key === "Customer") {
+          jobs = await searchCustomers(val);
+        } else if (key === "Job") {
+          jobs = await searchJobs("Job", val);
+        } else if (key === "Part_Number") {
+          jobs = await searchJobs("Part_Number", val);
+        } else if (key === "Customer_PO") {
+          jobs = await searchJobs("Customer_PO", val);
+        }
+
+        setData(jobs);
       }
-    });
-
-    await fetchContracts(selectedParam);
-    form.reset();
+    }
   };
 
-  const columns = [
-    {
-      accessor: 'Job',
-    },
-    {
-      accessor: 'Part_Number',
-      sortable: true,
-      render: ({ Part_Number }) => (
-        <p
-          style={{
-            textDecoration: 'underline',
-          }}
-        >
-          {Part_Number}
-        </p>
-      ),
-    },
-    {
-      accessor: 'Customer_PO',
-    },
-    {
-      accessor: 'Status',
-    },
-    {
-      accessor: 'Description',
-    },
-  ];
+  const handleSubmit = async (data, form) => {
+    // console.log(data, currentAutofillSelection);
+    if (currentAutofillSelection) {
+      await fetchContracts({ [currentAutofillSelection]: data.value });
+      setCurrentAutofillSelection("");
+      setValue("");
+      setData([]);
+    }
+  };
 
   return (
     <Box>
-      <ContractForm handleSubmit={handleSubmit} />
-
-      <BasicUsageExample
+      <MantineDataTable
+        title={"Job Review"}
+        tableKey={`contracts-queue-data-table`}
         columns={columns}
-        rows={contracts}
-        sortStatus={null}
-        onSortStatusChange={null}
-        onCellClick={({ event, record, recordIndex, column, columnIndex }) => {
-          if (column.accessor === 'Part_Number') {
-            fetchPDF(record.Part_Number);
-          }
+        data={contracts || []}
+        tableProps={{
+          // editingMode: "cell",
+          enableEditing: false,
+          getRowId: (row, index) => `${row.Job}_${index}`,
         }}
-        rowContextMenu={{
-          items: (record) => [
-            {
-              key: 'operations',
-              onClick: () =>
-                navigate('/operations', { state: { jobID: record.Job } }),
-            },
-          ],
-        }}
-      />
+        loading={contractsLoading}
+        hasCustomActionBtn={true}
+        hasRefetch={false}
+        hasActionColumn={true}
+        enableGrouping={false}
+      >
+        <ContractForm
+          handleSubmit={handleSubmit}
+          value={value}
+          data={data}
+          handleChange={handleChange}
+          currentAutofillSelection={currentAutofillSelection}
+          // onSubmit={}
+        />
+      </MantineDataTable>
     </Box>
   );
 }
 
 const mapStateToProps = (state) => ({
-  contracts: state.getIn(['contract', 'contracts']),
+  contracts: state.getIn(["contract", "contracts"]),
+  contractsLoading: state.getIn(["contract", "contractsLoading"]),
 });
 
-export default connect(mapStateToProps, { fetchContracts, fetchPDF })(
-  Contracts
-);
+export default connect(mapStateToProps, {
+  fetchContracts,
+  fetchPDF,
+  searchCustomers,
+  searchJobs,
+  fetchPDFByJob,
+})(Contracts);

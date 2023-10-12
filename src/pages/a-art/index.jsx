@@ -5,7 +5,7 @@ import Engineering from '../../features/engineering';
 function AArt() {
   return (
     <div>
-      <Engineering />
+      <Engineering wc={'A-ART'} title={'A-ART'}/>
     </div>
   );
 }

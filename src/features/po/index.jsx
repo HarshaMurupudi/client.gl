@@ -1,105 +1,112 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { format } from 'date-fns';
+import React, { useMemo, useState, useRef } from "react";
+import { connect } from "react-redux";
+import { format } from "date-fns";
 
-import { PoForm } from './components';
-import { BasicUsageExample } from '../../components/data-table';
-import { Box } from '@mantine/core';
-import { fetchPos } from './store/actions';
-import { fetchPDF } from '../jobs/store/actions';
+import { getColumns } from "./columns";
+import { PoForm } from "./components";
+import { BasicUsageExample } from "../../components/data-table";
+import { Box } from "@mantine/core";
+import { fetchPos } from "./store/actions";
+import { fetchPDF } from "../jobs/store/actions";
+import { fetchPDFByJob } from "../jobs/store/actions";
+import { MantineDataTable } from "../../components/mantine-data-table";
+import { searchJobs } from "../tracking/store/actions";
+import { ContractForm } from "../contracts/module";
+import { searchCustomers } from "../contracts/store/actions";
 
-function Po({ pos, fetchPos, fetchPDF }) {
-  console.log(fetchPos);
-  const columns = [
-    {
-      accessor: 'Job',
-    },
-    {
-      accessor: 'Part_Number',
-      sortable: true,
-      render: ({ Part_Number }) => (
-        <p
-          style={{
-            textDecoration: 'underline',
-          }}
-        >
-          {Part_Number}
-        </p>
-      ),
-    },
-    {
-      accessor: 'NRE_Charges',
-    },
-    {
-      accessor: 'Customer_PO',
-    },
-    {
-      accessor: 'Order_Quantity',
-    },
-    {
-      accessor: 'Rev',
-    },
-    {
-      accessor: 'Sched_End',
-      render: ({ Requested_Date: value }) => (
-        <p>{format(new Date(value), 'MM/dd/yyyy')}</p>
-      ),
-    },
-    {
-      accessor: 'Requested_Date',
-      render: ({ Requested_Date: value }) => (
-        <p>{format(new Date(value), 'MM/dd/yyyy')}</p>
-      ),
-    },
-    {
-      accessor: 'Promised_Date',
-      render: ({ Promised_Date: value }) => (
-        <p>{format(new Date(value), 'MM/dd/yyyy')}</p>
-      ),
-    },
-    {
-      accessor: 'Shipped_Quantity',
-    },
-    {
-      accessor: 'Remaining_Quantity',
-    },
-    {
-      accessor: 'Packlist',
-    },
-  ];
+function Po({
+  pos,
+  fetchPos,
+  fetchPDF,
+  searchJobs,
+  posLoading,
+  searchCustomers,
+}) {
+  const [currentAutofillSelection, setCurrentAutofillSelection] = useState("");
+  const columns = useMemo(() => getColumns(fetchPDFByJob), []);
+  const timeoutRef = useRef(-1);
+  const [value, setValue] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState([]);
+
+  const handleChange = async (val, key) => {
+    if (key) {
+      setCurrentAutofillSelection(key);
+      window.clearTimeout(timeoutRef.current);
+      setValue(val);
+      setData([]);
+      let jobs = [];
+
+      if (val.trim().length === 0 || val.includes("@")) {
+        setLoading(false);
+      } else {
+        setLoading(true);
+
+        if (key === "Customer") {
+          jobs = await searchCustomers(val);
+        } else if (key === "Job") {
+          jobs = await searchJobs("Job", val);
+        } else if (key === "Part_Number") {
+          jobs = await searchJobs("Part_Number", val);
+        } else if (key === "Customer_PO") {
+          jobs = await searchJobs("Customer_PO", val);
+        }
+
+        setData(jobs);
+      }
+    }
+  };
+
   const handleSubmit = async (data) => {
-    // await fetchContracts();
-    await fetchPos(data);
+    // await fetchPos(data.value);
+
+    if (currentAutofillSelection) {
+      await fetchPos({ [currentAutofillSelection]: data.value });
+      setCurrentAutofillSelection("");
+      setValue("");
+      setData([]);
+    }
   };
 
   return (
-    <div>
-      <PoForm handleSubmit={handleSubmit} />
-      <Box mt={32}>
-        <BasicUsageExample
-          columns={columns}
-          rows={pos}
-          sortStatus={null}
-          onSortStatusChange={null}
-          onCellClick={({
-            event,
-            record,
-            recordIndex,
-            column,
-            columnIndex,
-          }) => {
-            if (column.accessor === 'Part_Number') {
-              fetchPDF(record.Part_Number);
-            }
-          }}
+    <Box mt={32}>
+      <MantineDataTable
+        title={"PO"}
+        tableKey={`pos-queue-data-table`}
+        columns={columns}
+        data={pos || []}
+        tableProps={{
+          // editingMode: "cell",
+          enableEditing: false,
+          getRowId: (row, index) => `${row.Job}_${index}`,
+        }}
+        loading={posLoading}
+        hasCustomActionBtn={true}
+        hasRefetch={false}
+        hasActionColumn={true}
+        enableGrouping={false}
+      >
+        <ContractForm
+          handleSubmit={handleSubmit}
+          value={value}
+          data={data}
+          handleChange={handleChange}
+          currentAutofillSelection={currentAutofillSelection}
+          // onSubmit={}
         />
-      </Box>
-    </div>
+      </MantineDataTable>
+    </Box>
   );
 }
 
 const mapStateToProps = (state) => ({
-  pos: state.getIn(['po', 'pos']),
+  pos: state.getIn(["po", "pos"]),
+  posLoading: state.getIn(["po", "posLoading"]),
 });
 
-export default connect(mapStateToProps, { fetchPos, fetchPDF })(Po);
+export default connect(mapStateToProps, {
+  fetchPos,
+  fetchPDF,
+  searchJobs,
+  searchCustomers,
+})(Po);

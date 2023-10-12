@@ -1,9 +1,7 @@
-import { forwardRef, useState } from 'react';
-import { Group, Avatar, Text, Select } from '@mantine/core';
+import { forwardRef, useState } from "react";
+import { Group, Avatar, Text, Select } from "@mantine/core";
 
-
-
-interface ItemProps extends React.ComponentPropsWithoutRef<'div'> {
+interface ItemProps extends React.ComponentPropsWithoutRef<"div"> {
   image: string;
   label: string;
   description: string;
@@ -24,7 +22,19 @@ const SelectItem = forwardRef<HTMLDivElement, ItemProps>(
   )
 );
 
-export const GLSelect = ({data, cell, table, onSelect}: {data: any, cell:any, table: any, onSelect:any}) => {
+export const GLSelect = ({
+  data,
+  cell,
+  table,
+  onSelect,
+  textColor,
+}: {
+  data: any;
+  cell: any;
+  table: any;
+  onSelect: any;
+  textColor: string | null;
+}) => {
   const [value, setValue] = useState(() => cell.getValue());
   const {
     getState,
@@ -61,7 +71,8 @@ export const GLSelect = ({data, cell, table, onSelect}: {data: any, cell:any, ta
 
   return (
     <Select
-      label="Plan Code"
+      // label="Plan Code"
+      // size="xs"
       placeholder="Pick one"
       itemComponent={SelectItem}
       onChange={(value) => {
@@ -79,21 +90,32 @@ export const GLSelect = ({data, cell, table, onSelect}: {data: any, cell:any, ta
         item.label?.toLowerCase().includes(value.toLowerCase().trim()) ||
         item.description.toLowerCase().includes(value.toLowerCase().trim())
       }
-       styles={(theme) => ({
+      styles={(theme) => ({
+        input: {
+          height: "1rem !important",
+          minHeight: "1rem !important",
+          //color: textColor,
+          ...(textColor && { backgroundColor: textColor }),
+        },
         item: {
           // applies styles to selected item
-          '&[data-selected]': {
-            '&, &:hover': {
+          "&[data-selected]": {
+            "&, &:hover": {
               backgroundColor:
-                theme.colorScheme === 'dark' ? theme.colors.teal[9] : theme.colors.teal[1],
-              color: theme.colorScheme === 'dark' ? theme.white : theme.colors.teal[9],
+                theme.colorScheme === "dark"
+                  ? theme.colors.teal[9]
+                  : theme.colors.teal[1],
+              color:
+                theme.colorScheme === "dark"
+                  ? theme.white
+                  : theme.colors.teal[9],
             },
           },
 
           // applies styles to hovered item (with mouse or keyboard)
-          '&[data-hovered]': {},
+          "&[data-hovered]": {},
         },
       })}
     />
   );
-}
+};
