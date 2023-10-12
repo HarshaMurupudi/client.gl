@@ -113,7 +113,7 @@ function POReviewComponent({
     Requested_Date: "Requested Date",
     Promised_Date: "Promised Date",
     Promised_Quantity: "Promised Quantity",
-    Unit_Price: "Unit Price",
+    Unit_Price: "Revenue",
   };
 
   const poLabelToValueMapper = (details) => {
@@ -138,7 +138,7 @@ function POReviewComponent({
       Requested_Date: details["Requested_Date"],
       Promised_Date: details["Promised_Date"],
       Promised_Quantity: details["Promised_Quantity"],
-      Unit_Price: details["Unit_Price"] * details["Order_Quantity"],
+      Unit_Price: '$' + (details["Unit_Price"] * details["Order_Quantity"] || 0),
     };
   };
 
@@ -201,7 +201,8 @@ function POReviewComponent({
 
             <Center>
               <Button
-                disabled={isPoBtnDisabled()}
+                // disabled={isPoBtnDisabled()}
+                disabled={true}
                 my={16}
                 onClick={() => onApprove()}
               >
