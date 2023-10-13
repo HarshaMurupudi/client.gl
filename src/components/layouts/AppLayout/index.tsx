@@ -154,7 +154,7 @@ const Index = ({ pdfLoading, children, logout, user }: Props) => {
               }}
             >
               <Burger
-                opened={true}
+                opened={opened}
                 onClick={() => setOpened((o) => !o)}
                 size="sm"
                 color={theme.colors.gray[6]}

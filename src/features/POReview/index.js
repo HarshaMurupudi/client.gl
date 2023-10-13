@@ -94,7 +94,7 @@ function POReviewComponent({
 
   const poKeyToLabelMapper = {
     Customer: "Customer",
-    Contact_Name: "ContactName",
+    Contact_Name: "Contact Name",
     Name: "Name",
     Line1: "Line1",
     Line2: "Line2",

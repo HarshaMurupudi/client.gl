@@ -21,6 +21,7 @@ export const setPDFS = (pdfs) => ({
 export const fetchPODetails = (jobId) => async (dispatch) => {
   try {
     dispatch(setPOLoading(true));
+    console.log("hit fetch")
 
     const response = await baseAxios.get(`/po-details/${jobId}`);
     dispatch(setPO(response.data.po));
