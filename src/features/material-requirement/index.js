@@ -37,7 +37,7 @@ function MaterialRequirement({
         overlayProps={{ radius: "sm", blur: 2 }}
       />
       <Text fz="md" fw={700}>
-        Material requirement
+        Material Requirements
       </Text>
 
       {Object.entries(materialJobs).map(([material, jobs]) => {
