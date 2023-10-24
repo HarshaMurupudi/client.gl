@@ -51,6 +51,7 @@ const DataTable = ({
   onColumnVisibilityChange,
   tableKey,
   maxHeight,
+  minHeight,
   fetchData,
   loading,
   isEditable,
@@ -211,6 +212,10 @@ const DataTable = ({
     );
   };
 
+  const handleMaterialActionBtn = (row) => {
+    window.open(`/material-requirement/${row.original.Job}`, "_blank");
+  };
+
   const handleNoteActionBtn = (row) => {
     setModalVisibility(true);
     setModalText(row.original.Note_Text);
@@ -241,7 +246,7 @@ const DataTable = ({
     enablePagination: false, //turn off pagination
     // enableRowVirtualization: true, //enable row virtualization
     mantineTableContainerProps: {
-      sx: { maxHeight: maxHeight || "82vh", minHeight: "30vh" },
+      sx: { maxHeight: maxHeight || "82vh", minHeight: minHeight || "30vh" },
     },
     // rowVirtualizerProps: { overscan: 8 }, //optionally customize the virtualizer
     enableBottomToolbar: false,
@@ -326,6 +331,9 @@ const DataTable = ({
           <Menu.Item onClick={() => handleNoteActionBtn(row)}>Note</Menu.Item>
           <Menu.Item onClick={() => handleInventoryActionBtn(row)}>
             Inventory
+          </Menu.Item>
+          <Menu.Item onClick={() => handleMaterialActionBtn(row)}>
+            Material
           </Menu.Item>
         </>
       ),

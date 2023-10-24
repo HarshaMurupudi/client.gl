@@ -72,9 +72,6 @@ function Login({ login, isAuthenticated, authLoading, loading }) {
        </form>
      </Center>
    );
-  
-
-
 }
 
 const mapStateToProps = (state) => ({
