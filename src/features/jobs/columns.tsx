@@ -184,8 +184,12 @@ export const getColumns = (
         table: any;
       }) => {
         const jobPlan = cell.getValue("Job_Plan");
-        const textColor = jobPlan === "4" ? "orange" : null;
-
+        var textColor = "transparent";
+        if (jobPlan === "4") {
+          textColor = "orange";
+        } else if (jobPlan === "3" || jobPlan === "2" || jobPlan === "1") {
+          textColor = "#40C057";
+        }
         return (
           <GLSelect
             data={planCodes}
@@ -337,18 +341,24 @@ export const getColumns = (
       header: "Revenue",
       enableEditing: false,
       accessorFn: (row: any) => {
-        const revenue = row["Order_Quantity"] * row["Unit_Price"];
+        const revenue = Math.round(row["Order_Quantity"] * row["Unit_Price"]);
         return revenue;
       },
-      Cell: ({ cell, row }: { cell: any; row: any }) => (
-        <p
-          style={{
-            margin: 0,
-          }}
-        >
-          ${cell.getValue()}
-        </p>
-      ),
+      Cell: ({ cell, row }: { cell: any; row: any }) => {
+        const revenue = cell.getValue();
+      
+        // Define a CSS style object based on the revenue value
+        const cellStyle = {
+          margin: 0,
+          backgroundColor: revenue > 5000 ? "#69d461" : "transparent",
+        };
+      
+        return (
+          <p style={cellStyle}>
+            ${revenue}
+          </p>
+        );
+      },
     },
     // {
     //   accessorKey: "On_Hand_Qty",

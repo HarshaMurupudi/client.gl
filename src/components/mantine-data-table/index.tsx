@@ -20,6 +20,7 @@ import {
   Title,
   ActionIcon,
   Divider,
+  rem,
   // IconRefresh,
 } from "@mantine/core";
 import { IconRefresh } from "@tabler/icons-react";
@@ -260,6 +261,7 @@ const DataTable = ({
     },
     mantineTableProps: {
       striped: true,
+      fontSize: ".80rem",
     },
     mantineTableBodyCellProps: {
       sx: {
