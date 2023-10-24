@@ -27,14 +27,12 @@ function MaterialRequirement({
     fetchPageData();
   }, []);
 
-  console.log(materialJobsOpenTotals);
-
   return (
     <Box pos="relative">
       <LoadingOverlay
         visible={materialJobsLoading}
         zIndex={1000}
-        overlayProps={{ radius: "sm", blur: 2 }}
+        overlayprops={{ radius: "sm", blur: 2 }}
       />
       <Text fz="md" fw={700}>
         Material Requirements
@@ -42,7 +40,7 @@ function MaterialRequirement({
 
       {Object.entries(materialJobs).map(([material, jobs]) => {
         return (
-          <>
+          <Box key={material}>
             <MantineDataTable
               tableKey={"Operation-Details-data-table"}
               title={`${material}`}
@@ -56,12 +54,13 @@ function MaterialRequirement({
                 enableEditing: false,
                 getRowId: (row, index) => `${row.Job}_${index}`,
               }}
+              minHeight={1}
             />
 
             <Paper shadow="xs" p="xl">
               <Text>Total Open Qty: {materialJobsOpenTotals[material]}</Text>
             </Paper>
-          </>
+          </Box>
         );
       })}
 
