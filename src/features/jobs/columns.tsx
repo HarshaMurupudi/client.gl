@@ -184,8 +184,12 @@ export const getColumns = (
         table: any;
       }) => {
         const jobPlan = cell.getValue("Job_Plan");
-        const textColor = jobPlan === "4" || jobPlan === "3" || jobPlan === "2" || jobPlan === "1" ? "orange" : null;
-
+        var textColor = "transparent";
+        if (jobPlan === "4") {
+          textColor = "orange";
+        } else if (jobPlan === "3" || jobPlan === "2" || jobPlan === "1") {
+          textColor = "#40C057";
+        }
         return (
           <GLSelect
             data={planCodes}
