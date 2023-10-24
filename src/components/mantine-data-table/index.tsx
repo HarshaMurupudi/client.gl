@@ -51,6 +51,7 @@ const DataTable = ({
   onColumnVisibilityChange,
   tableKey,
   maxHeight,
+  minHeight,
   fetchData,
   loading,
   isEditable,
@@ -210,12 +211,9 @@ const DataTable = ({
       "_blank"
     );
   };
-  
+
   const handleMaterialActionBtn = (row) => {
-    window.open(
-      `/material-requirement/${row.original.Job}`,
-      "_blank"
-    );
+    window.open(`/material-requirement/${row.original.Job}`, "_blank");
   };
 
   const handleNoteActionBtn = (row) => {
@@ -248,7 +246,7 @@ const DataTable = ({
     enablePagination: false, //turn off pagination
     // enableRowVirtualization: true, //enable row virtualization
     mantineTableContainerProps: {
-      sx: { maxHeight: maxHeight || "82vh", minHeight: "30vh" },
+      sx: { maxHeight: maxHeight || "82vh", minHeight: minHeight || "30vh" },
     },
     // rowVirtualizerProps: { overscan: 8 }, //optionally customize the virtualizer
     enableBottomToolbar: false,
