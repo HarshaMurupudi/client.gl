@@ -23,7 +23,6 @@ function POReviewComponent({
   fetchPODetails,
   fetchPOPDF,
   poDetails,
-  poPDF,
   updateJobStatus,
   poDetailsLoading,
   user,
@@ -295,7 +294,6 @@ function POReviewComponent({
 
 const mapStateToProps = (state) => ({
   poDetails: state.getIn(["poDetails", "poDetails"]),
-  poPDF: state.getIn(["po", "poPDF"]),
   poDetailsLoading: state.getIn(["poDetails", "poDetailsLoading"]),
   user: state.getIn(["user", "user"]),
 });

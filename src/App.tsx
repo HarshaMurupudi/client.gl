@@ -26,7 +26,7 @@ function App() {
       return (
         <Provider store={store}>
           <MantineProvider
-            theme={{ fontFamily: 'Open Sans' }}
+            theme={{ fontFamily: 'sans-serif' }}
             withGlobalStyles
             withNormalizeCSS
           >

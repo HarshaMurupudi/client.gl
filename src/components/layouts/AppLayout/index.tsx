@@ -73,7 +73,7 @@ const useStyles = createStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     textDecoration: "none",
-    fontSize: theme.fontSizes.sm,
+    fontSize: theme.fontSizes.xs,
     color:
       theme.colorScheme === "dark"
         ? theme.colors.dark[1]
