@@ -15,6 +15,10 @@ const PendingJobs = lazy(() => import("../pages/pending"));
 const DeliveryQueueDetails = lazy(
   () => import("../features/delivery-queue-details")
 );
+const MaterialRequirements = lazy(
+  () => import("../pages/material-requirement")
+);
+
 const Aart = lazy(() => import("../pages/a-art"));
 const Qc = lazy(() => import("../pages/qc"));
 const DScreens = lazy(() => import("../pages/d-screen"));
@@ -705,6 +709,18 @@ export const publicRoutes = [
         <PrivateRoute>
           <AppLayout>
             <PoReviewPage />
+          </AppLayout>
+        </PrivateRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/material-requirement/:jobID",
+    element: (
+      <Suspense fallback={<div>Loading</div>}>
+        <PrivateRoute>
+          <AppLayout>
+            <MaterialRequirements />
           </AppLayout>
         </PrivateRoute>
       </Suspense>

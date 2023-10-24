@@ -209,6 +209,13 @@ const DataTable = ({
       "_blank"
     );
   };
+  
+  const handleMaterialActionBtn = (row) => {
+    window.open(
+      `/material-requirement/${row.original.Job}`,
+      "_blank"
+    );
+  };
 
   const handleNoteActionBtn = (row) => {
     setModalVisibility(true);
@@ -324,6 +331,9 @@ const DataTable = ({
           <Menu.Item onClick={() => handleNoteActionBtn(row)}>Note</Menu.Item>
           <Menu.Item onClick={() => handleInventoryActionBtn(row)}>
             Inventory
+          </Menu.Item>
+          <Menu.Item onClick={() => handleMaterialActionBtn(row)}>
+            Material
           </Menu.Item>
         </>
       ),
