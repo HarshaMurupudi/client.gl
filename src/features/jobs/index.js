@@ -39,7 +39,12 @@ function Jobs({
   const CATEGORY_WC = "Now At";
   const categoryWCMap = {
     All: [],
-    Engineering: ["A-ADMIN", "A-ART", "A-CUSTOMER"],
+    Engineering: [
+      "A-ADMIN", 
+      "A-ART",
+      "A-CUSTOMER",
+      "HYTECH",
+    ],
     Print: [
       "D-SCREENS",
       "E-INK",
@@ -145,7 +150,7 @@ function Jobs({
         columnFilters={categoryWCs}
       >
         <Box display={"flex"}>
-          <Text fz="md" fw={700} mr={16}>
+          <Text fz="sm" fw={700} mr={16} pt={4}>
             Select Ship By Date
           </Text>
           <DatePicker

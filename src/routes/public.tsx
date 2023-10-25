@@ -10,12 +10,14 @@ const Contracts = lazy(() => import("../pages/contracts"));
 const Operations = lazy(() => import("../pages/operations"));
 const PO = lazy(() => import("../pages/po"));
 const Tracking = lazy(() => import("../pages/tracking"));
+//const Meeting = lazy(() => import("../pages/meeting"));
 const Dashboard = lazy(() => import("../pages/dashboard"));
 const PendingJobs = lazy(() => import("../pages/pending"));
 const DeliveryQueueDetails = lazy(
   () => import("../features/delivery-queue-details")
 );
 const Aart = lazy(() => import("../pages/a-art"));
+const Hytech = lazy(() => import("../pages/hytech"));
 const Qc = lazy(() => import("../pages/qc"));
 const DScreens = lazy(() => import("../pages/d-screen"));
 const ACustomer = lazy(() => import("../pages/a-customer"));
@@ -165,6 +167,18 @@ export const publicRoutes = [
       </Suspense>
     ),
   },
+  // {
+  //   path: "/meeting",
+  //   element: (
+  //     <Suspense fallback={<div>Loading</div>}>
+  //       <PrivateRoute>
+  //         <AppLayout>
+  //           <Meeting />
+  //         </AppLayout>
+  //       </PrivateRoute>
+  //     </Suspense>
+  //   ),
+  // },
   {
     path: "/pending-jobs",
     element: (
@@ -185,6 +199,18 @@ export const publicRoutes = [
         <PrivateRoute>
           <AppLayout>
             <Aart />
+          </AppLayout>
+        </PrivateRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/hytech",
+    element: (
+      <Suspense fallback={<div>Loading</div>}>
+        <PrivateRoute>
+          <AppLayout>
+            <Hytech />
           </AppLayout>
         </PrivateRoute>
       </Suspense>

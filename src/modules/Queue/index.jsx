@@ -44,6 +44,7 @@ function WorkCenterQueue({
   title,
   loading,
   wc,
+  vendor,
   columns,
   jobs,
   value,
@@ -53,6 +54,7 @@ function WorkCenterQueue({
   fetchData,
 }) {
   const { classes } = useStyles();
+  wc ? vendor : wc;
 
   return (
     <Box>

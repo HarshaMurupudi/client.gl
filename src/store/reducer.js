@@ -9,6 +9,7 @@ import { reducer as opReducer } from "../features/po/store";
 import { reducer as trackingReducer } from "../features/tracking/store";
 import { reducer as pendingJobsReducer } from "../features/pending/store";
 import { reducer as engineeringReducer } from "../features/engineering/store";
+import { reducer as vendorReducer } from "../features/vendor/store";
 import { reducer as deliveryQueueDetailReducer } from "../features/delivery-queue-details/store";
 import { reducer as modalReducer } from "../components/modal/store";
 import { reducer as poDetailsReducer } from "../features/POReview/store";
@@ -22,6 +23,7 @@ export default combineReducers({
   tracking: trackingReducer,
   pendingJob: pendingJobsReducer,
   engineering: engineeringReducer,
+  vendor: vendorReducer,
   deliveryQueueDetail: deliveryQueueDetailReducer,
   modal: modalReducer,
   poDetails: poDetailsReducer,
