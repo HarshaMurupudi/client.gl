@@ -27,6 +27,8 @@ function MaterialRequirement({
     fetchPageData();
   }, []);
 
+  console.log(materialJobs);
+
   return (
     <Box pos="relative">
       <LoadingOverlay
@@ -38,15 +40,27 @@ function MaterialRequirement({
         Material Requirements
       </Text>
 
-      {Object.entries(materialJobs).map(([material, jobs]) => {
+      {Object.entries(materialJobs).map(([material, jobData]) => {
+        console.log(material, jobData);
         return (
           <Box key={material}>
+            <Box display={"flex"} style={{"justifyContent": "space-between"}}>
+              <Text>Type: {jobData.type}</Text>
+              <Text>Description: {jobData.description}</Text>
+              <Text>On Hand: 21,121</Text>
+              <Text>Order: 0.00</Text>
+              <Text>Pending: 0.00</Text>
+              <Text>Allocated: 0.00</Text>
+              <Text>Last: ${jobData.estUnitCost}</Text>
+              <Text>Lead Days: {jobData.leadDays}</Text>
+            </Box>
             <MantineDataTable
               tableKey={"Operation-Details-data-table"}
               title={`${material}`}
               columns={columns}
-              data={jobs}
+              data={jobData.jobs}
               hasActionColumn={false}
+              hasCustomActionBtn={true}
               enableGrouping={false}
               loading={materialJobsLoading}
               // customOnRowSelection={customOnOperationRowSelection}
@@ -55,7 +69,7 @@ function MaterialRequirement({
                 getRowId: (row, index) => `${row.Job}_${index}`,
               }}
               minHeight={1}
-            />
+            ></MantineDataTable>
 
             <Paper shadow="xs" p="xl">
               <Text>Total Open Qty: {materialJobsOpenTotals[material]}</Text>
