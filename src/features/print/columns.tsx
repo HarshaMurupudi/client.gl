@@ -272,6 +272,11 @@ export const getColumns = (
       },
     },
     {
+      accessorKey: "Quote",
+      header: "Quote",
+      enableEditing: false,
+    },
+    {
       accessorKey: "Est_Total_Hrs",
       header: "Est Total Hrs",
       enableMultiSort: true,
