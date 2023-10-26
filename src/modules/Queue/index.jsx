@@ -53,8 +53,12 @@ function WorkCenterQueue({
   setValue,
   fetchData,
 }) {
+  if (wc) {
+    wc = wc;
+  } else {
+    wc = vendor;
+  }
   const { classes } = useStyles();
-  wc ? vendor : wc;
 
   return (
     <Box>
