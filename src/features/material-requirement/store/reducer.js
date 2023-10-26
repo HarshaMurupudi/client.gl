@@ -6,7 +6,6 @@ const INITIAL_STATE = {
 const jobsReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case "SET_MATERIAL_JOBS":
-      console.log(action.payload)
       return {
         ...state,
         materialJobs: Object.assign({}, action.payload),

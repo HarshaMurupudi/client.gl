@@ -1,18 +1,27 @@
 import React, { useEffect, useMemo } from "react";
-import { Box, Text, Paper, LoadingOverlay } from "@mantine/core";
+import { Box, Text, Paper, LoadingOverlay, Grid } from "@mantine/core";
 import { useParams } from "react-router-dom";
 import { connect } from "react-redux";
 
 import { MantineDataTable } from "../../components/mantine-data-table";
 import { getColumns } from "./columns";
 import { fetchMaterialJobs } from "./store/actions";
-import { selectMaterialJobsOpenTotals } from "./store/selector";
+import {
+  selectMaterialJobsOpenTotals,
+  selectOnHandMaterialTotals,
+  selectOnOrderMaterialTotals,
+} from "./store/selector";
+import Table from "../../components/Table";
+import onHandMaterialColumns from "./onHandColumns";
+import onOrderMaterialColumns from "./onOrderColumns";
 
 function MaterialRequirement({
   materialJobs,
   materialJobsLoading,
   fetchMaterialJobs,
   materialJobsOpenTotals,
+  onHandMaterialTotals,
+  onOrderMaterialTotals,
 }) {
   const params = useParams();
   const jobID = params.jobID;
@@ -27,8 +36,6 @@ function MaterialRequirement({
     fetchPageData();
   }, []);
 
-  console.log(materialJobs);
-
   return (
     <Box pos="relative">
       <LoadingOverlay
@@ -41,18 +48,22 @@ function MaterialRequirement({
       </Text>
 
       {Object.entries(materialJobs).map(([material, jobData]) => {
-        console.log(material, jobData);
+        const offsetTotal =
+          materialJobsOpenTotals[material] -
+          (onHandMaterialTotals[material] + onOrderMaterialTotals[material]);
+        const pendingTotal = offsetTotal > 0 ? offsetTotal : 0;
+
         return (
-          <Box key={material}>
-            <Box display={"flex"} style={{"justifyContent": "space-between"}}>
-              <Text>Type: {jobData.type}</Text>
-              <Text>Description: {jobData.description}</Text>
-              <Text>On Hand: 21,121</Text>
-              <Text>Order: 0.00</Text>
-              <Text>Pending: 0.00</Text>
-              <Text>Allocated: 0.00</Text>
-              <Text>Last: ${jobData.estUnitCost}</Text>
-              <Text>Lead Days: {jobData.leadDays}</Text>
+          <Box key={material} my={32}>
+            <Box display={"flex"} style={{ justifyContent: "space-between" }}>
+              <Text fw={700}>Type: {jobData.type}</Text>
+              <Text fw={700}>Description: {jobData.description}</Text>
+              <Text fw={700}>On Hand: {onHandMaterialTotals[material]}</Text>
+              <Text fw={700}>On Order: {onOrderMaterialTotals[material]}</Text>
+              <Text fw={700}>Pending: {pendingTotal}</Text>
+              <Text fw={700}>Allocated: {materialJobsOpenTotals[material]}</Text>
+              <Text fw={700}>Cost: ${jobData.estUnitCost}</Text>
+              <Text fw={700}>Lead Days: {jobData.leadDays}</Text>
             </Box>
             <MantineDataTable
               tableKey={"Operation-Details-data-table"}
@@ -71,8 +82,28 @@ function MaterialRequirement({
               minHeight={1}
             ></MantineDataTable>
 
-            <Paper shadow="xs" p="xl">
-              <Text>Total Open Qty: {materialJobsOpenTotals[material]}</Text>
+            <Paper shadow="xs" p="md">
+              <Grid>
+                <Grid.Col span={5} style={{ border: "1px soild black" }}>
+                  <Text fw={700}>On Hand Material ({onHandMaterialTotals[material]})</Text>
+                  <Table
+                    columns={onHandMaterialColumns}
+                    rows={jobData.onHandMaterial}
+                  />
+                </Grid.Col>
+                <Grid.Col span={5}>
+                  <Text fw={700}>On Order Material ({onOrderMaterialTotals[material]})</Text>
+                  <Table
+                    columns={onOrderMaterialColumns}
+                    rows={jobData.onOrderMaterial}
+                  />
+                </Grid.Col>
+                <Grid.Col span={2}>
+                  <Text>
+                    Total Open Qty: {materialJobsOpenTotals[material]}
+                  </Text>
+                </Grid.Col>
+              </Grid>
             </Paper>
           </Box>
         );
@@ -87,6 +118,8 @@ const mapStateToProps = (state) => ({
   materialJobs: state.getIn(["materialJobs", "materialJobs"]),
   materialJobsLoading: state.getIn(["materialJobs", "materialJobsLoading"]),
   materialJobsOpenTotals: selectMaterialJobsOpenTotals(state),
+  onHandMaterialTotals: selectOnHandMaterialTotals(state),
+  onOrderMaterialTotals: selectOnOrderMaterialTotals(state),
 });
 
 export default connect(mapStateToProps, { fetchMaterialJobs })(
