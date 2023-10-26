@@ -35,6 +35,21 @@ export const getColumns = (fetchPDF: any) => {
       enableEditing: false,
     },
     {
+      accessorKey: "Part_Number",
+      header: "Part Number",
+      enableEditing: false,
+    },
+    {
+      accessorKey: "Description",
+      header: "Description",
+      enableEditing: false,
+    },
+    {
+      accessorKey: "Quote",
+      header: "Quote",
+      enableEditing: false,
+    },
+    {
       accessorKey: "Shipped_Date",
       id: "Shipped_Date",
       sortingFn: "datetime",

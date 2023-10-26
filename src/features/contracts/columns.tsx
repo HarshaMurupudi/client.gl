@@ -82,7 +82,6 @@ export const getColumns = (fetchPDF: any) => {
       accessorKey: "Quote",
       header: "Quote",
       enableEditing: false,
-      // filterVariant: 'autocomplete',
     },
     {
       accessorKey: "Ship_Via",
@@ -124,6 +123,25 @@ export const getColumns = (fetchPDF: any) => {
       accessorKey: "Unit_Price",
       header: "Unit Price",
       enableEditing: false,
+    },
+    {
+      // accessorKey: "Order_Amount",
+      accessorFn: (row: any) => {
+        const { Unit_Price, Order_Quantity } = row;
+        const Part_Number = (Unit_Price * Order_Quantity).toFixed(2);
+        return Part_Number;
+      },
+      header: "Order Amount",
+      enableEditing: false,
+      Cell: ({ cell, row }: { cell: any; row: any }) => (
+        <p
+          style={{
+            margin: 0,
+          }}
+        >
+          ${cell.getValue()}
+        </p>
+      ),
     },
     {
       accessorFn: (row: any) => {

@@ -337,6 +337,11 @@ export const getColumns = (
       enableEditing: false,
     },
     {
+      accessorKey: "Quote",
+      header: "Quote",
+      enableEditing: false,
+    },
+    {
       accessorKey: "Revenue",
       header: "Revenue",
       enableEditing: false,
@@ -346,18 +351,14 @@ export const getColumns = (
       },
       Cell: ({ cell, row }: { cell: any; row: any }) => {
         const revenue = cell.getValue();
-      
+
         // Define a CSS style object based on the revenue value
         const cellStyle = {
           margin: 0,
           backgroundColor: revenue > 5000 ? "#69d461" : "transparent",
         };
-      
-        return (
-          <p style={cellStyle}>
-            ${revenue}
-          </p>
-        );
+
+        return <p style={cellStyle}>${revenue}</p>;
       },
     },
     // {

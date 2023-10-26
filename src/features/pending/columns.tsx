@@ -248,6 +248,11 @@ export const getColumns = (
       enableEditing: false,
     },
     {
+      accessorKey: "Quote",
+      header: "Quote",
+      enableEditing: false,
+    },
+    {
       accessorKey: "Customer_PO",
       header: "Customer PO",
       enableEditing: false,

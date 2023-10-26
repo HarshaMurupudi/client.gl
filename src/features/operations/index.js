@@ -41,10 +41,20 @@ function Operations({
     Work_Center: "",
   });
   const [selectedJob, setSelectedJob] = useState("");
+
+  const totalEstHours = useMemo(() => {
+    console.log("job selected")
+    const totalPoints = (operations[selectedJob] || []).reduce(
+      (acc, row) => acc + row.Est_Total_Hrs,
+      0
+    );
+    return totalPoints;
+  }, [operations, selectedJob]);
+
   const laborColumns = useMemo(() => getColumns(fetchPDFByJob), []);
   const operationColumns = useMemo(
-    () => getOperationColumns(fetchPDFByJob),
-    []
+    () => getOperationColumns(fetchPDFByJob, totalEstHours),
+    [totalEstHours]
   );
   const jobColumns = useMemo(() => getJobColumns(fetchPDFByJob), []);
 
@@ -112,7 +122,9 @@ function Operations({
               return {
                 Job: op,
                 Status: isCompleted ? "C" : "O",
-                Description: operations[op][0].job ? operations[op][0].job.Description : '-',
+                Description: operations[op][0].job
+                  ? operations[op][0].job.Description
+                  : "-",
               };
             })}
             hasActionColumn={false}

@@ -2,7 +2,7 @@ import { format, addMinutes } from "date-fns";
 import { Box, Button, Text, Textarea } from "@mantine/core";
 import { formatDate } from "../../utils";
 
-export const getOperationColumns = (fetchPDF: any) => {
+export const getOperationColumns = (fetchPDF: any, totalEstHours) => {
   const columns = [
     // {
     //   accessorKey: "Job",
@@ -28,6 +28,12 @@ export const getOperationColumns = (fetchPDF: any) => {
       accessorKey: "Description",
       header: "Description",
       enableEditing: false,
+    },
+    {
+      accessorKey: "Est_Total_Hrs",
+      header: "Est Total Hrs",
+      enableEditing: false,
+      Footer: () => <div>Total Hrs: {totalEstHours.toFixed(2)}</div>,
     },
     {
       accessorKey: "Status",
