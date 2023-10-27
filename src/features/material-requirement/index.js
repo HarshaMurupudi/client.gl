@@ -85,18 +85,54 @@ function MaterialRequirement({
           return (
             <Box key={material} my={16}>
               <Box display={"flex"} style={{ justifyContent: "space-between" }}>
-                <Text fw={700}>Type: {jobData.type}</Text>
-                <Text fw={700}>Description: {jobData.description}</Text>
-                <Text fw={700}>On Hand: {onHandMaterialTotals[material]}</Text>
-                <Text fw={700}>
-                  On Order: {onOrderMaterialTotals[material]}
+                <Text fw={600}>
+                  Type:{" "}
+                  <Text span fw={100}>
+                    {jobData.type}
+                  </Text>
                 </Text>
-                <Text fw={700}>Pending: {pendingTotal}</Text>
-                <Text fw={700}>
-                  Allocated: {materialJobsOpenTotals[material]}
+                <Text fw={600}>
+                  Description:{" "}
+                  <Text span fw={100}>
+                    {jobData.description}
+                  </Text>
                 </Text>
-                <Text fw={700}>Cost: ${jobData.estUnitCost}</Text>
-                <Text fw={700}>Lead Days: {jobData.leadDays}</Text>
+                <Text fw={600}>
+                  On Hand:{" "}
+                  <Text span fw={100}>
+                    {onHandMaterialTotals[material]}
+                  </Text>
+                </Text>
+                <Text fw={600}>
+                  On Order:{" "}
+                  <Text span fw={100}>
+                    {onOrderMaterialTotals[material]}
+                  </Text>
+                </Text>
+                <Text fw={600}>
+                  Pending:{" "}
+                  <Text span fw={100}>
+                    {pendingTotal}
+                  </Text>
+                </Text>
+                <Text fw={600}>
+                  Allocated:{" "}
+                  <Text span fw={100}>
+                    {materialJobsOpenTotals[material]}
+                  </Text>
+                </Text>
+                <Text fw={600}>
+                  Cost:{" "}
+                  <Text span fw={100}>
+                    ${jobData.estUnitCost}
+                  </Text>
+                </Text>
+                <Text fw={600}>
+                  Lead Days:{" "}
+                  <Text span fw={100}>
+                    {jobData.leadDays}
+                  </Text>
+                </Text>
               </Box>
               <MantineDataTable
                 tableKey={"Operation-Details-data-table"}
@@ -119,7 +155,10 @@ function MaterialRequirement({
                 <Grid>
                   <Grid.Col span={5} style={{ border: "1px soild black" }}>
                     <Text fw={700}>
-                      On Hand Material ({onHandMaterialTotals[material]})
+                      On Hand Material{" "}
+                      <Text span fw={100}>
+                        ({onHandMaterialTotals[material]})
+                      </Text>
                     </Text>
                     <Table
                       columns={onHandMaterialColumns}
@@ -128,7 +167,10 @@ function MaterialRequirement({
                   </Grid.Col>
                   <Grid.Col span={5}>
                     <Text fw={700}>
-                      On Order Material ({onOrderMaterialTotals[material]})
+                      On Order Material{" "}
+                      <Text span fw={100}>
+                        ({onOrderMaterialTotals[material]})
+                      </Text>
                     </Text>
                     <Table
                       columns={onOrderMaterialColumns}
@@ -137,7 +179,10 @@ function MaterialRequirement({
                   </Grid.Col>
                   <Grid.Col span={2}>
                     <Text fw={700}>
-                      Total Open Qty: {materialJobsOpenTotals[material]}
+                      Total Open Qty:{" "}
+                      <Text span fw={100}>
+                        {materialJobsOpenTotals[material]}
+                      </Text>
                     </Text>
                   </Grid.Col>
                 </Grid>
