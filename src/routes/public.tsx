@@ -19,6 +19,7 @@ const DeliveryQueueDetails = lazy(
 const Aart = lazy(() => import("../pages/a-art"));
 const Hytech = lazy(() => import("../pages/hytech"));
 const Qc = lazy(() => import("../pages/qc"));
+const Eco = lazy(() => import("../pages/eco"));
 const DScreens = lazy(() => import("../pages/d-screen"));
 const ACustomer = lazy(() => import("../pages/a-customer"));
 const PoReviewPage = lazy(() => import("../pages/po-review"));
@@ -168,7 +169,7 @@ export const publicRoutes = [
     ),
   },
   // {
-  //   path: "/meeting",
+  //   path: "/productionMeeting",
   //   element: (
   //     <Suspense fallback={<div>Loading</div>}>
   //       <PrivateRoute>
@@ -223,6 +224,18 @@ export const publicRoutes = [
         <PrivateRoute>
           <AppLayout>
             <Qc />
+          </AppLayout>
+        </PrivateRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/eco",
+    element: (
+      <Suspense fallback={<div>Loading</div>}>
+        <PrivateRoute>
+          <AppLayout>
+            <Eco />
           </AppLayout>
         </PrivateRoute>
       </Suspense>

@@ -43,6 +43,7 @@ function Jobs({
       "A-ADMIN", 
       "A-ART",
       "A-CUSTOMER",
+      "ECO",
       "HYTECH",
     ],
     Print: [
