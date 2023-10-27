@@ -10,6 +10,16 @@ export const setMaterialJobsLoading = (status) => ({
   payload: status,
 });
 
+export const setMaterialRequirements = (status) => ({
+  type: "SET_MATERIAL_REQUIREMENTS",
+  payload: status,
+});
+
+export const setMaterialRequirementsLoading = (status) => ({
+  type: "SET_MATERIAL_REQUIREMENTS_LOADING",
+  payload: status,
+});
+
 export const fetchMaterialJobs = (jobID) => async (dispatch) => {
   try {
     dispatch(setMaterialJobsLoading(true));
@@ -19,5 +29,17 @@ export const fetchMaterialJobs = (jobID) => async (dispatch) => {
     console.log(error);
   } finally {
     dispatch(setMaterialJobsLoading(false));
+  }
+};
+
+export const fetchMaterialRequirements = (jobID) => async (dispatch) => {
+  try {
+    dispatch(setMaterialRequirementsLoading(true));
+    const response = await baseAxios.get(`/job/material/requirements/${jobID}`);
+    dispatch(setMaterialRequirements(response.data.jobs));
+  } catch (error) {
+    console.log(error);
+  } finally {
+    dispatch(setMaterialRequirementsLoading(false));
   }
 };

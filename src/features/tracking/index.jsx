@@ -34,9 +34,6 @@ function Tracking({
       setData([]);
       let jobs = [];
 
-      // if (val.trim().length === 0 || val.includes("@")) {
-      //   setLoading(false);
-      // } else {
       setLoading(true);
 
       if (key === "Customer") {
@@ -52,7 +49,6 @@ function Tracking({
       }
 
       setData(jobs);
-      // }
     }
   };
 

@@ -1,6 +1,8 @@
 const INITIAL_STATE = {
   materialJobs: {},
+  materialRequirements: [],
   materialJobsLoading: true,
+  materialRequirementsLoading: true,
 };
 
 const jobsReducer = (state = INITIAL_STATE, action) => {
@@ -14,6 +16,16 @@ const jobsReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         materialJobsLoading: action.payload,
+      };
+    case "SET_MATERIAL_REQUIREMENTS":
+      return {
+        ...state,
+        materialRequirements: [...action.payload],
+      };
+    case "SET_MATERIAL_REQUIREMENTS_LOADING":
+      return {
+        ...state,
+        materialRequirementsLoading: action.payload,
       };
     default:
       return state;

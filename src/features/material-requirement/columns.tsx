@@ -6,6 +6,32 @@ export const getColumns = (fetchPDF: any, totalOpenQty) => {
   const columns = [
     // Description
     {
+      accessorKey: "allocation",
+      header: "",
+      enableEditing: false,
+    },
+    {
+      accessorKey: "risk",
+      header: "Risk",
+      enableEditing: false,
+      Cell: ({ cell, row }) => {
+        const prodNote = cell.row.getValue("risk");
+        let color: string | null = null;
+
+        if (prodNote === "None") {
+          color = "black";
+        } else if (prodNote === "Critical") {
+          color = "red";
+        }
+
+        if (color) {
+          return <Text c={color}>{cell.getValue()}</Text>;
+        } else {
+          return <Text>{cell.getValue()}</Text>;
+        }
+      },
+    },
+    {
       accessorKey: "Job",
       header: "Job",
       enableEditing: false,

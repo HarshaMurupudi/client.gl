@@ -3,13 +3,15 @@ import { Table } from "@mantine/core";
 import { formatDate } from "../../utils";
 
 function index({ columns, rows }) {
-  const tableRows = (rows || []).map((row) => (
-    <tr key={row[Object.keys(columns)[0]]}>
-      {Object.keys(columns || {}).map((column) => {
+  const tableRows = (rows || []).map((row, index) => (
+    <tr key={row[Object.keys(columns)[0]] + index}>
+      {Object.keys(columns || {}).map((column, index) => {
         if (column === "Due_Date") {
-          return formatDate(new Date(row[column]));
+          return (
+            <td key={column + index}>{formatDate(new Date(row[column]))}</td>
+          );
         } else {
-          return <td>{row[column]}</td>;
+          return <td key={column + index}>{row[column]}</td>;
         }
       })}
     </tr>
@@ -19,8 +21,8 @@ function index({ columns, rows }) {
     <Table>
       <thead>
         <tr>
-          {Object.entries(columns || {}).map(([key, value]) => {
-            return <th key={key}>{value}</th>;
+          {Object.entries(columns || {}).map(([key, value], index) => {
+            return <th key={key + index}>{value}</th>;
           })}
         </tr>
       </thead>
