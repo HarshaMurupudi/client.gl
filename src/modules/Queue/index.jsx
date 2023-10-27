@@ -44,6 +44,7 @@ function WorkCenterQueue({
   title,
   loading,
   wc,
+  vendor,
   columns,
   jobs,
   value,
@@ -52,6 +53,11 @@ function WorkCenterQueue({
   setValue,
   fetchData,
 }) {
+  if (wc) {
+    wc = wc;
+  } else {
+    wc = vendor;
+  }
   const { classes } = useStyles();
 
   return (

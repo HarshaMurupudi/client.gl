@@ -33,6 +33,7 @@ const mockdata = [
       { label: "Job Review", link: "/contracts" },
       { label: "PO Review", link: "/po" },
       { label: "Tracking", link: "/tracking" },
+      //{ label: "Production Meeting", link: "/productionMeeting" },
     ],
   },
   {
@@ -49,6 +50,8 @@ const mockdata = [
       { label: "A-ART", link: "/a-art" },
       { label: "QC", link: "/qc" },
       { label: "A-CUSTOMER", link: "/a-customer" },
+      { label: "HYTECH", link: "/hytech"},
+      { label: "ECO", link: "/eco"},
     ],
   },
   {

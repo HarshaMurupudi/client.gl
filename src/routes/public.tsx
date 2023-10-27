@@ -10,6 +10,7 @@ const Contracts = lazy(() => import("../pages/contracts"));
 const Operations = lazy(() => import("../pages/operations"));
 const PO = lazy(() => import("../pages/po"));
 const Tracking = lazy(() => import("../pages/tracking"));
+//const Meeting = lazy(() => import("../pages/meeting"));
 const Dashboard = lazy(() => import("../pages/dashboard"));
 const PendingJobs = lazy(() => import("../pages/pending"));
 const DeliveryQueueDetails = lazy(
@@ -20,7 +21,9 @@ const MaterialRequirements = lazy(
 );
 
 const Aart = lazy(() => import("../pages/a-art"));
+const Hytech = lazy(() => import("../pages/hytech"));
 const Qc = lazy(() => import("../pages/qc"));
+const Eco = lazy(() => import("../pages/eco"));
 const DScreens = lazy(() => import("../pages/d-screen"));
 const ACustomer = lazy(() => import("../pages/a-customer"));
 const PoReviewPage = lazy(() => import("../pages/po-review"));
@@ -169,6 +172,18 @@ export const publicRoutes = [
       </Suspense>
     ),
   },
+  // {
+  //   path: "/productionMeeting",
+  //   element: (
+  //     <Suspense fallback={<div>Loading</div>}>
+  //       <PrivateRoute>
+  //         <AppLayout>
+  //           <Meeting />
+  //         </AppLayout>
+  //       </PrivateRoute>
+  //     </Suspense>
+  //   ),
+  // },
   {
     path: "/pending-jobs",
     element: (
@@ -195,12 +210,36 @@ export const publicRoutes = [
     ),
   },
   {
+    path: "/hytech",
+    element: (
+      <Suspense fallback={<div>Loading</div>}>
+        <PrivateRoute>
+          <AppLayout>
+            <Hytech />
+          </AppLayout>
+        </PrivateRoute>
+      </Suspense>
+    ),
+  },
+  {
     path: "/qc",
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
           <AppLayout>
             <Qc />
+          </AppLayout>
+        </PrivateRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/eco",
+    element: (
+      <Suspense fallback={<div>Loading</div>}>
+        <PrivateRoute>
+          <AppLayout>
+            <Eco />
           </AppLayout>
         </PrivateRoute>
       </Suspense>
