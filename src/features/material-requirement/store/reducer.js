@@ -1,6 +1,8 @@
 const INITIAL_STATE = {
-  materialJobs: [],
+  materialJobs: {},
+  materialRequirements: [],
   materialJobsLoading: true,
+  materialRequirementsLoading: true,
 };
 
 const jobsReducer = (state = INITIAL_STATE, action) => {
@@ -8,12 +10,22 @@ const jobsReducer = (state = INITIAL_STATE, action) => {
     case "SET_MATERIAL_JOBS":
       return {
         ...state,
-        materialJobs: action.payload,
+        materialJobs: Object.assign({}, action.payload),
       };
     case "SET_MATERIAL_JOBS_LOADING":
       return {
         ...state,
         materialJobsLoading: action.payload,
+      };
+    case "SET_MATERIAL_REQUIREMENTS":
+      return {
+        ...state,
+        materialRequirements: [...action.payload],
+      };
+    case "SET_MATERIAL_REQUIREMENTS_LOADING":
+      return {
+        ...state,
+        materialRequirementsLoading: action.payload,
       };
     default:
       return state;
