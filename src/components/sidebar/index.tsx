@@ -110,7 +110,6 @@ const mockdata = [
     links: [
       { label: "SPARTANICS", link: "/spartanics" },
       { label: "V-PICKPLAC", link: "/v-pickplac" },
-      { label: "V-PICKPLC2", link: "/v-pickplc2" },
       { label: "W-MEMBRANE", link: "/w-membrane" },
       { label: "W-STAGE", link: "/w-stage" },
     ],
@@ -121,7 +120,6 @@ const mockdata = [
     initiallyOpened: false,
     links: [
       { label: "N-LAM", link: "/n-lam" },
-      { label: "N-LAM-AUTO", link: "/n-lam-auto" },
     ],
   },
   {
@@ -145,6 +143,9 @@ const mockdata = [
       { label: "J-OS -Outside service", link: "/j-os-outside-service" },
       { label: "L-Zebra", link: "/l-zebra" },
       { label: "Q-Lam", link: "/q-lam" },
+      { label: "N-LAM-AUTO", link: "/n-lam-auto" },
+      { label: "V-PICKPLC2", link: "/v-pickplc2" },
+      
     ],
   },
   {
