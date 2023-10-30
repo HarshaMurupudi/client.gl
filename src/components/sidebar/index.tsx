@@ -52,6 +52,7 @@ const mockdata = [
       { label: "A-CUSTOMER", link: "/a-customer" },
       { label: "HYTECH", link: "/hytech"},
       { label: "ECO", link: "/eco"},
+      { label: "FAI", link: "/fai"},
     ],
   },
   {
