@@ -216,8 +216,12 @@ const DataTable = ({
     );
   };
 
-  const handleMaterialActionBtn = (row) => {
-    window.open(`/material-requirement/${row.original.Job}`, "_blank");
+  const handleMaterialActionBtn = (row, action) => {
+    if (action === "material") {
+      window.open(`/material-requirement/${row.original.Job}`, "_blank");
+    } else if (action === "shiplines") {
+      window.open(`/shiplines/${row.original.Job}`, "_blank");
+    }
   };
 
   const handleNoteActionBtn = (row) => {
@@ -340,7 +344,7 @@ const DataTable = ({
           <Menu.Item onClick={() => handleInventoryActionBtn(row)}>
             Inventory
           </Menu.Item>
-          <Menu.Item onClick={() => handleMaterialActionBtn(row)}>
+          <Menu.Item onClick={() => handleMaterialActionBtn(row, 'material')}>
             Material
           </Menu.Item>
           <Menu.Item onClick={() => handleActionBtn(row, "customer-approval")}>
@@ -353,6 +357,9 @@ const DataTable = ({
               Z.Cut File
             </Menu.Item>
           )}
+          <Menu.Item onClick={() => handleMaterialActionBtn(row, 'shiplines')}>
+            Shiplines
+          </Menu.Item>
         </>
       ),
     }),

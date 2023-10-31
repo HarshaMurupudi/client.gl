@@ -19,11 +19,13 @@ const DeliveryQueueDetails = lazy(
 const MaterialRequirements = lazy(
   () => import("../pages/material-requirement")
 );
+const Shiplines =  lazy(() => import("../features/shiplines/page"))
 
 const Aart = lazy(() => import("../pages/a-art"));
 const Hytech = lazy(() => import("../pages/hytech"));
 const Qc = lazy(() => import("../pages/qc"));
 const Eco = lazy(() => import("../pages/eco"));
+const Fai = lazy(() => import("../pages/fai"));
 const DScreens = lazy(() => import("../pages/d-screen"));
 const ACustomer = lazy(() => import("../pages/a-customer"));
 const PoReviewPage = lazy(() => import("../pages/po-review"));
@@ -240,6 +242,18 @@ export const publicRoutes = [
         <PrivateRoute>
           <AppLayout>
             <Eco />
+          </AppLayout>
+        </PrivateRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/fai",
+    element: (
+      <Suspense fallback={<div>Loading</div>}>
+        <PrivateRoute>
+          <AppLayout>
+            <Fai />
           </AppLayout>
         </PrivateRoute>
       </Suspense>
@@ -760,6 +774,18 @@ export const publicRoutes = [
         <PrivateRoute>
           <AppLayout>
             <MaterialRequirements />
+          </AppLayout>
+        </PrivateRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/shiplines/:jobID",
+    element: (
+      <Suspense fallback={<div>Loading</div>}>
+        <PrivateRoute>
+          <AppLayout>
+            <Shiplines />
           </AppLayout>
         </PrivateRoute>
       </Suspense>
