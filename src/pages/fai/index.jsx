@@ -2,12 +2,12 @@ import React from 'react';
 
 import Engineering from '../../features/engineering';
 
-function ECO() {
+function FAI() {
   return (
     <div>
-      <Engineering wc={'ECO'} title={'ECO'}/>
+      <Engineering wc={'FAI'} title={'FAI'}/>
     </div>
   );
 }
 
-export default ECO;
+export default FAI;
