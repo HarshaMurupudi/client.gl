@@ -43,7 +43,6 @@ function Operations({
   const [selectedJob, setSelectedJob] = useState("");
 
   const totalEstHours = useMemo(() => {
-    console.log("job selected")
     const totalPoints = (operations[selectedJob] || []).reduce(
       (acc, row) => acc + row.Est_Total_Hrs,
       0

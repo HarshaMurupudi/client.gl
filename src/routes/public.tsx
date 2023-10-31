@@ -19,6 +19,7 @@ const DeliveryQueueDetails = lazy(
 const MaterialRequirements = lazy(
   () => import("../pages/material-requirement")
 );
+const Shiplines =  lazy(() => import("../features/shiplines/page"))
 
 const Aart = lazy(() => import("../pages/a-art"));
 const Hytech = lazy(() => import("../pages/hytech"));
@@ -760,6 +761,18 @@ export const publicRoutes = [
         <PrivateRoute>
           <AppLayout>
             <MaterialRequirements />
+          </AppLayout>
+        </PrivateRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/shiplines/:jobID",
+    element: (
+      <Suspense fallback={<div>Loading</div>}>
+        <PrivateRoute>
+          <AppLayout>
+            <Shiplines />
           </AppLayout>
         </PrivateRoute>
       </Suspense>
