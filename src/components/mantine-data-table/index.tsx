@@ -30,6 +30,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { MRT_ShowHideColumnsButton } from "../mantine-custom/buttons/MRT_ShowHideColumnsButton";
 import { fetchPOPDF } from "../../features/po/store/actions";
 import { setModalText, setModalVisibility } from "../modal/store/actions";
+import { fetchCustomerApprovalPDF, fetchZundCutFilePDF } from "./store/actions";
 
 interface Props {
   columns: any;
@@ -68,6 +69,8 @@ const DataTable = ({
   customOnRowSelection,
   isBasicTable = false,
   columnFilters,
+  fetchCustomerApprovalPDF,
+  fetchZundCutFilePDF,
 }: Props) => {
   const navigate = useNavigate();
   const isFirstRender = useRef(true);
@@ -193,16 +196,17 @@ const DataTable = ({
     );
   }, [columnOrder]);
 
-  const handleActionBtn = (row) => {
+  const handleActionBtn = async (row, type) => {
     const selecetedRowID = row.id.split("_")[0];
-    // navigate('/operations', { state: { jobID: selecetedRowID } });
+    const { Part_Number } = row.original;
 
-    // window.open(
-    //   `/operations/${selecetedRowID}`,
-    //   "_blank",
-    //   "rel=noopener noreferrer"
-    // );
-    window.open(`/operations/${selecetedRowID}`, "_blank");
+    if (type === "operations") {
+      window.open(`/operations/${selecetedRowID}`, "_blank");
+    } else if (type === "customer-approval") {
+      await fetchCustomerApprovalPDF(Part_Number);
+    } else if ((type = "zund-cut-file")) {
+      await fetchZundCutFilePDF(Part_Number);
+    }
   };
 
   const handleInventoryActionBtn = (row) => {
@@ -225,6 +229,8 @@ const DataTable = ({
     const jobId = row.original.Job;
     await fetchPOPDF(jobId);
   };
+
+  // fetchCustomerApprovalPDF
 
   const table = useMantineReactTable({
     key: tableKey,
@@ -326,7 +332,9 @@ const DataTable = ({
     ...(hasActionColumn && {
       renderRowActionMenuItems: ({ row }) => (
         <>
-          <Menu.Item onClick={() => handleActionBtn(row)}>Operations</Menu.Item>
+          <Menu.Item onClick={() => handleActionBtn(row, "operations")}>
+            Operations
+          </Menu.Item>
           <Menu.Item onClick={() => handlePOActionBtn(row)}>PO</Menu.Item>
           <Menu.Item onClick={() => handleNoteActionBtn(row)}>Note</Menu.Item>
           <Menu.Item onClick={() => handleInventoryActionBtn(row)}>
@@ -335,6 +343,16 @@ const DataTable = ({
           <Menu.Item onClick={() => handleMaterialActionBtn(row)}>
             Material
           </Menu.Item>
+          <Menu.Item onClick={() => handleActionBtn(row, "customer-approval")}>
+            Customer Approval
+          </Menu.Item>
+          {/* only in zund plot */}
+          {/* key = O-ZUNDPLOT-data-table */}
+          {tableKey === "O-ZUNDPLOT-data-table" && (
+            <Menu.Item onClick={() => handleActionBtn(row, "zund-cut-file")}>
+              Z.Cut File
+            </Menu.Item>
+          )}
         </>
       ),
     }),
@@ -367,4 +385,6 @@ export const MantineDataTable = connect(null, {
   fetchPOPDF,
   setModalVisibility,
   setModalText,
+  fetchCustomerApprovalPDF,
+  fetchZundCutFilePDF,
 })(DataTable);
