@@ -1,28 +1,28 @@
-import baseAxios from '../../../apis/baseAxios';
-import {delay} from '../../../utils';
+import baseAxios from "../../../apis/baseAxios";
+import { delay } from "../../../utils";
 
 const headers = {
-  'Content-Type': 'application/json',
-  Accept: 'application/json'
-}
+  "Content-Type": "application/json",
+  Accept: "application/json",
+};
 
 export const setJobs = (status) => ({
-  type: 'SET_JOBS',
+  type: "SET_JOBS",
   payload: status,
 });
 
 export const setJobsLoading = (status) => ({
-  type: 'SET_JOBS_LOADING',
+  type: "SET_JOBS_LOADING",
   payload: status,
 });
 
 export const setPDFLoading = (status) => ({
-  type: 'SET_PDF_LOADING',
+  type: "SET_PDF_LOADING",
   payload: status,
 });
 
 export const setEditedUsers = (status) => ({
-  type: 'SET_EDITED_USERS',
+  type: "SET_EDITED_USERS",
   payload: status,
 });
 
@@ -30,19 +30,18 @@ export const fetchJobs = (startDate, endDate) => async (dispatch) => {
   try {
     dispatch(setJobsLoading(true));
 
-    const response = await baseAxios.get('/', 
-    {
+    const response = await baseAxios.get("/", {
       params: {
-        startDate, endDate
+        startDate,
+        endDate,
       },
     });
-  
-    dispatch(setJobs(response.data.jobs));
 
+    dispatch(setJobs(response.data.jobs));
   } catch (error) {
     console.log(error);
   } finally {
-    await delay(2000)
+    await delay(2000);
     dispatch(setJobsLoading(false));
   }
 };
@@ -52,16 +51,20 @@ export const fetchPDF = (partID) => async (dispatch) => {
     dispatch(setPDFLoading(true));
     const { data } = await baseAxios.get(`/part-number/${partID}`, {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        "Content-Type": "multipart/form-data",
       },
-      responseType: 'arraybuffer',
+      responseType: "arraybuffer",
     });
 
-    const blob = new Blob([data], { type: 'application/pdf' });
+    const blob = new Blob([data], { type: "application/pdf" });
     const fileUrl = URL.createObjectURL(blob);
     window.open(fileUrl);
   } catch (error) {
-    alert('no file');
+    if (error.response.data.code === "ENOENT") {
+      alert("no file");
+    } else {
+      alert("Try after some time");
+    }
   } finally {
     dispatch(setPDFLoading(false));
   }
@@ -72,16 +75,20 @@ export const fetchPDFByJob = (jobID) => async (dispatch) => {
     dispatch(setPDFLoading(true));
     const { data } = await baseAxios.get(`/job-image/${jobID}`, {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        "Content-Type": "multipart/form-data",
       },
-      responseType: 'arraybuffer',
+      responseType: "arraybuffer",
     });
 
-    const blob = new Blob([data], { type: 'application/pdf' });
+    const blob = new Blob([data], { type: "application/pdf" });
     const fileUrl = URL.createObjectURL(blob);
     window.open(fileUrl);
   } catch (error) {
-    alert('no file');
+    if (error.response.data.code === "ENOENT") {
+      alert("no file");
+    } else {
+      alert("Try after some time");
+    }
   } finally {
     dispatch(setPDFLoading(false));
   }
@@ -91,15 +98,14 @@ export const saveNotes = (jobs) => async (dispatch) => {
   try {
     dispatch(setJobsLoading(true));
 
-   await baseAxios.patch('/notes', 
-      {
-        data: {jobs},
-        headers
-      });
+    await baseAxios.patch("/notes", {
+      data: { jobs },
+      headers,
+    });
   } catch (error) {
     console.log(error);
   } finally {
-    await delay(1200)
+    await delay(1200);
     dispatch(setJobsLoading(false));
   }
 };
