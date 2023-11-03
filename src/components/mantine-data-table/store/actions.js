@@ -100,12 +100,26 @@ export const openFolder = (id, key) => async (dispatch) => {
       await localAxios.get(`/folders/parts/${id}`);
     } else if (key === "Job") {
       await localAxios.get(`/folders/jobs/${id}`);
-    } else if (key === "") {
+    } else if (key === "Quote") {
+      await localAxios.get(`/folders/quotes/${id}`);
     }
   } catch (error) {
-    console.log(error);
+    if (error.code === "ERR_NETWORK") {
+      notifications.show({
+        title: "Error",
+        message: "Please run the server file",
+        color: "red",
+      });
+    } else {
+      dispatch(setMantineDataLoading(false));
+      notifications.show({
+        title: "Error",
+        message: error.response.data.message,
+        color: "red",
+      });
+    }
   } finally {
-    await delay(2000)
+    await delay(2000);
     dispatch(setMantineDataLoading(false));
   }
 };

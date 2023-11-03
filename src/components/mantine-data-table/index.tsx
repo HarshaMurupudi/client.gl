@@ -377,6 +377,9 @@ const DataTable = ({
           <Menu.Item onClick={() => handleFolderOpen(row, "Job")}>
             Open Job Folder
           </Menu.Item>
+          <Menu.Item onClick={() => handleFolderOpen(row, "Quote")}>
+            Open Quote Folder
+          </Menu.Item>
         </>
       ),
     }),
