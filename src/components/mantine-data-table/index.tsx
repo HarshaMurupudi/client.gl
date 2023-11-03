@@ -30,7 +30,11 @@ import { useDisclosure } from "@mantine/hooks";
 import { MRT_ShowHideColumnsButton } from "../mantine-custom/buttons/MRT_ShowHideColumnsButton";
 import { fetchPOPDF } from "../../features/po/store/actions";
 import { setModalText, setModalVisibility } from "../modal/store/actions";
-import { fetchCustomerApprovalPDF, fetchZundCutFilePDF } from "./store/actions";
+import {
+  fetchCustomerApprovalPDF,
+  fetchZundCutFilePDF,
+  openFolder,
+} from "./store/actions";
 
 interface Props {
   columns: any;
@@ -55,6 +59,7 @@ const DataTable = ({
   minHeight,
   fetchData,
   loading,
+  mantineDataTableLoading,
   isEditable,
   isEdited,
   hasCustomActionBtn,
@@ -71,6 +76,7 @@ const DataTable = ({
   columnFilters,
   fetchCustomerApprovalPDF,
   fetchZundCutFilePDF,
+  openFolder,
 }: Props) => {
   const navigate = useNavigate();
   const isFirstRender = useRef(true);
@@ -234,6 +240,11 @@ const DataTable = ({
     await fetchPOPDF(jobId);
   };
 
+  const handleFolderOpen = async (row, key) => {
+    const id = row.original[key];
+    await openFolder(id, key);
+  };
+
   // fetchCustomerApprovalPDF
 
   const table = useMantineReactTable({
@@ -285,7 +296,7 @@ const DataTable = ({
       columnVisibility,
       columnOrder,
       rowSelection,
-      isLoading: loading,
+      isLoading: loading || mantineDataTableLoading,
       ...(columnFilters && { columnFilters }),
     },
     positionToolbarAlertBanner: "none", //hide alert banner selection message
@@ -344,7 +355,7 @@ const DataTable = ({
           <Menu.Item onClick={() => handleInventoryActionBtn(row)}>
             Inventory
           </Menu.Item>
-          <Menu.Item onClick={() => handleMaterialActionBtn(row, 'material')}>
+          <Menu.Item onClick={() => handleMaterialActionBtn(row, "material")}>
             Material
           </Menu.Item>
           <Menu.Item onClick={() => handleActionBtn(row, "customer-approval")}>
@@ -357,8 +368,14 @@ const DataTable = ({
               Z.Cut File
             </Menu.Item>
           )}
-          <Menu.Item onClick={() => handleMaterialActionBtn(row, 'shiplines')}>
+          <Menu.Item onClick={() => handleMaterialActionBtn(row, "shiplines")}>
             Shiplines
+          </Menu.Item>
+          <Menu.Item onClick={() => handleFolderOpen(row, "Part_Number")}>
+            Open Part Folder
+          </Menu.Item>
+          <Menu.Item onClick={() => handleFolderOpen(row, "Job")}>
+            Open Job Folder
           </Menu.Item>
         </>
       ),
@@ -388,10 +405,18 @@ const DataTable = ({
   );
 };
 
-export const MantineDataTable = connect(null, {
+const mapStateToProps = (state) => ({
+  mantineDataTableLoading: state.getIn([
+    "mantineDataTable",
+    "mantineDataTableLoading",
+  ]),
+});
+
+export const MantineDataTable = connect(mapStateToProps, {
   fetchPOPDF,
   setModalVisibility,
   setModalText,
   fetchCustomerApprovalPDF,
   fetchZundCutFilePDF,
+  openFolder,
 })(DataTable);
