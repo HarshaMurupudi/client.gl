@@ -88,6 +88,7 @@ const mockdata = [
     icon: IconCalendarStats,
     initiallyOpened: false,
     links: [
+      { label: "H-Rolt fin", link: "/h-rolt-fin" },
       { label: "H-ROLT", link: "/h-rolt" },
       { label: "ROCKWAY", link: "/rockway" },
     ],
@@ -134,7 +135,6 @@ const mockdata = [
     icon: IconCalendarStats,
     initiallyOpened: false,
     links: [
-      { label: "H-Rolt fin", link: "/h-rolt-fin" },
       { label: "Cir_ASMBLY", link: "/cir-asmbly" },
       { label: "H Sakurai 2", link: "/h-sakurai-2" },
       { label: "H_Sakurai", link: "/h-sakurai" },
