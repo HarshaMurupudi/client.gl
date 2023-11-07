@@ -21,6 +21,9 @@ import {
   ActionIcon,
   Divider,
   rem,
+  Popover,
+  LoadingOverlay,
+  Group,
   // IconRefresh,
 } from "@mantine/core";
 import { IconRefresh } from "@tabler/icons-react";
@@ -296,7 +299,7 @@ const DataTable = ({
       columnVisibility,
       columnOrder,
       rowSelection,
-      isLoading: loading || mantineDataTableLoading,
+      isLoading: loading,
       ...(columnFilters && { columnFilters }),
     },
     positionToolbarAlertBanner: "none", //hide alert banner selection message
@@ -371,7 +374,7 @@ const DataTable = ({
           <Menu.Item onClick={() => handleMaterialActionBtn(row, "shiplines")}>
             Shiplines
           </Menu.Item>
-          <Menu.Item onClick={() => handleFolderOpen(row, "Part_Number")}>
+          {/* <Menu.Item onClick={() => handleFolderOpen(row, "Part_Number")}>
             Open Part Folder
           </Menu.Item>
           <Menu.Item onClick={() => handleFolderOpen(row, "Job")}>
@@ -379,7 +382,25 @@ const DataTable = ({
           </Menu.Item>
           <Menu.Item onClick={() => handleFolderOpen(row, "Quote")}>
             Open Quote Folder
-          </Menu.Item>
+          </Menu.Item> */}
+          <Popover width="target" position="right" withArrow shadow="md">
+            <Popover.Target>
+              <Button w={150}>Open Folder</Button>
+            </Popover.Target>
+            <Popover.Dropdown>
+              <>
+                <Menu.Item onClick={() => handleFolderOpen(row, "Part_Number")}>
+                  Part
+                </Menu.Item>
+                <Menu.Item onClick={() => handleFolderOpen(row, "Job")}>
+                  Job
+                </Menu.Item>
+                <Menu.Item onClick={() => handleFolderOpen(row, "Quote")}>
+                  Quote
+                </Menu.Item>
+              </>
+            </Popover.Dropdown>
+          </Popover>
         </>
       ),
     }),
@@ -403,7 +424,15 @@ const DataTable = ({
   return (
     <>
       {/* <GLModal opened={opened} open={open} close={close} /> */}
-      <MantineReactTable table={table} key={tableKey} />
+      <Box pos="relative">
+        <LoadingOverlay
+          visible={mantineDataTableLoading}
+          zIndex={1000}
+          overlayProps={{ radius: "sm", blur: 2 }}
+        />
+        {/* ...other content */}
+        <MantineReactTable table={table} key={tableKey} />
+      </Box>
     </>
   );
 };

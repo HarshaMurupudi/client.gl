@@ -119,7 +119,7 @@ export const openFolder = (id, key) => async (dispatch) => {
       });
     }
   } finally {
-    await delay(2000);
+    // await delay(1000);
     dispatch(setMantineDataLoading(false));
   }
 };
