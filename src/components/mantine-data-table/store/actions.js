@@ -1,6 +1,12 @@
 import baseAxios from "../../../apis/baseAxios";
+import { localAxios } from "../../../apis/baseAxios";
 import { notifications } from "@mantine/notifications";
 import { delay } from "../../../utils";
+
+export const setMantineDataLoading = (status) => ({
+  type: "SET_MANTINE_DATA_TABLE_LOADING",
+  payload: status,
+});
 
 export const fetchCustomerApprovalPDF = (partNumber) => async (dispatch) => {
   try {
@@ -83,5 +89,37 @@ export const fetchZundCutFilePDF = (partNumber) => async (dispatch) => {
     }
   } finally {
     //   dispatch(setPDFLoading(false));
+  }
+};
+
+export const openFolder = (id, key) => async (dispatch) => {
+  try {
+    dispatch(setMantineDataLoading(true));
+
+    if (key === "Part_Number") {
+      await localAxios.get(`/folders/parts/${id}`);
+    } else if (key === "Job") {
+      await localAxios.get(`/folders/jobs/${id}`);
+    } else if (key === "Quote") {
+      await localAxios.get(`/folders/quotes/${id}`);
+    }
+  } catch (error) {
+    if (error.code === "ERR_NETWORK") {
+      notifications.show({
+        title: "Error",
+        message: "Please run the server file",
+        color: "red",
+      });
+    } else {
+      dispatch(setMantineDataLoading(false));
+      notifications.show({
+        title: "Error",
+        message: error.response.data.message,
+        color: "red",
+      });
+    }
+  } finally {
+    // await delay(1000);
+    dispatch(setMantineDataLoading(false));
   }
 };

@@ -21,6 +21,9 @@ import {
   ActionIcon,
   Divider,
   rem,
+  Popover,
+  LoadingOverlay,
+  Group,
   // IconRefresh,
 } from "@mantine/core";
 import { IconRefresh } from "@tabler/icons-react";
@@ -30,7 +33,11 @@ import { useDisclosure } from "@mantine/hooks";
 import { MRT_ShowHideColumnsButton } from "../mantine-custom/buttons/MRT_ShowHideColumnsButton";
 import { fetchPOPDF } from "../../features/po/store/actions";
 import { setModalText, setModalVisibility } from "../modal/store/actions";
-import { fetchCustomerApprovalPDF, fetchZundCutFilePDF } from "./store/actions";
+import {
+  fetchCustomerApprovalPDF,
+  fetchZundCutFilePDF,
+  openFolder,
+} from "./store/actions";
 
 interface Props {
   columns: any;
@@ -55,6 +62,7 @@ const DataTable = ({
   minHeight,
   fetchData,
   loading,
+  mantineDataTableLoading,
   isEditable,
   isEdited,
   hasCustomActionBtn,
@@ -71,6 +79,7 @@ const DataTable = ({
   columnFilters,
   fetchCustomerApprovalPDF,
   fetchZundCutFilePDF,
+  openFolder,
 }: Props) => {
   const navigate = useNavigate();
   const isFirstRender = useRef(true);
@@ -234,6 +243,11 @@ const DataTable = ({
     await fetchPOPDF(jobId);
   };
 
+  const handleFolderOpen = async (row, key) => {
+    const id = row.original[key];
+    await openFolder(id, key);
+  };
+
   // fetchCustomerApprovalPDF
 
   const table = useMantineReactTable({
@@ -344,7 +358,7 @@ const DataTable = ({
           <Menu.Item onClick={() => handleInventoryActionBtn(row)}>
             Inventory
           </Menu.Item>
-          <Menu.Item onClick={() => handleMaterialActionBtn(row, 'material')}>
+          <Menu.Item onClick={() => handleMaterialActionBtn(row, "material")}>
             Material
           </Menu.Item>
           <Menu.Item onClick={() => handleActionBtn(row, "customer-approval")}>
@@ -357,9 +371,36 @@ const DataTable = ({
               Z.Cut File
             </Menu.Item>
           )}
-          <Menu.Item onClick={() => handleMaterialActionBtn(row, 'shiplines')}>
+          <Menu.Item onClick={() => handleMaterialActionBtn(row, "shiplines")}>
             Shiplines
           </Menu.Item>
+          {/* <Menu.Item onClick={() => handleFolderOpen(row, "Part_Number")}>
+            Open Part Folder
+          </Menu.Item>
+          <Menu.Item onClick={() => handleFolderOpen(row, "Job")}>
+            Open Job Folder
+          </Menu.Item>
+          <Menu.Item onClick={() => handleFolderOpen(row, "Quote")}>
+            Open Quote Folder
+          </Menu.Item> */}
+          <Popover width="target" position="right" withArrow shadow="md">
+            <Popover.Target>
+              <Button w={150}>Open Folder</Button>
+            </Popover.Target>
+            <Popover.Dropdown>
+              <>
+                <Menu.Item onClick={() => handleFolderOpen(row, "Part_Number")}>
+                  Part
+                </Menu.Item>
+                <Menu.Item onClick={() => handleFolderOpen(row, "Job")}>
+                  Job
+                </Menu.Item>
+                <Menu.Item onClick={() => handleFolderOpen(row, "Quote")}>
+                  Quote
+                </Menu.Item>
+              </>
+            </Popover.Dropdown>
+          </Popover>
         </>
       ),
     }),
@@ -383,15 +424,31 @@ const DataTable = ({
   return (
     <>
       {/* <GLModal opened={opened} open={open} close={close} /> */}
-      <MantineReactTable table={table} key={tableKey} />
+      <Box pos="relative">
+        <LoadingOverlay
+          visible={mantineDataTableLoading}
+          zIndex={1000}
+          overlayProps={{ radius: "sm", blur: 2 }}
+        />
+        {/* ...other content */}
+        <MantineReactTable table={table} key={tableKey} />
+      </Box>
     </>
   );
 };
 
-export const MantineDataTable = connect(null, {
+const mapStateToProps = (state) => ({
+  mantineDataTableLoading: state.getIn([
+    "mantineDataTable",
+    "mantineDataTableLoading",
+  ]),
+});
+
+export const MantineDataTable = connect(mapStateToProps, {
   fetchPOPDF,
   setModalVisibility,
   setModalText,
   fetchCustomerApprovalPDF,
   fetchZundCutFilePDF,
+  openFolder,
 })(DataTable);
