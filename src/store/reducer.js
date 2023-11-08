@@ -13,6 +13,7 @@ import { reducer as vendorReducer } from "../features/vendor/store";
 import { reducer as deliveryQueueDetailReducer } from "../features/delivery-queue-details/store";
 import { reducer as modalReducer } from "../components/modal/store";
 import { reducer as poDetailsReducer } from "../features/POReview/store";
+import { reducer as meetingReducer} from "../features/meeting/store";
 
 export default combineReducers({
   job: jobsReducer,
@@ -27,4 +28,5 @@ export default combineReducers({
   deliveryQueueDetail: deliveryQueueDetailReducer,
   modal: modalReducer,
   poDetails: poDetailsReducer,
+  meeting: meetingReducer,
 });
