@@ -21,6 +21,11 @@ export const setPDFLoading = (status) => ({
   payload: status,
 });
 
+export const setNowAtLoading = (status) => ({
+  type: "SET_NOW_AT_LOADING",
+  payload: status,
+});
+
 export const setEditedUsers = (status) => ({
   type: "SET_EDITED_USERS",
   payload: status,
@@ -43,6 +48,26 @@ export const fetchJobs = (startDate, endDate) => async (dispatch) => {
   } finally {
     await delay(2000);
     dispatch(setJobsLoading(false));
+  }
+};
+
+export const fetchJobsWithNowAt = (startDate, endDate) => async (dispatch) => {
+  try {
+    dispatch(setNowAtLoading(true));
+
+    const response = await baseAxios.get("/now-at", {
+      params: {
+        startDate,
+        endDate,
+      },
+    });
+
+    dispatch(setJobs(response.data.jobs));
+  } catch (error) {
+    console.log(error);
+  } finally {
+    // await delay(2000);
+    dispatch(setNowAtLoading(false));
   }
 };
 
