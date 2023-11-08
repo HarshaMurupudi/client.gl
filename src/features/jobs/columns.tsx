@@ -1,5 +1,5 @@
 import { format, addMinutes } from "date-fns";
-import { Box, Button, Text, Textarea } from "@mantine/core";
+import { Box, Button, Text, Skeleton } from "@mantine/core";
 
 import { GLSelect } from "../../components/select";
 import { GLTextarea } from "../../components/ReactTableTextarea";
@@ -16,7 +16,8 @@ export const getColumns = (
   fetchPDF: any,
   editedUsers: any,
   setEditedUsers: any,
-  getTableData: any
+  getTableData: any,
+  nowAtLoading: any
 ) => {
   const onQtyClick = (job: any) => {
     window.open(
@@ -313,6 +314,13 @@ export const getColumns = (
       accessorFn: (row: any) => {
         const Job = row["Now At"] || "";
         return Job;
+      },
+      Cell: ({ cell, row }: { cell: any; row: any }) => {
+        if (nowAtLoading) {
+          return <Skeleton height={8} mt={6} width="70%" radius="xl" />;
+        } else {
+          return cell.getValue();
+        }
       },
       // filterVariant: 'autocomplete',
     },

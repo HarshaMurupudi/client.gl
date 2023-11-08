@@ -1,25 +1,30 @@
-import { notifications } from '@mantine/notifications';
+import { notifications } from "@mantine/notifications";
 
-import baseAxios from '../../../apis/baseAxios';
-import {delay} from '../../../utils';
+import baseAxios from "../../../apis/baseAxios";
+import { delay } from "../../../utils";
 
 const headers = {
-  'Content-Type': 'application/json',
-  Accept: 'application/json'
-}
+  "Content-Type": "application/json",
+  Accept: "application/json",
+};
 
 export const setOpenJobs = (status) => ({
-  type: 'SET_OPEN_JOBS',
+  type: "SET_OPEN_JOBS",
   payload: status,
 });
 
 export const setReadyJobs = (status) => ({
-  type: 'SET_READY_JOBS',
+  type: "SET_READY_JOBS",
   payload: status,
 });
 
 export const setEngineeringLoading = (status) => ({
-  type: 'SET_ENGINEERING_LOADING',
+  type: "SET_ENGINEERING_LOADING",
+  payload: status,
+});
+
+export const setOpenJobsNowAtLoading = (status) => ({
+  type: "SET_ENGINEERING_OPEN_JOBS_NOW_AT_LOADING",
   payload: status,
 });
 
@@ -42,6 +47,19 @@ export const fetchOpenJobs = (partID) => async (dispatch) => {
   }
 };
 
+export const fetchOpenJobsNowAt = (partID) => async (dispatch) => {
+  try {
+    let url = `/jobs/open/${partID}/now-at`;
+    dispatch(setOpenJobsNowAtLoading(true));
+    const response = await baseAxios.get(url);
+    dispatch(setOpenJobs(response.data.jobs));
+  } catch (error) {
+    console.log(error);
+  } finally {
+    dispatch(setOpenJobsNowAtLoading(false));
+  }
+};
+
 export const fetchReadyJobs = (partID) => async (dispatch) => {
   try {
     dispatch(setEngineeringLoading(true));
@@ -58,20 +76,19 @@ export const saveNotes = (jobs) => async (dispatch) => {
   try {
     dispatch(setEngineeringLoading(true));
 
-   await baseAxios.patch('engineering/notes', 
-      {
-        data: {jobs},
-        headers
-      });
+    await baseAxios.patch("engineering/notes", {
+      data: { jobs },
+      headers,
+    });
   } catch (error) {
     console.log(error);
     notifications.show({
-      title: 'Error',
+      title: "Error",
       message: error.response?.data?.message,
-      color: 'red',
-    })
+      color: "red",
+    });
   } finally {
-    await delay(1200)
+    await delay(1200);
     dispatch(setEngineeringLoading(false));
   }
 };
