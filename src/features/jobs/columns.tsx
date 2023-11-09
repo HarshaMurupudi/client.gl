@@ -325,6 +325,25 @@ export const getColumns = (
       // filterVariant: 'autocomplete',
     },
     {
+      accessorKey: "On_Hand_Qty",
+      header: "On Hand Qty",
+      enableEditing: false,
+      // accessorFn: (row: any) => {
+      //   const Job = row["Now At"] || "";
+      //   return Job;
+      // },
+      Cell: ({ cell, row }: { cell: any; row: any }) => {
+        if (nowAtLoading) {
+          return <Skeleton height={8} mt={6} width="70%" radius="xl" />;
+        } else if (cell.getValue() === undefined) {
+          return "-";
+        } else {
+          return cell.getValue();
+        }
+      },
+      // filterVariant: 'autocomplete',
+    },
+    {
       accessorKey: "Promised_Quantity",
       header: "Promised Quantity",
       enableEditing: false,
