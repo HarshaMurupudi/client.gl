@@ -10,6 +10,7 @@
 - [**Requirements and Resources**](#requirements-and-resources)
 - [**Resources**](#resources)
 - [**SQL Databases**](#sql-databases)
+- [**Open and Ready Queue Logic**](#open-and-ready-queue-logic)
 - [**Changes and New Features**](#changes-and-new-features)
   - [User-Interface](#user-interface)
   - [New Pages](#new-pages)
@@ -47,9 +48,223 @@ This project was built using GitHub, a version control platform that keeps track
 The GLI App uses the Mantine UI Library. For customization that is not covered in this document refer to their general documentation [here](https://mantine.dev/overview/), and the Mantine-React-Table documentation [here](https://www.mantine-react-table.com/docs).
 
 # **SQL Databases**
-The GLI App works with data coming from multiple databases on the GL servers. 
-![GL_DB](./documentationImages/GLDatabase.png)
+The GLI App works with data coming from multiple databases on the GL servers. The first and one with the most information is the production database generated from JobBoss. It is accessed in SQL queries as [Production][DBO][...]. This holds almost all the information for every queue. In the query below, we are looking at the `[Production][dbo][Job_Operation]` table. 
+
 ![Prod_DB](./documentationImages/ProductionDatabase.png)
+  
+However, the second database that we will look at is the General Label database, which is all in house unlike production. We use these for job notes and priorities. It is accessed in SQL queries [General_Label][dbo][...]. In this specific query, we are looking at the `[General_Label][dbo][Engineering_Notes]`table. When we use this table, the only thing we are writing to is `Priority`, `Plan_Notes`, and `Assigned_To`.
+  
+![GL_DB](./documentationImages/GLDatabase.png)
+  
+To understand how we read and write the General Label database, we will use Engineering notes as an example. First, here is the request query for our engineering queue.
+
+```SQL
+      SELECT * FROM [Production].[dbo].[Job_Operation] 
+      WHERE Job IN 
+      (
+        SELECT DISTINCT(Job) FROM [Production].[dbo].[Job] 
+        WHERE Status IN ('Active', 'Hold', 'Complete', 'Pending'
+      ))
+      AND Status in  ('O', 'S')
+      ;
+
+...
+
+      SELECT *
+      FROM (
+        SELECT j.[Job], [Part_Number], [Customer], j.[Status], j.[Description], [Order_Quantity], [Completed_Quantity], [Released_Date], 
+        j.Sched_Start, j.Make_Quantity, j.Note_Text, j.Sales_Code, jo.Work_Center, j.Rev, j.Quote,
+        jo.WC_Vendor, jo.Sequence,
+        del.Promised_Date,
+        Plan_Notes, t3.Priority, t3.Assigned_To,
+        ROW_NUMBER() OVER (PARTITION BY
+        j.Job ORDER BY j.Sched_Start) AS row_number,
+        jo.Est_Total_Hrs,
+        del.DeliveryKey,
+        jo.Job_OperationKey,
+        j.Lead_Days,
+        j.Customer_PO, j.Top_Lvl_Job
+        FROM [dbo].[Job] AS j
+        LEFT JOIN [dbo].[Job_Operation] jo on j.Job = jo.Job
+        LEFT JOIN 
+              (SELECT Job, Promised_Date, Requested_Date, DeliveryKey FROM [Production].[dbo].[Delivery]) AS del ON j.Job = del.Job
+        LEFT JOIN
+        (SELECT * FROM [General_Label].[dbo].[Engineering_Notes] ) AS t3
+        ON 
+          jo.Job = t3.Job
+          AND jo.Job_OperationKey = t3.Job_OperationKey
+          AND jo.Work_Center = t3.Work_Center
+          AND (del.DeliveryKey = t3.DeliveryKey OR (del.DeliveryKey IS NULL AND t3.DeliveryKey IS NULL))
+        WHERE j.[Job] IN (:jobIDs) AND jo.Work_Center = :wc
+      ) AS t
+        WHERE t.row_number = 1;
+```
+  
+These are 2 queries, separated by an ellipsis. The first query gathers jobs from the Production database that are open or started, as the engineering queue only needs open jobs. The second query pulls from both the Production and the General Label database. There is further filtering done with these results which can be found at [server.gl/src/routes/work-centers/engineering.js](../server.gl/src/routes/work-centers/engineering.js), but we will analyze this second query more.  
+  
+For our purposes, the important part is '`(SELECT * FROM [General_Label][dbo][Engineering_Notes]) as t3 ON ...`'. The '`*`' indicates that we want to read all of the data from the table. The lines between `ON` and `WHERE...` matches the jobs from the Production and General Label databases. It checks that the operation keys, work centers, and delivery keys are the same. If a job does not have a delivery key, it's important to make sure neither have a delivery key. If one does, then they might be separate shipments. To see how this data is being used, read into the engineering feature at [client.gl/src/features/engineering/](../client.gl/src/features/engineering/).  
+  
+---
+
+Now we can take a look at how we write to the General Label database, using the same example. First we need to define a model for the data we want to interact with. This can be found at [server.gl/src/models/EngineeringNotes.ts](../server.gl/src/models/EngineeringNotes.ts). The `primaryKey` gives each note a unique ID, and `autoIncrement` is enabled in the database table, so it has to be enabled here.
+  
+```TypeScript
+const EngineeringNotes = db.define(
+  "Engineering_Notes",
+  {
+    Engineering_Note_ID: {
+      primaryKey: true,
+      type: Sequelize.STRING,
+      autoIncrement: true,
+    },
+    Job: {
+      type: Sequelize.STRING,
+    },
+    DeliveryKey: {
+      type: Sequelize.INTEGER,
+    },
+    Job_OperationKey: {
+      type: Sequelize.INTEGER,
+    },
+    Work_Center: {
+      type: Sequelize.STRING,
+    },
+    Plan_Notes: {
+      type: Sequelize.STRING,
+    },
+    Priority: {
+      type: Sequelize.STRING,
+    },
+    Assigned_To: {
+      type: Sequelize.STRING,
+    },
+  },
+  {
+    tableName: "Engineering_Notes",
+  }
+);
+
+module.exports = EngineeringNotes;
+```  
+  
+Using this model, we can now write the SQL `patch` that will write to the database. This can be found at [server.gl/src/routes/notes.ts](../server.gl/src/routes/notes.ts). 
+  
+```TypeScript
+const EngineeringNotes = require("../models/EngineeringNotes");
+
+...
+
+router.patch("/engineering/notes", async (req, res) => {
+  try {
+    const {
+      data: { jobs },
+    } = req.body;
+
+    for (const {
+      Job,
+      DeliveryKey = null,
+      Job_OperationKey = null,
+      Plan_Notes = null,
+      Work_Center = null,
+      Assigned_To = null,
+      Priority = null,
+    } of jobs) {
+      const condition = { Job, DeliveryKey, Job_OperationKey, Work_Center };
+      const values = { Plan_Notes, Priority, Assigned_To };
+
+      await upsert(EngineeringNotes, condition, values);
+    }
+
+    res.status(200).json({
+      status: "success",
+    });
+  } catch (error: any) {
+    console.log(error.message);
+
+    res.status(400).json({
+      status: "Error",
+      message: `${error.message} & Ship By Date must not be empty`,
+    });
+  }
+});
+```
+  
+First, notice that we are passing the jobs through `req.body`. For each job, we assign each data type as null except for `Job`. This is because Job is the only value that cannot be null. We then separate the data into `conditions` and `values`. Conditions are values that are being pulled from the Production database and passed back into the General Label database, which is used for identification. The `upsert` function checks if this job already exists. If so, it will update the values that align with the conditions. If not, it will create a new row using both the conditions and values. 
+  
+# **Open and Ready Queue Logic**
+The open and ready queue job statuses are among the most vital features for managing work flow on the shop floor. Understanding the logic behind them is important to implement them properly and know how the queues are being displayed in our tables.  
+  
+First let's look at the broader status, open queue, and the logic behind it. The open status comes directly from the database. When a new job is added and approved, the status is automatically set as 'O' (or open) in the production database. When it is closed, the status becomes 'C' (or closed). These are the two major statuses in the database.  
+
+![open_status](./documentationImages/openStatus.png)
+
+Here you can see the Status of each job, but also take a look at the Sequence value for each job. This lets us implement our next topic, the ready queue. The ready queue is a smaller section of the open queue. If a job has a ready status, then it is active and open.  
+  
+The sequence value signifies which work center or department the job is currently at. When a sequence is closed at a work center, the job is still open and only the sequence changes in the database. However, if you look at a job with the operations feature, it will list all the sequences that have been completed. Take a look at the following job.  
+
+![sequences](./documentationImages/sequences.png)
+  
+The operations feature lists the work center for each sequence, and whether it has been completed or not. The sequences are taken by cross-referencing (LEFT-JOIN in SQL) the Job number and the Job_OperationKey in the database. In this example, the first sequence has been completed and has the corresponding 'C' status. This means that this job is now **ready** for the next sequence at the *F-MATERIAL* work center.  
+  
+If we go to the *F-MATERIAL* queue, we can now see that it is in the ready queue, as the corresponding work center for the current sequence '1' is *F-MATERIAL*. All ready jobs are open, so this will also show in the open queue for *F-MATERIAL*, as well as all the jobs that have yet to reach this work center.
+
+![f-material](./documentationImages/f-material-ready.png)
+  
+Now that we understand the difference of the open and ready queues, we can look at how the SQL query is pulling these jobs to differentiate them. Take a look at the **Ready** jobs query below.
+
+```SQL
+      SELECT * FROM [Production].[dbo].[Job_Operation] 
+      WHERE Job IN 
+      (
+        SELECT DISTINCT(Job) FROM [Production].[dbo].[Job] 
+        WHERE Status IN ('Active', 'Hold', 'Complete', 'Pending'
+      ))
+      AND Status in  ('O', 'S')
+      ;
+          
+...
+
+      SELECT *
+      FROM (
+        SELECT j.[Job], [Part_Number], [Customer], j.[Status], j.[Description], [Order_Quantity], [Completed_Quantity], [Released_Date], 
+        j.Sched_Start, j.Make_Quantity, j.Note_Text, j.Sales_Code, jo.Work_Center, j.Rev, j.Quote,
+        jo.WC_Vendor, jo.Sequence,
+        del.Promised_Date,
+        Plan_Notes, t3.Priority,
+        ROW_NUMBER() OVER (PARTITION BY
+        j.Job ORDER BY j.Sched_Start) AS row_number,
+        jo.Est_Total_Hrs,
+        del.DeliveryKey,
+        jo.Job_OperationKey,
+        j.Lead_Days,
+        j.Customer_PO, j.Top_Lvl_Job
+        FROM [dbo].[Job] AS j
+        LEFT JOIN [dbo].[Job_Operation] jo on j.Job = jo.Job
+        LEFT JOIN 
+              (SELECT Job, Promised_Date, Requested_Date, DeliveryKey FROM [Production].[dbo].[Delivery]) AS del ON j.Job = del.Job
+        LEFT JOIN
+        (SELECT * FROM [General_Label].[dbo].[F_Material_Notes] ) AS t3 
+        ON 
+          jo.Job = t3.Job
+          AND jo.Job_OperationKey = t3.Job_OperationKey
+          AND jo.Work_Center = t3.Work_Center
+          AND (del.DeliveryKey = t3.DeliveryKey OR (del.DeliveryKey IS NULL AND t3.DeliveryKey IS NULL))
+        WHERE j.[Job] IN (:jobIDs) AND jo.Work_Center = :wc
+      ) AS t
+        WHERE t.row_number = 1;
+```
+  
+This query has a lot of information, but the important sections that differentiate the ready jobs from open is the following lines:
+  
+```SQL
+SELECT * FROM (
+  ROW_NUMBER() OVER (PARTITION BY
+          j.Job ORDER BY j.Sched_Start) AS row_number,
+) AS t
+  WHERE t.row_number = 1;
+```
+  
+Our query is only looking at open jobs, so this orders the remaining sequences by their scheduled start. If the first sequence in the list of open jobs corresponds to our work center, then the job is now ready. 
 
 # **Changes and New Features**
 
