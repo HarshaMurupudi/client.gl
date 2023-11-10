@@ -9,8 +9,19 @@
 - [**Overview**](#overview)
 - [**Requirements and Resources**](#requirements-and-resources)
 - [**Resources**](#resources)
-- [**SQL Databases**](#sql-databases)
-- [**Open and Ready Queue Logic**](#open-and-ready-queue-logic)
+- [**Feature Logic**](#feature-logic)
+  - [SQL Server Databases](#sql-server-databases)
+  - [Open and Ready Queue Logic](#open-and-ready-queue-logic)
+  - [Action Button Features](#action-button-features)
+    - [Operations](#operations)
+    - [Purchase Orders](#purchase-orders)
+    - [Note](#note)
+    - [Inventory](#inventory)
+    - [Material](#material)
+    - [Customer Approval](#customer-approval)
+    - [Shiplines](#shiplines)
+  - [Open Folder](#open-folder)
+  - [Delivery Queue Notes](#delivery-queue-notes)
 - [**Changes and New Features**](#changes-and-new-features)
   - [User-Interface](#user-interface)
   - [New Pages](#new-pages)
@@ -47,7 +58,9 @@ This project was built using GitHub, a version control platform that keeps track
 
 The GLI App uses the Mantine UI Library. For customization that is not covered in this document refer to their general documentation [here](https://mantine.dev/overview/), and the Mantine-React-Table documentation [here](https://www.mantine-react-table.com/docs).
 
-# **SQL Databases**
+# **Feature Logic**
+
+## SQL Server Databases
 The GLI App works with data coming from multiple databases on the GL servers. The first and one with the most information is the production database generated from JobBoss. It is accessed in SQL queries as [Production][DBO][...]. This holds almost all the information for every queue. In the query below, we are looking at the `[Production][dbo][Job_Operation]` table. 
 
 ![Prod_DB](./documentationImages/ProductionDatabase.png)
@@ -189,9 +202,46 @@ router.patch("/engineering/notes", async (req, res) => {
 });
 ```
   
-First, notice that we are passing the jobs through `req.body`. For each job, we assign each data type as null except for `Job`. This is because Job is the only value that cannot be null. We then separate the data into `conditions` and `values`. Conditions are values that are being pulled from the Production database and passed back into the General Label database, which is used for identification. The `upsert` function checks if this job already exists. If so, it will update the values that align with the conditions. If not, it will create a new row using both the conditions and values. 
+First, notice that we are passing the jobs through `req.body`. For each job, we assign each data type as null except for `Job`. This is because Job is the only value that cannot be null. We then separate the data into `conditions` and `values`. Conditions are values that are being pulled from the Production database and passed back into the General Label database, which is used for identification. The `upsert` function checks if this job already exists. If so, it will update the values that align with the conditions. If not, it will create a new row using both the conditions and values.  
   
-# **Open and Ready Queue Logic**
+If our notes were not all grouped together in that routing file, then we would also need to set the route for the app. However, all the notes are grouped together and routed into the app within [server.gl/src/index.ts](../server.gl/src/index.ts), as shown below.
+
+```TypeScript
+require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` });
+const express = require("express");
+const cors = require("cors");
+
+const { glDB } = require("./config/database");
+const jobRoutes = require("./routes/jobs");
+const auth = require("./routes/employee");
+const noteRoutes = require("./routes/notes"); // Import notes route
+
+...
+
+glDB
+  .authenticate()
+  .then(() => console.log("DB Authenticated"))
+  .catch((err: any) => {
+    console.log("Error: " + err);
+  });
+
+const app = express();
+
+app.use(cors());
+app.use(express.json({ limit: "5mb" }));
+app.use(jobRoutes);
+app.use(auth);
+app.use(noteRoutes); // Set routing for the app
+
+...
+
+app.listen(PORT, () => {
+  console.log(`Server is up and listening on port ${PORT}`);
+  console.log(process.env.DB_NAME, "env");
+});
+```
+
+## Open and Ready Queue Logic
 The open and ready queue job statuses are among the most vital features for managing work flow on the shop floor. Understanding the logic behind them is important to implement them properly and know how the queues are being displayed in our tables.  
   
 First let's look at the broader status, open queue, and the logic behind it. The open status comes directly from the database. When a new job is added and approved, the status is automatically set as 'O' (or open) in the production database. When it is closed, the status becomes 'C' (or closed). These are the two major statuses in the database.  
@@ -265,6 +315,158 @@ SELECT * FROM (
 ```
   
 Our query is only looking at open jobs, so this orders the remaining sequences by their scheduled start. If the first sequence in the list of open jobs corresponds to our work center, then the job is now ready. 
+
+## Action Button Features
+
+Each job row in our queues has an action button as the first column. There are various actions that we will look at below. While some of these actions are simple, others lead to entirely different pages. The only action that will have its own section is the [`Open Folder`](#open-folder) action button, as it has very different logic and requires the user to have a separate server running on their own computer.
+  
+<img src="./documentationImages/actions.png" alt="drawing" width="200"/>
+
+---
+  
+### Operations
+
+When the operations action button is clicked, it reroutes the user to a separate page that takes a deeper look into the sequences (or operations), for the job in that row. The image below shows an example of a job and a look into the features of this page. 
+  
+![operations_example](./documentationImages/operations.png)
+  
+As you can see, the job we have selected has a lot of sequences on the right. These are being pulled from the `[Production][dbo][Job_Operation]` table from the database. Each job has multiple entries in this table, one for each sequence. Each sequence has a status, and estimated labor hours. The status is set by JobBoss when a user completes a job at a particular work center or sequence. The labor hours are also entered by JobBoss, and the routing for operation times can be found at [server.gl/src/routes/operationTime.ts](../server.gl/src/routes/operationTime.ts).  
+  
+Each operation has an estimated total hours, which combines estimated setup and run hours. When a specific operation is clicked on the top right table, it pulls that job by the work center and shows which employee worked on it, if it is completed. The following code block shows how this data is being called, which can be found at [client.gl/src/features/operations/index.js](../client.gl/src/features/operations/index.js)
+
+  
+```JavaScript
+// client.gl/src/features/operations/index.js
+<Grid.Col span={8}>
+  <MantineDataTable
+    tableKey={"Employee-Details"}
+    title={`Labor Entry - ${selectedOperation.Work_Center || ""}`}
+    columns={laborColumns}
+    data={operationTimes}
+    hasActionColumn={false}
+    enableGrouping={false}
+    tableProps={{
+      enableEditing: false,
+      getRowId: (row, index) => `${row.Job}_${index}`,
+    }}
+  />
+</Grid.Col>
+
+// client.gl/src/features/operations/store/actions.js
+export const fetchOperationTimes = (operationId) => async (dispatch) => {
+  try {
+    dispatch(setOperationTimesLoading(true));
+
+    const response = await baseAxios.get(`/operation-time/${operationId}`);
+
+    dispatch(setOperationTimes(response.data.operationTimes));
+  } catch (error) {
+  } finally {
+    dispatch(setOperationTimesLoading(false));
+  }
+};
+```
+  
+A unique feature of the operations page is how it fetches notes. When an operation is selected, the notes from that work center are displayed on the bottom left panel. The following code block shows how this feature works, which can be found at [client.gl/src/features/operations/index.js](../client.gl/src/features/operations/index.js)
+  
+```JavaScript
+<Grid.Col span={4}>
+  <Textarea
+    my={16}
+    label={`Operation Notes - ${selectedOperation.Work_Center || ""}`}
+    value={selectedOperation.Note_Text}
+    autosize
+  />
+</Grid.Col>
+```
+  
+`Note_Text` is coming straight from the operation in the `[Production][dbo][Job_Operation]` table, so we do not need a separate table to store and fetch these notes. 
+
+---
+### Purchase Orders
+  
+The purchase order action button is labelled as "`PO`" in the actions menu. This action fetches the Purchase Order PDF from the database. It functions similarly to the fetchPDF function that part numbers have, but with slightly different logic due to file structures. The following code block shows the `fetchPOPDF` function.   
+```JavaScript
+export const fetchPOPDF = (jobID) => async (dispatch) => {
+  try {
+    dispatch(setPDFLoading(true));
+
+    // Check for avalability and file number
+    const {
+      data: { count },
+    } = await baseAxios.get(`/part-number/${jobID}/po/info`);
+
+    for (let i = 1; i <= count; i++) {
+      const { data } = await baseAxios.get(`/part-number/${jobID}/po/${i}`, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        responseType: "arraybuffer",
+      });
+
+      const blob = new Blob([data], { type: "application/pdf" });
+      const fileUrl = URL.createObjectURL(blob);
+
+      await window.open(fileUrl);
+    }
+  } catch (error) {
+    alert("no file");
+  } finally {
+    dispatch(setPDFLoading(false));
+  }
+};
+```
+  
+First, it fetches the info for a part number's purchase order. This returns how many orders their are for that part. The next segment fetches all the PDFs for that part number by iterating through count, which is how many orders there are. If the info fetch returns nothing, then an alert pops up saying that there is no PO file.
+
+---
+### Note
+  
+The Note action button displays the Note Text from any given job. The `Note_Text` value is separate from work center notes, descriptions, and operation notes. This is directly from the `Production` database that is tied to JobBoss. The following code block shows the component behind this popup, which can be found at [client.gl/src/components/modal/index.js](../client.gl/src/components/modal/index.js)
+  
+```JavaScript
+// client.gl/src/components/modal/index.js
+< >
+  <Modal
+    opened={isModalOpen}
+    onClose={() => setModalVisibility(false)}
+    title="Note"
+    centered
+  >
+    {/* Modal content */}
+    <Textarea value={modalText} autosize />
+  </Modal>
+</>
+
+// client.gl/src/components/mantine-data-table/index.tsx
+const handleNoteActionBtn = (row) => {
+    setModalVisibility(true);
+    setModalText(row.original.Note_Text);
+  };
+```
+  
+Note that since the job from the `[Production][dbo][Job]` database contains `Note_Text`, the note is being called from the pre-existing value at "`row.original.Note_Text`".
+
+---
+### Inventory
+  
+The inventory action button reroutes the user to the delivery-queue-details page. This page shows inventory for the part that was selected. Take a look at the example below. Notice that while we are only looking at one part, there are multiple entries. This is because there are different job numbers associated with this part. 
+
+![inventoryExample](./documentationImages/inventoryExample.png)
+
+---
+### Material
+  
+---
+### Customer Approval
+  
+---
+### Shiplines
+  
+---
+## Open Folder
+  
+## Delivery Queue Notes
 
 # **Changes and New Features**
 
