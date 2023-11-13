@@ -39,6 +39,7 @@ function Operations({
     Job_Operation: "",
     Note_Text: "",
     Work_Center: "",
+    Floor_Notes: "",
   });
   const [selectedJob, setSelectedJob] = useState("");
 
@@ -62,6 +63,7 @@ function Operations({
       Job_Operation: row.Job_Operation,
       Note_Text: row.Note_Text,
       Work_Center: row.Work_Center,
+      Floor_Notes: row.Floor_Notes,
     });
 
     await fetchOperationTimes(row.Job_Operation);
@@ -99,6 +101,7 @@ function Operations({
         Job_Operation: "",
         Note_Text: "",
         Work_Center: "",
+        Floor_Notes: "",
       });
       setOperationTimes([]);
     }
@@ -160,6 +163,13 @@ function Operations({
             my={16}
             label={`Operation Notes - ${selectedOperation.Work_Center || ""}`}
             value={selectedOperation.Note_Text}
+            autosize
+            maxRows={12}
+          />
+          <Textarea
+            my={32}
+            label={`Floor Notes - ${selectedOperation.Work_Center || ""}`}
+            value={selectedOperation.Floor_Notes}
             autosize
           />
         </Grid.Col>
