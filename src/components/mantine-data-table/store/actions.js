@@ -1,4 +1,4 @@
-import fileDownload from 'js-file-download';
+import fileDownload from "js-file-download";
 
 import baseAxios from "../../../apis/baseAxios";
 import { localAxios } from "../../../apis/baseAxios";
@@ -76,23 +76,14 @@ export const fetchZundCutFilePDF = (partNumber) => async (dispatch) => {
       );
       const { data, headers } = res;
 
-      console.log(res);
-      console.log(res.headers);
-      //content-type: "application/postscript"
-      //content-disposition
-      //.split('filename=');
-      //.replace(/^["'](.+(?=["']$))["']$/, '$1');
-
-      console.log(headers["content-type"] === "application/postscript", )
-
-      if (headers["content-type"] === "application/postscript") {
+      if (headers["content-type"] !== "application/pdf") {
         const blob = new Blob([data]);
         const fileName = headers["content-disposition"]
           .split("filename=")[1]
           .replace(/^["'](.+(?=["']$))["']$/, "$1");
 
-          //download
-          fileDownload(blob, fileName);
+        //download
+        fileDownload(blob, fileName);
       } else {
         const blob = new Blob([data], { type: "application/pdf" });
         const fileUrl = URL.createObjectURL(blob);
