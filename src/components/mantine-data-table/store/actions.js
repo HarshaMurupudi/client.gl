@@ -1,3 +1,5 @@
+import fileDownload from "js-file-download";
+
 import baseAxios from "../../../apis/baseAxios";
 import { localAxios } from "../../../apis/baseAxios";
 import { notifications } from "@mantine/notifications";
@@ -63,7 +65,7 @@ export const fetchZundCutFilePDF = (partNumber) => async (dispatch) => {
     );
 
     for (let i = 1; i <= count; i++) {
-      const { data } = await baseAxios.get(
+      const res = await baseAxios.get(
         `/part-numbers/${partNumber}/cutting/zund/pdfs/${i}`,
         {
           headers: {
@@ -72,12 +74,23 @@ export const fetchZundCutFilePDF = (partNumber) => async (dispatch) => {
           responseType: "arraybuffer",
         }
       );
+      const { data, headers } = res;
 
-      const blob = new Blob([data], { type: "application/pdf" });
-      const fileUrl = URL.createObjectURL(blob);
-      //   pdfData.push(fileUrl);
+      if (headers["content-type"] !== "application/pdf") {
+        const blob = new Blob([data]);
+        const fileName = headers["content-disposition"]
+          .split("filename=")[1]
+          .replace(/^["'](.+(?=["']$))["']$/, "$1");
 
-      await window.open(fileUrl);
+        //download
+        fileDownload(blob, fileName);
+      } else {
+        const blob = new Blob([data], { type: "application/pdf" });
+        const fileUrl = URL.createObjectURL(blob);
+        //   pdfData.push(fileUrl);
+
+        await window.open(fileUrl);
+      }
     }
 
     // return pdfData;

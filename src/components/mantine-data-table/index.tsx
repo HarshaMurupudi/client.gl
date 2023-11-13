@@ -366,7 +366,8 @@ const DataTable = ({
           </Menu.Item>
           {/* only in zund plot */}
           {/* key = O-ZUNDPLOT-data-table */}
-          {tableKey === "O-ZUNDPLOT-data-table" && (
+          {(tableKey === "O-ZUNDPLOT-data-table" ||
+            tableKey === "contracts-queue-data-table") && (
             <Menu.Item onClick={() => handleActionBtn(row, "zund-cut-file")}>
               Z.Cut File
             </Menu.Item>
