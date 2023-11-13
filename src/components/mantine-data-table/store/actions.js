@@ -79,9 +79,10 @@ export const fetchZundCutFilePDF = (partNumber) => async (dispatch) => {
         .replace(/^["'](.+(?=["']$))["']$/, "$1");
 
       if (headers["content-type"] !== "application/pdf") {
-        fileDownload(blob, fileName);
+        await fileDownload(blob, fileName);
       } else {
         await window.open(fileUrl);
+        await fileDownload(blob, fileName);
       }
     }
   } catch (error) {
