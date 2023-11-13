@@ -450,18 +450,199 @@ Note that since the job from the `[Production][dbo][Job]` database contains `Not
 ---
 ### Inventory
   
-The inventory action button reroutes the user to the delivery-queue-details page. This page shows inventory for the part that was selected. Take a look at the example below. Notice that while we are only looking at one part, there are multiple entries. This is because there are different job numbers associated with this part. 
+The inventory action button reroutes the user to the `delivery-queue-details` page. This page shows inventory for the part that was selected. Take a look at the example below. Notice that while we are only looking at one part, there are multiple entries. This is because there are different jobs associated with this part. 
 
 ![inventoryExample](./documentationImages/inventoryExample.png)
+  
+The inventory database query is handled in the same file as the part number and purchase order, located at [server.gl/src/routes/partNumber.ts](../server.gl/src/routes/partNumber.ts). On the client side, we have a handler for the inventory button that is located at [features/delivery-queue-details/store/actions.js](../client.gl/src/features/delivery-queue-details/store/actions.js)
+
+```JavaScript
+// server.gl
+router.get("/inventory/part-number/:partID", async (req, res) => {
+  try {
+    const { partID } = req.params;
+
+    const parts = await glDB.query(
+      `
+      SELECT 
+      LOC.Material, Location_ID, Lot, On_Hand_Qty, Deferred_Qty AS Allocated_Qty, MAT.Description, mr.Job FROM [Production].[dbo].[Material_Location] AS LOC
+      INNER JOIN
+      (SELECT Description, Material FROM [Production].[dbo].[Material]) AS MAT
+      ON LOC.Material = MAT.Material
+      LEFT JOIN
+      (SELECT * FROM [Production].[dbo].[Material_Req] WHERE Deferred_Qty > 0) AS mr
+      ON LOC.Material = mr.Material
+      WHERE LOC.Material LIKE :partID + '%';
+      `
+    );
+
+// client.gl
+export const fetchDeliveryQueueDetails = (partID) => async (dispatch) => {
+  try {
+    dispatch(setDeliveryQueueDetailsLoading(true));
+    const response = await baseAxios.get(`/inventory/part-number/${partID}`);
+    dispatch(setDeliveryQueueDetails(response.data.parts));
+  } catch (error) {
+    console.log(error);
+  } finally {
+    dispatch(setDeliveryQueueDetailsLoading(false));
+  }
+};  
+```
+  
+Notice that we are pulling from some other database tables here, specifically `[Material]`, `[Material_Location]`, and `[Material_Req]`. Using inner and left joins, these tables work together to tie part numbers to inventory, as well as allocated quantities for each job.  
 
 ---
 ### Material
   
+The material action button reroutes us to the Material Requirements page, which has a lot more going on than our other actions. In the example below, this job only lists one material requirement. Other jobs may have quite a few, and for each requirement there is another table similar to the one shown. 
+  
+![materialExample](./documentationImages/materialReq.png)
+
+The client side UI is more comprehensive than most pages, and can be found at [client.gl/src/features/material-requirement/index.js](../client.gl/src/features/material-requirement/index.js). The important part to take a look at for our tables is this return in the table function. Using the `key={material}` argument, we can display an independent table for each material requirement tied to a job. 
+
+```JavaScript
+return (
+    <Box key={material} my={16}>
+      <Box display={"flex"} style={{ justifyContent: "space-between" }}>
+      ...
+      <Box />
+    <Box />
+);
+```
+  
+The server side of this page differs a lot from other queues and pages, but it is not that difficult to understand. Let's take a look at certain parts of [server.gl/src/routes/materialRequirement.js](../server.gl/src/routes/materialRequirement.js). First, notice that we are pulling material requirements from the `[Material_Req]` table in the `Production` database. 
+
+```JavaScript
+router.get("/material/requirements/:jobID", async (req, res) => {
+  const { jobID } = req.params;
+
+  const jobs = await glDB.query(
+      `
+        SELECT *
+        FROM 
+            [Production].[dbo].[Material_Req]
+        WHERE 
+            Job =:jobID
+        `,
+      {
+        replacements: {
+          jobID,
+        },
+        type: glDB.QueryTypes.SELECT,
+      }
+    );
+```
+Now that we have all of our material requirements that are tied to jobs, we need to join relevant data from various tables. The necessary queries are as followed
+
+``` JavaScript
+const materialsWithJobs = {};
+for (let job of jobs) {
+  const {
+    Material: material,
+    Type: type,
+    Description: description,
+    Est_Unit_Cost: estUnitCost,
+    Lead_Days: leadDays,
+    Material_Req: materialReq,
+  } = job;
+
+  const materialJobs = await glDB.query(
+    `
+    SELECT *
+    FROM 
+    [Production].[dbo].[Material_Req] AS req
+    LEFT JOIN 
+    [Production].[dbo].[Job] AS j ON req.Job = j.Job
+    WHERE 
+    Material = :material AND (req.Status = 'O' OR req.Status = 'S');
+    `
+  );
+
+  const onHandMaterialData = await glDB.query(
+    `
+    SELECT 
+    Location_ID, Lot, On_Hand_Qty FROM [Production].[dbo].[Material_Location] AS LOC
+    WHERE LOC.Material = :material;
+    `
+  );
+
+  const onOrderMaterialData = await glDB.query(
+    `
+    SELECT 
+    * FROM [Production].[dbo].[Source] AS src
+    LEFT JOIN
+    [Production].[dbo].[PO_Detail] AS detail ON src.PO_Detail = detail.PO_Detail
+    LEFT JOIN
+    [Production].[dbo].[PO_Header] AS header ON detail.PO = header.PO
+    WHERE Material_Req = :materialReq;
+    `
+  );
+}
+```
+Notice that we are creating an object, `job`, that is part of an array, `jobs`. For each job in this array, we are setting data types to be used later, as well as calling from the database for that data. 
+  
+Every job has an allocated and onHand value. Using the `onHandMaterialData`, we have further logic to determine if materials need to be ordered for a certain job. First, take a look at the example below and the code block that handles this logic. For this material, we have an allocated quantity of 1121, but an on hand quantity of 672. So we have to allocate the on hand quantity to all the jobs we can, until we run out. 
+
+![criticalRequirement](./documentationImages/criticalRequirement.png)
+  
+```JavaScript
+materialsWithJobs[material] = {};
+materialsWithJobs[material].jobs = materialJobs || [];
+materialsWithJobs[material].type = type;
+materialsWithJobs[material].description = description;
+materialsWithJobs[material].estUnitCost = estUnitCost;
+materialsWithJobs[material].leadDays = leadDays;
+materialsWithJobs[material].onHandMaterial = onHandMaterialData;
+materialsWithJobs[material].onOrderMaterial = onOrderMaterialData;
+
+const total = onHandMaterialData.reduce((total, item) => {
+  total += item.On_Hand_Qty;
+  return total;
+}, 0);
+let tempCount = total;
+
+for (let materialJob of materialJobs) {
+  const { Est_Qty } = materialJob;
+  tempCount -= Est_Qty;
+  let allocation = "";
+  let risk = "None";
+
+  if (tempCount >= 0) {
+    allocation = `${Est_Qty} from current inventory`;
+  } else {
+    if (Est_Qty + tempCount > 0) {
+      risk = "Critical";
+      allocation = `${Est_Qty + tempCount} from inventory & ${Math.abs(
+        tempCount
+      )} required`;
+    } else {
+      risk = "Critical";
+      allocation = `${Est_Qty} required`;
+    }
+  }
+  materialJob.allocation = allocation;
+  materialJob.risk = risk;
+}
+```
+  
+Note that this code block is in the same for loop that we looked at earlier, meaning this is being done for each job. First we insert materials into our `materialWithJobs` array using the data we just called from the database. 
+  
+The next section is the logic for determining if we need to order material. We take the on hand quantity for a certain material, and subtract how much this current job is allocating. If a material is used in several jobs, then the `onHandMaterial` quantity will subtracted from until we hit below zero. Once the material count is below zero, the remaining material requirement is labeled as `critical`, to indicate that it must be ordered to fulfill the remaining jobs. 
+  
+Some jobs may have some material on hand but not all of it. While this is cutoff in the picture above, the selected job lists the material as "`278 from inventory & 325 required`". This is determined by adding the estimated quantity and temporary quantity, which would be negative at this point. If the needed temporary quantity is still less than the estimated quantity, then we know that some of the material is in the on hand inventory. 
+    
+While we do have an On Order Material value, this does not affect available material for the jobs, as it needs to arrive and be entered into inventory and labeled as on hand. The On Order Material section is only to tell the user if someone has ordered that material yet.
+
 ---
 ### Customer Approval
   
+
+  
 ---
 ### Shiplines
+  
+
   
 ---
 ## Open Folder
@@ -501,9 +682,9 @@ const renderApp = () => {
     }
   };
   ```
-> As you can see, we can easily change the fontFamily for our app, which was changed in production from Open Sans to sans-serif.  
->   
-> You can also see here that we have a <`Router` \\> and <`Notification` \\> component. The router component helps manage the various links and pages the GLI App has, such as the DeliveryQueue. The notification component is Mantine package that allows us to easily implement notifications on any page for different scenarios.  
+As you can see, we can easily change the fontFamily for our app, which was changed in production from Open Sans to sans-serif.  
+   
+You can also see here that we have a <`Router` \\> and <`Notification` \\> component. The router component helps manage the various links and pages the GLI App has, such as the DeliveryQueue. The notification component is Mantine package that allows us to easily implement notifications on any page for different scenarios.  
 
 ## New Pages
 React based applications allow a developer to expand their app out relatively easily compared to traditional HTML/JavaScript based web applications. In an HTML/JS based project, creating components can be quite bloated when you need to adjust them slightly for different needs. With React, however, you are creating HTML components using JavaScript (or TypeScript in our case), which can have parameters with more flexibility. 
@@ -515,10 +696,10 @@ Many of our tables display job queues that filter based on the Work Center they 
 
 #### Client Side
 
-> First, let's create the label on the main Sidebar of the app. The file can be found [here](src/components/sidebar/index.tsx).  
->   
-> Here we have the structure for our sidebar labels and links on the Dashboard link. We want to put a new HYTECH button under Engineering, which has its own subclass of links beneath it. Create a new link under Engineering with the label "HYTECH" and the link "/hytech". Keep the link in mind, as we will be using that to redirect the application to the HYTECH page. 
-
+First, let's create the label on the main Sidebar of the app. The file can be found [here](src/components/sidebar/index.tsx).  
+  
+Here we have the structure for our sidebar labels and links on the Dashboard link. We want to put a new HYTECH button under Engineering, which has its own subclass of links beneath it. Create a new link under Engineering with the label "HYTECH" and the link "/hytech". Keep the link in mind, as we will be using that to redirect the application to the HYTECH page. 
+  
 ```TypeScript
 { label: "Dashboard", icon: IconGauge, link: "/" },
   {
@@ -545,8 +726,8 @@ Many of our tables display job queues that filter based on the Work Center they 
   },
 ```
 
-> We also need to add HYTECH to the Work Center Category Map for the `Now At` column in the jobs queue. This can be found at [client.gl/src/features/jobs/index.js](src/features/jobs/index.js)
-
+We also need to add HYTECH to the Work Center Category Map for the `Now At` column in the jobs queue. This can be found at [client.gl/src/features/jobs/index.js](src/features/jobs/index.js)
+  
 ```JavaScript
 const CATEGORY_WC = "Now At";
   const categoryWCMap = {
@@ -560,10 +741,10 @@ const CATEGORY_WC = "Now At";
     ],
 ```
 
-> Next, let's create the page file for HYTECH. Under `client.gl/src/pages/`, create a new folder "`hytech`", with an `index.jsx` file.  
->   
-> Within this file, we will make a hytech component using the modular component <`Vendor `\\>. This is being imported from `client.gl/src/features/vendor`, which we will look at next. This function returns a <`div` \\> component that contains the <`Vendor` \\> component. The Vendor component takes in two arguments, the vendor name, and the table title. The title can be capitalized and formatted however we want, but the Vendor name (or `vendor={}`) must match the data that is in the database for the Vendor component to work. Finally, this function must be exported for another file to import it.
-
+Next, let's create the page file for HYTECH. Under `client.gl/src/pages/`, create a new folder "`hytech`", with an `index.jsx` file.  
+   
+Within this file, we will make a hytech component using the modular component <`Vendor `\\>. This is being imported from `client.gl/src/features/vendor`, which we will look at next. This function returns a <`div` \\> component that contains the <`Vendor` \\> component. The Vendor component takes in two arguments, the vendor name, and the table title. The title can be capitalized and formatted however we want, but the Vendor name (or `vendor={}`) must match the data that is in the database for the Vendor component to work. Finally, this function must be exported for another file to import it.
+  
 ``` TypeScript
 import React from 'react';
 
@@ -580,10 +761,10 @@ function Hytech() {
 export default Hytech;
 ```
 
-> If our HYTECH utilized the normal WorkCenterQueue component, our last step would be setting up the routing for the page. Since we need to modify our queue, we have more after this. This client side routing file can be found at [`client.gl/src/routes/public.tsx`](src/routes/public.tsx).  
->   
-> Within this file, we first need to import the HYTECH page at the top of the file. Then we need to set up the routing components and URL path, which wraps the Hytech component that we have just created. 
-
+If our HYTECH utilized the normal WorkCenterQueue component, our last step would be setting up the routing for the page. Since we need to modify our queue, we have more after this. This client side routing file can be found at [`client.gl/src/routes/public.tsx`](src/routes/public.tsx).  
+  
+Within this file, we first need to import the HYTECH page at the top of the file. Then we need to set up the routing components and URL path, which wraps the Hytech component that we have just created. 
+  
 ```TypeScript
 const Hytech = lazy(() => import("../pages/hytech"));
 
@@ -604,23 +785,23 @@ const Hytech = lazy(() => import("../pages/hytech"));
     ),
   },
 ```
-> Now we can take a look at the Vendor component, which can be found [here](src/features/vendor/).  
->   
-> Within this folder, there are a few files that build the structure of the Vendor component. For our example, we will simply copy the Engineering features folder and change the names of functions and variables. The folder structure of our folder will be as follows:
+Now we can take a look at the Vendor component, which can be found [here](src/features/vendor/).  
+   
+Within this folder, there are a few files that build the structure of the Vendor component. For our example, we will simply copy the Engineering features folder and change the names of functions and variables. The folder structure of our folder will be as follows:
 
-* [vendor/](src/features/vendor/)
-  * [store/](src/features/vendor/store)
-    * [actions.js](src/features/vendor/store/actions.js)
-    * [index.js](src/features/vendor/store/index.js)
-    * [reducer.js](src/features/vendor/store/reducer.js)
-  * [columns.tsx](src/features/vendor/columns.tsx)
-  * [index.jsx](src/features/vendor/index.jsx)
-
-> First, let's look at `columns.tsx`, which is where you define which columns appear in your table. Each column is defined with an accessorKey, which should match the name of column in the database that you wish to display. There is also a header, which is the name that will appear on the column in our table. Here you can set certain options like enableEditing or set the filter type for the column.  
->   
-> For our Vendor table, we need to add the WC_Vendor column. So, we make a new column in the order we want it to display, in this case it will appear to the right of Part_Number. We set the accessorKey to "WC_Vendor", but have the header be "WC Vendor" for readability. This data is coming from the database and users shouldn't be able to change it, so we turn editing off and give it the standard "multi-select" filter, as it's a simple text data type.  
->   
-> The accessorFn is what retrieves the data from that specific row. It will either display the Vendor value from that row, or show nothing if there is no Vendor. This structure will work for most standard text data types, however if it needs to have further functions or styling, you will have to customize each cell of the column as shown under the Part Number column.
+>  * [vendor/](src/features/vendor/)
+>    * [store/](src/features/vendor/store)
+>      * [actions.js](src/features/vendor/store/actions.js)
+>      * [index.js](src/features/vendor/store/index.js)
+>      * [reducer.js](src/features/vendor/store/reducer.js)
+>    * [columns.tsx](src/features/vendor/columns.tsx)
+>    * [index.jsx](src/features/vendor/index.jsx)
+  
+First, let's look at `columns.tsx`, which is where you define which columns appear in your table. Each column is defined with an accessorKey, which should match the name of column in the database that you wish to display. There is also a header, which is the name that will appear on the column in our table. Here you can set certain options like enableEditing or set the filter type for the column.  
+  
+For our Vendor table, we need to add the WC_Vendor column. So, we make a new column in the order we want it to display, in this case it will appear to the right of Part_Number. We set the accessorKey to "WC_Vendor", but have the header be "WC Vendor" for readability. This data is coming from the database and users shouldn't be able to change it, so we turn editing off and give it the standard "multi-select" filter, as it's a simple text data type.  
+   
+The accessorFn is what retrieves the data from that specific row. It will either display the Vendor value from that row, or show nothing if there is no Vendor. This structure will work for most standard text data types, however if it needs to have further functions or styling, you will have to customize each cell of the column as shown under the Part Number column.
 
 ```TypeScript
 const columns = [
@@ -672,11 +853,11 @@ const columns = [
     },
 ```
 
-> Next, we can take a look into the [store folder](src/features/vendor/store/).  
->   
-> The files within the store directory work together to make API and network calls to retrieve data for our table. Since our Vendor component is very similar to the Work Center component, we can simply duplicate these files from the [Engineering store](src/features/engineering/store/), and replace any mentions of "engineering" (keeping the same letter cases) with "vendor". However, since Vendor is retrieving data from a different field in the database, we need to change the routing for retrieving jobs and posting notes.  
->   
-> Beyond the naming scheme, the URL routes in our `baseAxios` functions are different. The `/vendor/open` and `/jobsByVendor/` URL routes are not decided here, but in the server side files, which can be found at `[server.gl/src/routes/work-centers/vendor.js](../server.gl/src/routes/work-centers/vendor.js)`, which we will look into later. However, the `vendor/notes` route is set in [server.gl/src/routes/notes.ts](../server.gl/src/routes/notes.ts), and importantly is missing the first forward slash, even though that slash is present in the route set on the server side.
+Next, we can take a look into the [store folder](src/features/vendor/store/).  
+   
+The files within the store directory work together to make API and network calls to retrieve data for our table. Since our Vendor component is very similar to the Work Center component, we can simply duplicate these files from the [Engineering store](src/features/engineering/store/), and replace any mentions of "engineering" (keeping the same letter cases) with "vendor". However, since Vendor is retrieving data from a different field in the database, we need to change the routing for retrieving jobs and posting notes.  
+   
+Beyond the naming scheme, the URL routes in our `baseAxios` functions are different. The `/vendor/open` and `/jobsByVendor/` URL routes are not decided here, but in the server side files, which can be found at `[server.gl/src/routes/work-centers/vendor.js](../server.gl/src/routes/work-centers/vendor.js)`, which we will look into later. However, the `vendor/notes` route is set in [server.gl/src/routes/notes.ts](../server.gl/src/routes/notes.ts), and importantly is missing the first forward slash, even though that slash is present in the route set on the server side.
 
 ```JavaScript
 export const fetchOpenJobs = (partID) => async (dispatch) => {
@@ -726,7 +907,7 @@ export const saveNotes = (jobs) => async (dispatch) => {
 };
 ```
 
-> Now we can work on `index.jsx`, which utilizes our `columns.tsx` and `/store` files that we set up. Once again we are mostly replacing the names of functions and variables that associate with our Vendor queue. So we replace mentions of `ws` (Work Center) with `vendor`, keeping letter casing. 
+Now we can work on `index.jsx`, which utilizes our `columns.tsx` and `/store` files that we set up. Once again we are mostly replacing the names of functions and variables that associate with our Vendor queue. So we replace mentions of `ws` (Work Center) with `vendor`, keeping letter casing. 
 
 
 ```JavaScript
@@ -766,13 +947,13 @@ const columns = useMemo(
 #### Server Side
 
 Before reading how we will setup our server side routing, you can take a look at the [Database section](#sql-database) to familiarize yourself with the databases we are working with.
-
-> The first thing we will create on the server side is a Vendor Notes model, which will be found at [server.gl/src/models/notes/VendorNotes.ts](../server.gl/src/models/notes/VendorNotes.ts).  
->   
-> Models are files that define the data types we are reading and writing from the database. The data types for Jobs are already defined in our database config, so we only need to define types for Vendor_Notes in the database. We will need to define Job, Job_OperationKey (which is being read from `[Production].[dbo].[Job_Operation]`), Vendor_Note_ID, Plan_Notes, and Priority (which is being read from and written to `[General_Label].[dbo].[Vendor_Notes]`).  
->   
-> First we need to define the table as VendorNotes for routing, but give it the name "Vendor_Notes" so that it corresponds to the right table in the database. The Vendor_Note_ID is what the table is ordered by, so we set the options `primaryKey` and `autoIncrement` to true. These options need to also be set within the sql database as well. For defining the types, it is recommended to look at other models and set the type to the corresponding data value. If you are creating a data value that other queries don't use, make sure that the data type in the database is the same as what you define here.
-
+  
+The first thing we will create on the server side is a Vendor Notes model, which will be found at [server.gl/src/models/notes/VendorNotes.ts](../server.gl/src/models/notes/VendorNotes.ts).  
+  
+Models are files that define the data types we are reading and writing from the database. The data types for Jobs are already defined in our database config, so we only need to define types for Vendor_Notes in the database. We will need to define Job, Job_OperationKey (which is being read from `[Production].[dbo].[Job_Operation]`), Vendor_Note_ID, Plan_Notes, and Priority (which is being read from and written to `[General_Label].[dbo].[Vendor_Notes]`).  
+  
+First we need to define the table as VendorNotes for routing, but give it the name "Vendor_Notes" so that it corresponds to the right table in the database. The Vendor_Note_ID is what the table is ordered by, so we set the options `primaryKey` and `autoIncrement` to true. These options need to also be set within the sql database as well. For defining the types, it is recommended to look at other models and set the type to the corresponding data value. If you are creating a data value that other queries don't use, make sure that the data type in the database is the same as what you define here.
+  
 ```JavaScript
 import Sequelize from "sequelize";
 const { glNotesDB: db } = require("../../config/database");
@@ -815,11 +996,11 @@ const VendorNotes = db.define(
 module.exports = VendorNotes;
 ```
 
-> Next we need to create our vendor route and query, which can be found at [`server.gl/src/routes/work-centers/vendor.js`](../server.gl/src/routes/work-centers/vendor.js).  
->   
-> Once again we can copy another routing file, such as `finishing.js`, and modify it to achieve our vendor file. The router.get() function defines the URL path and array we will fill with the query from the database. Here you can see the routing for `/finishing/jobsByWorkCenter/:workCenterName`.  
->   
-> Keep in mind that this query modification is very specific to this example. Other queues might require very different changes, but this is just to show how one might go about modifying a query to get the data you need.
+Next we need to create our vendor route and query, which can be found at [`server.gl/src/routes/work-centers/vendor.js`](../server.gl/src/routes/work-centers/vendor.js).  
+   
+Once again we can copy another routing file, such as `finishing.js`, and modify it to achieve our vendor file. The router.get() function defines the URL path and array we will fill with the query from the database. Here you can see the routing for `/finishing/jobsByWorkCenter/:workCenterName`.  
+   
+Keep in mind that this query modification is very specific to this example. Other queues might require very different changes, but this is just to show how one might go about modifying a query to get the data you need.
 
 ```JavaScript
 router.get("/finishing/jobsByWorkCenter/:workCenterName", async (req, res) => {
@@ -853,7 +1034,7 @@ router.get("/finishing/jobsByWorkCenter/:workCenterName", async (req, res) => {
     }
 ```
 
-> Since we are looking for Work Center Vendors instead, we will make our URL path `/jobsByVendor/:vendorName`, which corresponds to *ready jobs* by the Vendor that is entered. We also need to change the request parameter from workCenterName to vendorName, which is being used by `:vendorName` in the URL path. You can also see here that we had to change the sorting of jobs from `Work_Center` to `WC_Vendor`.
+Since we are looking for Work Center Vendors instead, we will make our URL path `/jobsByVendor/:vendorName`, which corresponds to *ready jobs* by the Vendor that is entered. We also need to change the request parameter from workCenterName to vendorName, which is being used by `:vendorName` in the URL path. You can also see here that we had to change the sorting of jobs from `Work_Center` to `WC_Vendor`.
 
 ```JavaScript
 router.get("/jobsByVendor/:vendorName", async (req, res) => {
@@ -887,7 +1068,7 @@ router.get("/jobsByVendor/:vendorName", async (req, res) => {
     }
 ```
 
-> Now let's look at the main query job queries, which depending on what you need to get from the database, will be the hardest part about creating a new queue page. The following is the `finishing/jobsByWorkCenter/:workCenterName` query.
+Now let's look at the main query job queries, which depending on what you need to get from the database, will be the hardest part about creating a new queue page. The following is the `finishing/jobsByWorkCenter/:workCenterName` query.
 
 ```JavaScript
 await glDB.query(
@@ -930,7 +1111,7 @@ await glDB.query(
           )
 ```
 
-> What we want to change is located in the last `LEFT JOIN` of the query. Specifically the `[Finishing_Notes]`, and `jo.Work_Center = :wc`. In our Vendor queue, we don't need `jo.Work_Center` or to filter by `del.DeliveryKey`, so the following query will not have that data.
+What we want to change is located in the last `LEFT JOIN` of the query. Specifically the `[Finishing_Notes]`, and `jo.Work_Center = :wc`. In our Vendor queue, we don't need `jo.Work_Center` or to filter by `del.DeliveryKey`, so the following query will not have that data.
 
 ```JavaScript
 await glDB.query(
@@ -971,12 +1152,12 @@ await glDB.query(
       )
 ```
 
-> As you can see, we changed 
-> - `[Finishing_Notes]` into `[Vendor_Notes]` (which comes from the `[General_Label]` database)
+> As you can see, we changed
+> - `[Finishing_Notes]` into `[Vendor_Notes]` (from the `[General_Label]` database)
 > - `jo.Work_Center = :wc` into `jo.WC_Vendor = :vendor`
 > - `wc: workCenterName` into `vendor: vendorName`
 
-> For the open jobs query, we make the same changes. We make a similar change to the URL, just making sure we keep it simple and in mind for when we create the client side routing for this data. The following is the new `/vendor/open/:vendorName` query.
+For the open jobs query, we make the same changes. We make a similar change to the URL, just making sure we keep it simple and in mind for when we create the client side routing for this data. The following is the new `/vendor/open/:vendorName` query.
 
 ```JavaScript
 router.get("/vendor/open/:vendorName", async (req, res) => {
@@ -1024,7 +1205,7 @@ router.get("/vendor/open/:vendorName", async (req, res) => {
     );
 ```
 
-> We also need to change sorting from `"Work_Center"` to `"WC_Vendor"`.
+We also need to change sorting from `"Work_Center"` to `"WC_Vendor"`.
 
 ```JavaScript
 const sortedJobs = jobsWithData.sort(compare);
@@ -1033,9 +1214,9 @@ const sortedJobs = jobsWithData.sort(compare);
       }
 ```
 
-> Next we need to route our Vendor notes to the database. This can be found at [server.gl/src/routes/notes.ts](../server.gl/src/routes/notes.ts). Set the `VendorNotes` model with the `require()` function at the top of the file, and write the patch at least after the `upsert` import. Choose a simple URL such as `/vendor/notes`, and keep it in mind for when we route the notes on the client side. When we do route it on the client side, remember to remove the first forward slash so that the path is `vendor/notes`.  
->   
-> Within this router patch, we need to set our data to null, and pass them to the constants condition and values appropriately. `Plan_Notes` and `Priority` are the values that a user is allowed to change, so those are passed into the value constant, while the other data types are passed into the condition constant. Also note that we are passing `VendorNotes` into the `upsert()` function.
+Next we need to route our Vendor notes to the database. This can be found at [server.gl/src/routes/notes.ts](../server.gl/src/routes/notes.ts). Set the `VendorNotes` model with the `require()` function at the top of the file, and write the patch at least after the `upsert` import. Choose a simple URL such as `/vendor/notes`, and keep it in mind for when we route the notes on the client side. When we do route it on the client side, remember to remove the first forward slash so that the path is `vendor/notes`.  
+   
+Within this router patch, we need to set our data to null, and pass them to the constants condition and values appropriately. `Plan_Notes` and `Priority` are the values that a user is allowed to change, so those are passed into the value constant, while the other data types are passed into the condition constant. Also note that we are passing `VendorNotes` into the `upsert()` function.
 
 ```TypeScript
 const VendorNotes = require("../models/notes/VendorNotes");
@@ -1076,7 +1257,7 @@ router.patch("/vendor/notes", async (req, res) => {
 });
 ```
 
-> Our last step on the server side is opening this route to the application. This can be found at [src/index.ts](../server.gl/src/index.ts). At the top of the file, we import the vendor routing. After the `app` constant is declared, we call `app.use()` to open the route. 
+Our last step on the server side is opening this route to the application. This can be found at [src/index.ts](../server.gl/src/index.ts). At the top of the file, we import the vendor routing. After the `app` constant is declared, we call `app.use()` to open the route. 
 
 ```TypeScript
 const vendorJobs = require("./routes/work-centers/vendor");
@@ -1090,7 +1271,7 @@ const app = express();
 app.use(vendorJobs);
 ```
 
-> If you have completed both the client and server side steps to create a new queue page, you should now see it on the development server you have set up. If not, you need to check the error logs for the Node.Js instances for the client and server. Some errors will not directly show up with Node.Js, and you will have to insert console logs to find where and what the error occurring is. 
+If you have completed both the client and server side steps to create a new queue page, you should now see it on the development server you have set up. If not, you need to check the error logs for the Node.Js instances for the client and server. Some errors will not directly show up with Node.Js, and you will have to insert console logs to find where and what the error occurring is. 
 
 ![HYTECH Page](./documentationImages/hytechExample.png "HYTECH")
 
@@ -1098,13 +1279,13 @@ app.use(vendorJobs);
 
 ### Example: ECO Work Center Queue
 
-> Adding a new Work Center queue is fairly simple, as there is already a <`WorkCenterQueue` \\> component that we will utilize. What you will have to keep in mind is which route you will be using (engineering, meeting, print, etc). In this case we will be adding the ECO Queue to Engineering. Using an existing route means we will not have to make any changes to the server side code. 
-
+Adding a new Work Center queue is fairly simple, as there is already a <`WorkCenterQueue` \\> component that we will utilize. What you will have to keep in mind is which route you will be using (engineering, meeting, print, etc). In this case we will be adding the ECO Queue to Engineering. Using an existing route means we will not have to make any changes to the server side code. 
+  
 #### Client Side
 
-> First, let's create the label on the main Sidebar of the app. The file can be found [here](src/components/sidebar/index.tsx).  
->   
-> Here we have the structure for our sidebar labels and links on the Dashboard link. We want to put a new ECO button under Engineering, which has its own subclass of links beneath it. Create a new link under Engineering with the label "ECO" and the link "/eco". Keep the link in mind, as we will be using that to redirect the application to the HYTECH page.
+First, let's create the label on the main Sidebar of the app. The file can be found [here](src/components/sidebar/index.tsx).  
+  
+Here we have the structure for our sidebar labels and links on the Dashboard link. We want to put a new ECO button under Engineering, which has its own subclass of links beneath it. Create a new link under Engineering with the label "ECO" and the link "/eco". Keep the link in mind, as we will be using that to redirect the application to the HYTECH page.
 
 ```TypeScript
 { label: "Dashboard", icon: IconGauge, link: "/" },
@@ -1133,7 +1314,7 @@ app.use(vendorJobs);
   },
 ```
 
-> We also need to add ECO to the Work Center Category Map for the `Now At` column in the jobs queue. This can be found at [client.gl/src/features/jobs/index.js](src/features/jobs/index.js)
+We also need to add ECO to the Work Center Category Map for the `Now At` column in the jobs queue. This can be found at [client.gl/src/features/jobs/index.js](src/features/jobs/index.js)
 
 ```JavaScript
 const CATEGORY_WC = "Now At";
@@ -1148,9 +1329,9 @@ const CATEGORY_WC = "Now At";
     ],
 ```
 
-> Next, let's create the page file for ECO. Under `client.gl/src/pages/`, create a new folder "`eco`", with an `index.jsx` file.  
->   
-> Within this file, we will create an Eco component using the modular component <`Engineering` \\> (if you are routing through print, use <`Print` \\> instead). The Engineering component takes in two arguments, the work center name, and the table title. The title can be capitalized and formatted however we want, but the Work Center (or `wc={}`) name must match the data that is in the database for the Engineering component to work, which is "ECO" in this case. Finally, this function must be exported for another file to import it.
+Next, let's create the page file for ECO. Under `client.gl/src/pages/`, create a new folder "`eco`", with an `index.jsx` file.  
+   
+Within this file, we will create an Eco component using the modular component <`Engineering` \\> (if you are routing through print, use <`Print` \\> instead). The Engineering component takes in two arguments, the work center name, and the table title. The title can be capitalized and formatted however we want, but the Work Center (or `wc={}`) name must match the data that is in the database for the Engineering component to work, which is "ECO" in this case. Finally, this function must be exported for another file to import it.
 
 ```JavaScript
 import React from 'react';
@@ -1168,9 +1349,9 @@ function ECO() {
 export default ECO;
 ```
 
-> Our last step is setting up the client side routing, which can be found in [`client.gl/src/routes/public.tsx`](src/routes/public.tsx).  
->   
-> Within this file, we first need to import the ECO page at the top of the file. Then we need to set up the routing components and URL path, which wraps the Eco component that we have just created. 
+Our last step is setting up the client side routing, which can be found in [`client.gl/src/routes/public.tsx`](src/routes/public.tsx).  
+   
+Within this file, we first need to import the ECO page at the top of the file. Then we need to set up the routing components and URL path, which wraps the Eco component that we have just created. 
 
 ```TypeScript
 const Eco = lazy(() => import("../pages/eco"));
