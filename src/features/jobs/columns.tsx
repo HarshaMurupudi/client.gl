@@ -1,5 +1,6 @@
 import { format, addMinutes } from "date-fns";
 import { Box, Button, Text, Skeleton } from "@mantine/core";
+import { Link } from "react-router-dom";
 
 import { GLSelect } from "../../components/select";
 import { GLTextarea } from "../../components/ReactTableTextarea";
@@ -79,6 +80,13 @@ export const getColumns = (
         },
       });
     }
+  };
+
+  const handleInventoryActionBtn = (row) => {
+    window.open(
+      `/delivery-queue-details/${row.original.Part_Number}`,
+      "_blank"
+    );
   };
 
   const planCodes = [
@@ -332,13 +340,28 @@ export const getColumns = (
       //   const Job = row["Now At"] || "";
       //   return Job;
       // },
+      mantineTableBodyCellProps: ({ cell, row }: { cell: any; row: any }) => ({
+        onClick: () => {
+          handleInventoryActionBtn(row);
+        },
+      }),
       Cell: ({ cell, row }: { cell: any; row: any }) => {
         if (nowAtLoading) {
           return <Skeleton height={8} mt={6} width="70%" radius="xl" />;
         } else if (cell.getValue() === undefined) {
           return "-";
         } else {
-          return cell.getValue();
+          return (
+            <p
+              style={{
+                textDecoration: "underline",
+                cursor: "pointer",
+                margin: 0,
+              }}
+            >
+              {cell.getValue()}
+            </p>
+          );
         }
       },
       // filterVariant: 'autocomplete',
