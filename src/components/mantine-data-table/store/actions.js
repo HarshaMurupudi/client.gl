@@ -54,10 +54,6 @@ export const fetchCustomerApprovalPDF = (partNumber) => async (dispatch) => {
 
 export const fetchZundCutFilePDF = (partNumber) => async (dispatch) => {
   try {
-    //   dispatch(setPDFLoading(true));
-
-    // Check for avalability and file number
-    // await delay(2100);
     const {
       data: { count },
     } = await baseAxios.get(
@@ -75,25 +71,19 @@ export const fetchZundCutFilePDF = (partNumber) => async (dispatch) => {
         }
       );
       const { data, headers } = res;
+      const pdfBlob = new Blob([data], { type: "application/pdf" });
+      const fileUrl = URL.createObjectURL(pdfBlob);
+      const blob = new Blob([data]);
+      const fileName = headers["content-disposition"]
+        .split("filename=")[1]
+        .replace(/^["'](.+(?=["']$))["']$/, "$1");
 
       if (headers["content-type"] !== "application/pdf") {
-        const blob = new Blob([data]);
-        const fileName = headers["content-disposition"]
-          .split("filename=")[1]
-          .replace(/^["'](.+(?=["']$))["']$/, "$1");
-
-        //download
         fileDownload(blob, fileName);
       } else {
-        const blob = new Blob([data], { type: "application/pdf" });
-        const fileUrl = URL.createObjectURL(blob);
-        //   pdfData.push(fileUrl);
-
         await window.open(fileUrl);
       }
     }
-
-    // return pdfData;
   } catch (error) {
     if (error.response.data.code === "ENOENT") {
       alert("no file");
