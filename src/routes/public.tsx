@@ -10,7 +10,7 @@ const Contracts = lazy(() => import("../pages/contracts"));
 const Operations = lazy(() => import("../pages/operations"));
 const PO = lazy(() => import("../pages/po"));
 const Tracking = lazy(() => import("../pages/tracking"));
-const Meeting = lazy(() => import("../pages/meeting"));
+//const Meeting = lazy(() => import("../pages/meeting"));
 const Dashboard = lazy(() => import("../pages/dashboard"));
 const PendingJobs = lazy(() => import("../pages/pending"));
 const DeliveryQueueDetails = lazy(
@@ -174,18 +174,18 @@ export const publicRoutes = [
       </Suspense>
     ),
   },
-  {
-    path: "/productionMeeting",
-    element: (
-      <Suspense fallback={<div>Loading</div>}>
-        <PrivateRoute>
-          <AppLayout>
-            <Meeting />
-          </AppLayout>
-        </PrivateRoute>
-      </Suspense>
-    ),
-  },
+  // {
+  //   path: "/productionMeeting",
+  //   element: (
+  //     <Suspense fallback={<div>Loading</div>}>
+  //       <PrivateRoute>
+  //         <AppLayout>
+  //           <Meeting />
+  //         </AppLayout>
+  //       </PrivateRoute>
+  //     </Suspense>
+  //   ),
+  // },
   {
     path: "/pending-jobs",
     element: (
