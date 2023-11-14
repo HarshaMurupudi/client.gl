@@ -12,6 +12,7 @@ function Meetings({
   fetchMeetings,
   saveNotes,
   addNewRow,
+  user,
 }) {
 
   const [editedUsers, setEditedUsers] = useState({});
@@ -27,19 +28,6 @@ function Meetings({
 
   const createNewRow = async () => {
     await addNewRow();
-    // const newRow = {
-    //   Meeting_Note_ID: null,
-    //   Description: null,
-    //   Date: Date.now(),
-    //   Meeting_Note: null,
-    // };
-
-    // setEditedUsers((prevEditedUsers) => {
-    //   return {
-    //     ...prevEditedUsers,
-    //     [`new_${Date.now()}`]: newRow,
-    //   };
-    // });
   };
 
   useEffect(() => {
@@ -49,6 +37,12 @@ function Meetings({
   const handleSaveUsers = async (e, table) => {
     await saveNotes(Object.values(editedUsers));
     setEditedUsers({});
+  };
+
+  const canEdit = () => {
+    const { Employee } = user;
+    const employeeList = ["51040"];
+    return employeeList.includes(Employee) ? true : false;
   };
 
   return (
@@ -73,7 +67,7 @@ function Meetings({
           hasRefetch={true}
           hasActionColumn={true}
           enableGrouping={false}
-          isEditable={true}
+          isEditable={canEdit()}
           isEdited={Object.keys(editedUsers).length === 0}
           handleSave={handleSaveUsers}
           hasCustomActionBtn={true}
@@ -91,6 +85,7 @@ function Meetings({
 const mapStateToProps = (state) => ({
   meeting: state.getIn(["meeting", "meetings"]),
   meetingsLoading: state.getIn(["meetings", "meetingsLoading"]),
+  user: state.getIn(["user","user"]),
 });
 
 export default connect(mapStateToProps, {

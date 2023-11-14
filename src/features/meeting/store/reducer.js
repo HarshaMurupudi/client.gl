@@ -3,6 +3,8 @@ const INITIAL_STATE = {
   meetingsLoading: false,
 };
 
+const date = new Date(Date.now()).toISOString();
+
 const meetingReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case 'SET_MEETINGS':
@@ -18,7 +20,7 @@ const meetingReducer = (state = INITIAL_STATE, action) => {
     case 'ADD_NEW_ROW':
       return {
         ...state,
-        meetings: [...state.meetings, {Meeting_Note_ID: null, Description: null, Date: Date.now(), Meeting_Note: null }]
+        meetings: [...state.meetings, {Meeting_Note_ID: null, Description: null, Date: date, Meeting_Note: null }]
       }
     default:
       return state;
