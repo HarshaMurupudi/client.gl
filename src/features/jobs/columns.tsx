@@ -396,7 +396,7 @@ export const getColumns = (
       header: "Revenue",
       enableEditing: false,
       accessorFn: (row: any) => {
-        const revenue = Math.round(row["Order_Quantity"] * row["Unit_Price"]);
+        const revenue = Math.round(row["Order_Quantity"] * row["Unit_Price"]).toFixed(2);
         return revenue;
       },
       Cell: ({ cell, row }: { cell: any; row: any }) => {
@@ -405,7 +405,7 @@ export const getColumns = (
         // Define a CSS style object based on the revenue value
         const cellStyle = {
           margin: 0,
-          backgroundColor: revenue > 5000 ? "#69d461" : "transparent",
+          backgroundColor: revenue >= 5000 ? "#69d461" : "transparent",
         };
 
         return <p style={cellStyle}>${revenue}</p>;
