@@ -82,6 +82,8 @@ export const getColumns = (
     }
   };
 
+  const PRODUCTION_STATUS_LIST = ['0', '1', '2'];
+
   const handleInventoryActionBtn = (row) => {
     window.open(
       `/delivery-queue-details/${row.original.Part_Number}`,
@@ -467,6 +469,35 @@ export const getColumns = (
           return true;
         }
       },
+    },
+    {
+      accessorKey: "Production_Status",
+      header: "Production Status",
+      enableEditing: true,
+      editVariant: "select",
+      mantineEditSelectProps: ({ cell, row }: { cell: any; row: any }) => ({
+        data: PRODUCTION_STATUS_LIST,
+        clearable: true,
+        onChange: (value) => {
+          if (editedUsers[row.id]) {
+            setEditedUsers({
+              ...editedUsers,
+              [row.id]: {
+                ...editedUsers[row.id],
+                ...{ Production_Status: value },
+              },
+            });
+          } else {
+            setEditedUsers({
+              ...editedUsers,
+              [row.id]: {
+                ...row.original,
+                ...{ Production_Status: value },
+              },
+            });
+          }
+        },
+      }),
     },
     {
       accessorKey: "Production_Notes",
