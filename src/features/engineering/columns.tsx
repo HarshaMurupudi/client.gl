@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { format, addMinutes } from "date-fns";
-import { Box, Button, Text, Textarea, Checkbox } from "@mantine/core";
+import { Box, Button, Text, Textarea, Skeleton } from "@mantine/core";
 
 import { GLTextarea } from "../../components/ReactTableTextarea";
 import {
@@ -19,7 +19,8 @@ export const getColumns = (
   editedUsers: any,
   setEditedUsers: any,
   totalEstHours: any,
-  getTableData: any
+  getTableData: any,
+  engineeringOpenJobsNowAtLoading: boolean
 ) => {
   const onFetchPDFClick = (partNumber: any) => {
     fetchPDF(partNumber);
@@ -254,11 +255,16 @@ export const getColumns = (
         let nowAt = "-";
         if (value === "Open") {
           nowAt = row.original["Now At"];
+
+          if (engineeringOpenJobsNowAtLoading) {
+            return <Skeleton height={8} mt={6} width="70%" radius="xl" />;
+          } else {
+            return <p style={{ margin: 0 }}>{nowAt}</p>;
+          }
         } else {
           nowAt = wc;
+          return <p style={{ margin: 0 }}>{nowAt}</p>;
         }
-
-        return <p style={{ margin: 0 }}>{nowAt}</p>;
       },
     },
     {
@@ -280,6 +286,11 @@ export const getColumns = (
     {
       accessorKey: "Description",
       header: "Description",
+      enableEditing: false,
+    },
+    {
+      accessorKey: "Quote",
+      header: "Quote",
       enableEditing: false,
     },
     {

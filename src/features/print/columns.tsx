@@ -1,5 +1,5 @@
 import { format, addMinutes } from "date-fns";
-import { Text } from "@mantine/core";
+import { Text, Skeleton } from "@mantine/core";
 
 import { GLTextarea } from "../../components/ReactTableTextarea";
 import { CheckboxFilter } from "../../components/TableComponents";
@@ -18,7 +18,8 @@ export const getColumns = (
   editedUsers: any,
   setEditedUsers: any,
   totalEstHours: any,
-  getTableData: any
+  getTableData: any,
+  openJobsNowAtLoading: boolean
 ) => {
   const onFetchPDFClick = (partNumber: any) => {
     fetchPDF(partNumber);
@@ -243,11 +244,16 @@ export const getColumns = (
         let nowAt = "-";
         if (value === "Open") {
           nowAt = row.original["Now At"];
+
+          if (openJobsNowAtLoading) {
+            return <Skeleton height={8} mt={6} width="70%" radius="xl" />;
+          } else {
+            return <p style={{ margin: 0 }}>{nowAt}</p>;
+          }
         } else {
           nowAt = wc;
+          return <p style={{ margin: 0 }}>{nowAt}</p>;
         }
-
-        return <p style={{ margin: 0 }}>{nowAt}</p>;
       },
     },
     {
@@ -270,6 +276,11 @@ export const getColumns = (
         const Customer_PO = row["Customer_PO"] || "";
         return Customer_PO;
       },
+    },
+    {
+      accessorKey: "Quote",
+      header: "Quote",
+      enableEditing: false,
     },
     {
       accessorKey: "Est_Total_Hrs",

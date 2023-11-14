@@ -9,11 +9,14 @@ import { reducer as opReducer } from "../features/po/store";
 import { reducer as trackingReducer } from "../features/tracking/store";
 import { reducer as pendingJobsReducer } from "../features/pending/store";
 import { reducer as engineeringReducer } from "../features/engineering/store";
+import { reducer as printReducer } from "../features/print/store";
 import { reducer as vendorReducer } from "../features/vendor/store";
 import { reducer as deliveryQueueDetailReducer } from "../features/delivery-queue-details/store";
 import { reducer as modalReducer } from "../components/modal/store";
 import { reducer as poDetailsReducer } from "../features/POReview/store";
-import { reducer as meetingReducer} from "../features/meeting/store";
+import { reducer as materialJobsReducer } from "../features/material-requirement/store";
+import { reducer as shiplinesReducer } from "../features/shiplines/store";
+import { reducer as mantineDataTableReducer } from "../components/mantine-data-table/store";
 
 export default combineReducers({
   job: jobsReducer,
@@ -24,9 +27,12 @@ export default combineReducers({
   tracking: trackingReducer,
   pendingJob: pendingJobsReducer,
   engineering: engineeringReducer,
+  print: printReducer,
   vendor: vendorReducer,
   deliveryQueueDetail: deliveryQueueDetailReducer,
   modal: modalReducer,
   poDetails: poDetailsReducer,
-  meeting: meetingReducer,
+  materialJobs: materialJobsReducer,
+  shiplines: shiplinesReducer,
+  mantineDataTable: mantineDataTableReducer,
 });

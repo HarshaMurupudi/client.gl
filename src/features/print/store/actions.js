@@ -9,17 +9,22 @@ const headers = {
 };
 
 export const setOpenJobs = (status) => ({
-  type: "SET_OPEN_JOBS",
+  type: "SET_PRINT_OPEN_JOBS",
   payload: status,
 });
 
 export const setReadyJobs = (status) => ({
-  type: "SET_READY_JOBS",
+  type: "SET_PRINT_READY_JOBS",
   payload: status,
 });
 
 export const setEngineeringLoading = (status) => ({
-  type: "SET_ENGINEERING_LOADING",
+  type: "SET_PRINT_LOADING",
+  payload: status,
+});
+
+export const setOpenJobsNowAtLoading = (status) => ({
+  type: "SET_OPEN_JOBS_NOW_AT_LOADING",
   payload: status,
 });
 
@@ -38,6 +43,19 @@ export const fetchOpenJobs = (partID, type) => async (dispatch) => {
     dispatch(setOpenJobs(response.data.jobs));
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const fetchOpenJobsNowAt = (partID, type) => async (dispatch) => {
+  try {
+    let url = `/${type}/jobs/open/${partID}/now-at`;
+    dispatch(setOpenJobsNowAtLoading(true));
+    const response = await baseAxios.get(url);
+    dispatch(setOpenJobs(response.data.jobs));
+  } catch (error) {
+    console.log(error);
+  } finally {
+    dispatch(setOpenJobsNowAtLoading(false));
   }
 };
 

@@ -39,12 +39,22 @@ function Operations({
     Job_Operation: "",
     Note_Text: "",
     Work_Center: "",
+    Floor_Notes: "",
   });
   const [selectedJob, setSelectedJob] = useState("");
+
+  const totalEstHours = useMemo(() => {
+    const totalPoints = (operations[selectedJob] || []).reduce(
+      (acc, row) => acc + row.Est_Total_Hrs,
+      0
+    );
+    return totalPoints;
+  }, [operations, selectedJob]);
+
   const laborColumns = useMemo(() => getColumns(fetchPDFByJob), []);
   const operationColumns = useMemo(
-    () => getOperationColumns(fetchPDFByJob),
-    []
+    () => getOperationColumns(fetchPDFByJob, totalEstHours),
+    [totalEstHours]
   );
   const jobColumns = useMemo(() => getJobColumns(fetchPDFByJob), []);
 
@@ -53,6 +63,7 @@ function Operations({
       Job_Operation: row.Job_Operation,
       Note_Text: row.Note_Text,
       Work_Center: row.Work_Center,
+      Floor_Notes: row.Floor_Notes,
     });
 
     await fetchOperationTimes(row.Job_Operation);
@@ -90,6 +101,7 @@ function Operations({
         Job_Operation: "",
         Note_Text: "",
         Work_Center: "",
+        Floor_Notes: "",
       });
       setOperationTimes([]);
     }
@@ -112,7 +124,9 @@ function Operations({
               return {
                 Job: op,
                 Status: isCompleted ? "C" : "O",
-                Description: operations[op][0].job ? operations[op][0].job.Description : '-',
+                Description: operations[op][0].job
+                  ? operations[op][0].job.Description
+                  : "-",
               };
             })}
             hasActionColumn={false}
@@ -149,6 +163,13 @@ function Operations({
             my={16}
             label={`Operation Notes - ${selectedOperation.Work_Center || ""}`}
             value={selectedOperation.Note_Text}
+            autosize
+            maxRows={12}
+          />
+          <Textarea
+            my={32}
+            label={`Floor Notes - ${selectedOperation.Work_Center || ""}`}
+            value={selectedOperation.Floor_Notes}
             autosize
           />
         </Grid.Col>

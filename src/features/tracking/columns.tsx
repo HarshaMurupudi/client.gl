@@ -35,6 +35,41 @@ export const getColumns = (fetchPDF: any) => {
       enableEditing: false,
     },
     {
+      accessorKey: "Part_Number",
+      header: "Part Number",
+      enableEditing: false,
+      accessorFn: (row: any) => {
+        const Part_Number = row.Part_Number || "";
+        return Part_Number;
+      },
+      mantineTableBodyCellProps: ({ cell }: { cell: any }) => ({
+        onClick: () => {
+          onFetchPDFClick(cell.getValue());
+        },
+      }),
+      Cell: ({ cell, row }: { cell: any; row: any }) => (
+        <p
+          style={{
+            textDecoration: "underline",
+            cursor: "pointer",
+            margin: 0,
+          }}
+        >
+          {cell.getValue()}
+        </p>
+      ),
+    },
+    {
+      accessorKey: "Description",
+      header: "Description",
+      enableEditing: false,
+    },
+    {
+      accessorKey: "Quote",
+      header: "Quote",
+      enableEditing: false,
+    },
+    {
       accessorKey: "Shipped_Date",
       id: "Shipped_Date",
       sortingFn: "datetime",

@@ -21,6 +21,9 @@ import {
   ActionIcon,
   Divider,
   rem,
+  Popover,
+  LoadingOverlay,
+  Group,
   // IconRefresh,
 } from "@mantine/core";
 import { IconRefresh } from "@tabler/icons-react";
@@ -30,6 +33,11 @@ import { useDisclosure } from "@mantine/hooks";
 import { MRT_ShowHideColumnsButton } from "../mantine-custom/buttons/MRT_ShowHideColumnsButton";
 import { fetchPOPDF } from "../../features/po/store/actions";
 import { setModalText, setModalVisibility } from "../modal/store/actions";
+import {
+  fetchCustomerApprovalPDF,
+  fetchZundCutFilePDF,
+  openFolder,
+} from "./store/actions";
 
 interface Props {
   columns: any;
@@ -51,8 +59,10 @@ const DataTable = ({
   onColumnVisibilityChange,
   tableKey,
   maxHeight,
+  minHeight,
   fetchData,
   loading,
+  mantineDataTableLoading,
   isEditable,
   isEdited,
   hasCustomActionBtn,
@@ -67,6 +77,9 @@ const DataTable = ({
   customOnRowSelection,
   isBasicTable = false,
   columnFilters,
+  fetchCustomerApprovalPDF,
+  fetchZundCutFilePDF,
+  openFolder,
 }: Props) => {
   const navigate = useNavigate();
   const isFirstRender = useRef(true);
@@ -192,16 +205,17 @@ const DataTable = ({
     );
   }, [columnOrder]);
 
-  const handleActionBtn = (row) => {
+  const handleActionBtn = async (row, type) => {
     const selecetedRowID = row.id.split("_")[0];
-    // navigate('/operations', { state: { jobID: selecetedRowID } });
+    const { Part_Number } = row.original;
 
-    // window.open(
-    //   `/operations/${selecetedRowID}`,
-    //   "_blank",
-    //   "rel=noopener noreferrer"
-    // );
-    window.open(`/operations/${selecetedRowID}`, "_blank");
+    if (type === "operations") {
+      window.open(`/operations/${selecetedRowID}`, "_blank");
+    } else if (type === "customer-approval") {
+      await fetchCustomerApprovalPDF(Part_Number);
+    } else if ((type = "zund-cut-file")) {
+      await fetchZundCutFilePDF(Part_Number);
+    }
   };
 
   const handleInventoryActionBtn = (row) => {
@@ -209,6 +223,14 @@ const DataTable = ({
       `/delivery-queue-details/${row.original.Part_Number}`,
       "_blank"
     );
+  };
+
+  const handleMaterialActionBtn = (row, action) => {
+    if (action === "material") {
+      window.open(`/material-requirement/${row.original.Job}`, "_blank");
+    } else if (action === "shiplines") {
+      window.open(`/shiplines/${row.original.Job}`, "_blank");
+    }
   };
 
   const handleNoteActionBtn = (row) => {
@@ -220,6 +242,13 @@ const DataTable = ({
     const jobId = row.original.Job;
     await fetchPOPDF(jobId);
   };
+
+  const handleFolderOpen = async (row, key) => {
+    const id = row.original[key];
+    await openFolder(id, key);
+  };
+
+  // fetchCustomerApprovalPDF
 
   const table = useMantineReactTable({
     key: tableKey,
@@ -241,7 +270,7 @@ const DataTable = ({
     enablePagination: false, //turn off pagination
     // enableRowVirtualization: true, //enable row virtualization
     mantineTableContainerProps: {
-      sx: { maxHeight: maxHeight || "82vh", minHeight: "30vh" },
+      sx: { maxHeight: maxHeight || "82vh", minHeight: minHeight || "30vh" },
     },
     // rowVirtualizerProps: { overscan: 8 }, //optionally customize the virtualizer
     enableBottomToolbar: false,
@@ -321,12 +350,58 @@ const DataTable = ({
     ...(hasActionColumn && {
       renderRowActionMenuItems: ({ row }) => (
         <>
-          <Menu.Item onClick={() => handleActionBtn(row)}>Operations</Menu.Item>
+          <Menu.Item onClick={() => handleActionBtn(row, "operations")}>
+            Operations
+          </Menu.Item>
           <Menu.Item onClick={() => handlePOActionBtn(row)}>PO</Menu.Item>
           <Menu.Item onClick={() => handleNoteActionBtn(row)}>Note</Menu.Item>
           <Menu.Item onClick={() => handleInventoryActionBtn(row)}>
             Inventory
           </Menu.Item>
+          <Menu.Item onClick={() => handleMaterialActionBtn(row, "material")}>
+            Material
+          </Menu.Item>
+          <Menu.Item onClick={() => handleActionBtn(row, "customer-approval")}>
+            Customer Approval
+          </Menu.Item>
+          {/* only in zund plot */}
+          {/* key = O-ZUNDPLOT-data-table */}
+          {(tableKey === "O-ZUNDPLOT-data-table" ||
+            tableKey === "contracts-queue-data-table") && (
+            <Menu.Item onClick={() => handleActionBtn(row, "zund-cut-file")}>
+              Z.Cut File
+            </Menu.Item>
+          )}
+          <Menu.Item onClick={() => handleMaterialActionBtn(row, "shiplines")}>
+            Shiplines
+          </Menu.Item>
+          {/* <Menu.Item onClick={() => handleFolderOpen(row, "Part_Number")}>
+            Open Part Folder
+          </Menu.Item>
+          <Menu.Item onClick={() => handleFolderOpen(row, "Job")}>
+            Open Job Folder
+          </Menu.Item>
+          <Menu.Item onClick={() => handleFolderOpen(row, "Quote")}>
+            Open Quote Folder
+          </Menu.Item> */}
+          <Popover width="target" position="right" withArrow shadow="md">
+            <Popover.Target>
+              <Button w={150}>Open Folder</Button>
+            </Popover.Target>
+            <Popover.Dropdown>
+              <>
+                <Menu.Item onClick={() => handleFolderOpen(row, "Part_Number")}>
+                  Part
+                </Menu.Item>
+                <Menu.Item onClick={() => handleFolderOpen(row, "Job")}>
+                  Job
+                </Menu.Item>
+                <Menu.Item onClick={() => handleFolderOpen(row, "Quote")}>
+                  Quote
+                </Menu.Item>
+              </>
+            </Popover.Dropdown>
+          </Popover>
         </>
       ),
     }),
@@ -350,13 +425,31 @@ const DataTable = ({
   return (
     <>
       {/* <GLModal opened={opened} open={open} close={close} /> */}
-      <MantineReactTable table={table} key={tableKey} />
+      <Box pos="relative">
+        <LoadingOverlay
+          visible={mantineDataTableLoading}
+          zIndex={1000}
+          overlayProps={{ radius: "sm", blur: 2 }}
+        />
+        {/* ...other content */}
+        <MantineReactTable table={table} key={tableKey} />
+      </Box>
     </>
   );
 };
 
-export const MantineDataTable = connect(null, {
+const mapStateToProps = (state) => ({
+  mantineDataTableLoading: state.getIn([
+    "mantineDataTable",
+    "mantineDataTableLoading",
+  ]),
+});
+
+export const MantineDataTable = connect(mapStateToProps, {
   fetchPOPDF,
   setModalVisibility,
   setModalText,
+  fetchCustomerApprovalPDF,
+  fetchZundCutFilePDF,
+  openFolder,
 })(DataTable);

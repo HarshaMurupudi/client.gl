@@ -5,7 +5,7 @@ import { Box } from "@mantine/core";
 import { PoForm } from "../po/components";
 import { ContractForm } from "../contracts/module";
 import { fetchTracking, searchJobs } from "./store/actions";
-import { fetchPDFByJob } from "../jobs/store/actions";
+import { fetchPDF } from "../jobs/store/actions";
 import { MantineDataTable } from "../../components/mantine-data-table";
 import { getColumns } from "./columns";
 import { searchCustomers } from "../contracts/store/actions";
@@ -15,10 +15,10 @@ function Tracking({
   trackingLoading,
   fetchTracking,
   searchJobs,
-  fetchPDFByJob,
+  fetchPDF,
   searchCustomers,
 }) {
-  const columns = useMemo(() => getColumns(fetchPDFByJob), []);
+  const columns = useMemo(() => getColumns(fetchPDF), []);
   const [currentAutofillSelection, setCurrentAutofillSelection] = useState("");
   const timeoutRef = useRef(-1);
   const [value, setValue] = useState("");
@@ -34,9 +34,6 @@ function Tracking({
       setData([]);
       let jobs = [];
 
-      // if (val.trim().length === 0 || val.includes("@")) {
-      //   setLoading(false);
-      // } else {
       setLoading(true);
 
       if (key === "Customer") {
@@ -52,7 +49,6 @@ function Tracking({
       }
 
       setData(jobs);
-      // }
     }
   };
 
@@ -110,7 +106,7 @@ const mapStateToProps = (state) => ({
 
 export default connect(mapStateToProps, {
   fetchTracking,
-  fetchPDFByJob,
+  fetchPDF,
   searchJobs,
   searchCustomers,
 })(Tracking);

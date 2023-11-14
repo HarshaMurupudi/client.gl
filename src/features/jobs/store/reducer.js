@@ -1,32 +1,38 @@
 const INITIAL_STATE = {
   jobs: [],
+  nowAtLoading: false,
   jobsLoading: true,
   pdfLoading: false,
-  editedUsers: {}
+  editedUsers: {},
 };
 
 const jobsReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case 'SET_JOBS':
+    case "SET_JOBS":
       return {
         ...state,
         jobs: action.payload,
       };
-    case 'SET_JOBS_LOADING':
+    case "SET_JOBS_LOADING":
       return {
         ...state,
         jobsLoading: action.payload,
       };
-    case 'SET_PDF_LOADING':
-        return {
-          ...state,
-          pdfLoading: action.payload,
-    };
-    case 'SET_EDITED_USERS':
+    case "SET_PDF_LOADING":
       return {
-          ...state,
-          editedUsers: action.payload,
-        };
+        ...state,
+        pdfLoading: action.payload,
+      };
+    case "SET_NOW_AT_LOADING":
+      return {
+        ...state,
+        nowAtLoading: action.payload,
+      };
+    case "SET_EDITED_USERS":
+      return {
+        ...state,
+        editedUsers: action.payload,
+      };
     default:
       return state;
   }

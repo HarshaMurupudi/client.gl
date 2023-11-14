@@ -9,6 +9,7 @@ import {
   fetchPDF,
   saveNotes,
   setJobsLoading,
+  fetchJobsWithNowAt,
 } from "./store/actions";
 import { getColumns } from "./columns";
 import { delay } from "../../utils";
@@ -16,10 +17,12 @@ import { delay } from "../../utils";
 function Jobs({
   jobs,
   jobsLoading,
+  nowAtLoading,
   fetchJobs,
   fetchPDF,
   saveNotes,
   setJobsLoading,
+  fetchJobsWithNowAt,
 }) {
   const [dateRange, setDateRange] = useState([null, null]);
   const [startDate, endDate] = dateRange;
@@ -39,13 +42,7 @@ function Jobs({
   const CATEGORY_WC = "Now At";
   const categoryWCMap = {
     All: [],
-    Engineering: [
-      "A-ADMIN", 
-      "A-ART",
-      "A-CUSTOMER",
-      "ECO",
-      "HYTECH",
-    ],
+    Engineering: ["A-ADMIN", "A-ART", "A-CUSTOMER", "ECO", "HYTECH"],
     Print: [
       "D-SCREENS",
       "E-INK",
@@ -107,6 +104,7 @@ function Jobs({
   const fetchData = async () => {
     if (startDate && endDate) {
       await fetchJobs(startDate, endDate);
+      fetchJobsWithNowAt(startDate, endDate);
     }
   };
 
@@ -115,8 +113,8 @@ function Jobs({
   }, [startDate, endDate]);
 
   const columns = useMemo(
-    () => getColumns(fetchPDF, editedUsers, setEditedUsers, jobs),
-    [editedUsers, jobs]
+    () => getColumns(fetchPDF, editedUsers, setEditedUsers, jobs, nowAtLoading),
+    [editedUsers, jobs, nowAtLoading]
   );
 
   const handleSaveUsers = async (e, table) => {
@@ -180,6 +178,7 @@ function Jobs({
 const mapStateToProps = (state) => ({
   jobs: state.getIn(["job", "jobs"]),
   jobsLoading: state.getIn(["job", "jobsLoading"]),
+  nowAtLoading: state.getIn(["job", "nowAtLoading"]),
 });
 
 export default connect(mapStateToProps, {
@@ -187,4 +186,5 @@ export default connect(mapStateToProps, {
   fetchPDF,
   saveNotes,
   setJobsLoading,
+  fetchJobsWithNowAt,
 })(Jobs);

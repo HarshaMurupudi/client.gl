@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { connect } from "react-redux";
 import { useLocation } from "react-router-dom";
 
-import { fetchJobs, saveNotes } from "./store/actions";
+import { fetchJobs, saveNotes, fetchOpenJobsNowAt } from "./store/actions";
 import { fetchPDF } from "../jobs/store/actions";
 import { getColumns } from "./columns";
 import WorkCenterQueue from "../../modules/Queue";
@@ -13,9 +13,11 @@ function Engineering({
   engineeringLoading,
   wc,
   title,
+  engineeringOpenJobsNowAtLoading,
   fetchJobs,
   fetchPDF,
   saveNotes,
+  fetchOpenJobsNowAt,
 }) {
   const location = useLocation();
   const pathName = location.pathname;
@@ -27,6 +29,7 @@ function Engineering({
 
   const fetchPageData = async () => {
     await fetchJobs(wc);
+    fetchOpenJobsNowAt(wc)
   };
 
   useEffect(() => {
@@ -51,9 +54,10 @@ function Engineering({
         editedUsers,
         setEditedUsers,
         totalEstHours,
-        getTableData
+        getTableData,
+        engineeringOpenJobsNowAtLoading
       ),
-    [value, editedUsers, totalEstHours]
+    [value, editedUsers, totalEstHours, engineeringOpenJobsNowAtLoading]
   );
 
   const handleSaveUsers = async () => {
@@ -81,10 +85,15 @@ const mapStateToProps = (state) => ({
   openJobs: state.getIn(["engineering", "openJobs"]),
   readyJobs: state.getIn(["engineering", "readyJobs"]),
   engineeringLoading: state.getIn(["engineering", "engineeringLoading"]),
+  engineeringOpenJobsNowAtLoading: state.getIn([
+    "engineering",
+    "engineeringOpenJobsNowAtLoading",
+  ]),
 });
 
 export default connect(mapStateToProps, {
   fetchJobs,
   fetchPDF,
   saveNotes,
+  fetchOpenJobsNowAt,
 })(Engineering);

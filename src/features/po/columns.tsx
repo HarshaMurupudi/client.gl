@@ -151,6 +151,11 @@ export const getColumns = (fetchPDF: any) => {
       Cell: ({ cell }: { cell: any }) => formatDate(cell.getValue()),
     },
     {
+      accessorKey: "Quote",
+      header: "Quote",
+      enableEditing: false,
+    },
+    {
       accessorKey: "Packlist",
       header: "Packlist",
       enableEditing: false,

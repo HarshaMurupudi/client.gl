@@ -27,6 +27,7 @@
     "highcharts": "^11.1.0",
     "highcharts-react-official": "^3.2.0",
     "immutable": "^4.3.0",
+    "js-file-download": "^0.4.12",
     "mantine-datatable": "^2.5.9",
     "mantine-react-table": "^1.1.1",
     "powerbi-client": "^2.22.3",
@@ -42,6 +43,7 @@
     "react-scripts": "5.0.1",
     "redux-immutable": "^4.0.0",
     "redux-thunk": "^2.4.2",
+    "reselect": "^4.1.8",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4",
     "yup": "^1.2.0"
