@@ -64,7 +64,7 @@ const Shipping = lazy(() => import("../pages/shipping/Z-SHIP"));
 
 // LAM
 const NLam = lazy(() => import("../pages/lam/N-LAM"));
-const NLamAuto = lazy(() => import("../pages/obsolete/N-LAM-AUTO"));
+const NLamAuto = lazy(() => import("../pages/lam/N-LAM-AUTO"));
 
 // OBSOLETE
 const CirASMBLY = lazy(() => import("../pages/obsolete/Cir_ASMBLY"));
