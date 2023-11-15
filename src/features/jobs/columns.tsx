@@ -82,7 +82,7 @@ export const getColumns = (
     }
   };
 
-  const PRODUCTION_STATUS_LIST = ['0', '1', '2'];
+  const PRODUCTION_STATUS_LIST = ["0", "1", "2"];
 
   const handleInventoryActionBtn = (row) => {
     window.open(
@@ -261,12 +261,14 @@ export const getColumns = (
         return Job;
       },
       Cell: ({ cell, row }) => {
-        const prodNote = cell.row.getValue("Production_Notes");
+        const prodNote = cell.row.getValue("Production_Status");
         let color: string | null = null;
 
         if (prodNote === "0") {
           color = "red";
         } else if (prodNote === "1") {
+          color = "orange";
+        } else if(prodNote === "2") {
           color = "green";
         }
 
