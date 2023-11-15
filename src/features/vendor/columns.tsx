@@ -281,6 +281,9 @@ export const getColumns = (
       accessorKey: "Est_Total_Hrs",
       header: "Est Total Hrs",
       enableEditing: false,
+      Cell: ({ cell, row }: { cell: any; row: any }) => {
+        return cell.getValue().toFixed(2);
+      },
       Footer: () => <div>Total Hrs: {totalEstHours.toFixed(2)}</div>,
     },
     //   ],
