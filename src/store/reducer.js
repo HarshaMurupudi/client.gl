@@ -18,6 +18,7 @@ import { reducer as materialJobsReducer } from "../features/material-requirement
 import { reducer as shiplinesReducer } from "../features/shiplines/store";
 import { reducer as mantineDataTableReducer } from "../components/mantine-data-table/store";
 import { reducer as attendanceReducer } from "../features/attendance/store";
+import { reducer as meetingReducer } from "../features/meeting/store";
 
 export default combineReducers({
   job: jobsReducer,
@@ -35,6 +36,7 @@ export default combineReducers({
   poDetails: poDetailsReducer,
   materialJobs: materialJobsReducer,
   shiplines: shiplinesReducer,
+  meeting: meetingReducer,
   mantineDataTable: mantineDataTableReducer,
   attendance: attendanceReducer,
 });

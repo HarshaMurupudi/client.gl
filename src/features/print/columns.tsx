@@ -287,6 +287,9 @@ export const getColumns = (
       header: "Est Total Hrs",
       enableMultiSort: true,
       enableEditing: false,
+      Cell: ({ cell, row }: { cell: any; row: any }) => {
+        return cell.getValue().toFixed(2);
+      },
       Footer: () => <div>Total Hrs: {totalEstHours.toFixed(2)}</div>,
     },
     // {

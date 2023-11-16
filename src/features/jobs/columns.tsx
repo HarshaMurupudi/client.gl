@@ -1,5 +1,6 @@
 import { format, addMinutes } from "date-fns";
 import { Box, Button, Text, Skeleton } from "@mantine/core";
+import { Link } from "react-router-dom";
 
 import { GLSelect } from "../../components/select";
 import { GLTextarea } from "../../components/ReactTableTextarea";
@@ -79,6 +80,15 @@ export const getColumns = (
         },
       });
     }
+  };
+
+  const PRODUCTION_STATUS_LIST = ["0", "1", "2"];
+
+  const handleInventoryActionBtn = (row) => {
+    window.open(
+      `/delivery-queue-details/${row.original.Part_Number}`,
+      "_blank"
+    );
   };
 
   const planCodes = [
@@ -251,12 +261,14 @@ export const getColumns = (
         return Job;
       },
       Cell: ({ cell, row }) => {
-        const prodNote = cell.row.getValue("Production_Notes");
+        const prodNote = cell.row.getValue("Production_Status");
         let color: string | null = null;
 
         if (prodNote === "0") {
           color = "red";
         } else if (prodNote === "1") {
+          color = "orange";
+        } else if(prodNote === "2") {
           color = "green";
         }
 
@@ -325,6 +337,40 @@ export const getColumns = (
       // filterVariant: 'autocomplete',
     },
     {
+      accessorKey: "On_Hand_Qty",
+      header: "On Hand Qty",
+      enableEditing: false,
+      // accessorFn: (row: any) => {
+      //   const Job = row["Now At"] || "";
+      //   return Job;
+      // },
+      mantineTableBodyCellProps: ({ cell, row }: { cell: any; row: any }) => ({
+        onClick: () => {
+          handleInventoryActionBtn(row);
+        },
+      }),
+      Cell: ({ cell, row }: { cell: any; row: any }) => {
+        if (nowAtLoading) {
+          return <Skeleton height={8} mt={6} width="70%" radius="xl" />;
+        } else if (cell.getValue() === undefined) {
+          return "-";
+        } else {
+          return (
+            <p
+              style={{
+                textDecoration: "underline",
+                cursor: "pointer",
+                margin: 0,
+              }}
+            >
+              {cell.getValue()}
+            </p>
+          );
+        }
+      },
+      // filterVariant: 'autocomplete',
+    },
+    {
       accessorKey: "Promised_Quantity",
       header: "Promised Quantity",
       enableEditing: false,
@@ -354,7 +400,7 @@ export const getColumns = (
       header: "Revenue",
       enableEditing: false,
       accessorFn: (row: any) => {
-        const revenue = Math.round(row["Order_Quantity"] * row["Unit_Price"]);
+        const revenue = Math.round(row["Order_Quantity"] * row["Unit_Price"]).toFixed(2);
         return revenue;
       },
       Cell: ({ cell, row }: { cell: any; row: any }) => {
@@ -363,7 +409,7 @@ export const getColumns = (
         // Define a CSS style object based on the revenue value
         const cellStyle = {
           margin: 0,
-          backgroundColor: revenue > 5000 ? "#69d461" : "transparent",
+          backgroundColor: revenue >= 5000 ? "#69d461" : "transparent",
         };
 
         return <p style={cellStyle}>${revenue}</p>;
@@ -425,6 +471,35 @@ export const getColumns = (
           return true;
         }
       },
+    },
+    {
+      accessorKey: "Production_Status",
+      header: "Production Status",
+      enableEditing: true,
+      editVariant: "select",
+      mantineEditSelectProps: ({ cell, row }: { cell: any; row: any }) => ({
+        data: PRODUCTION_STATUS_LIST,
+        clearable: true,
+        onChange: (value) => {
+          if (editedUsers[row.id]) {
+            setEditedUsers({
+              ...editedUsers,
+              [row.id]: {
+                ...editedUsers[row.id],
+                ...{ Production_Status: value },
+              },
+            });
+          } else {
+            setEditedUsers({
+              ...editedUsers,
+              [row.id]: {
+                ...row.original,
+                ...{ Production_Status: value },
+              },
+            });
+          }
+        },
+      }),
     },
     {
       accessorKey: "Production_Notes",

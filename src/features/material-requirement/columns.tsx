@@ -95,11 +95,17 @@ export const getColumns = (fetchPDF: any, totalOpenQty) => {
       accessorKey: "Est_Qty",
       header: "Qty Need",
       enableEditing: false,
+      Cell: ({ cell, row }: { cell: any; row: any }) => {
+        return cell.getValue().toFixed(2);
+      },
     },
     {
       accessorKey: "Act_Qty",
       header: "Qty Used",
       enableEditing: false,
+      Cell: ({ cell, row }: { cell: any; row: any }) => {
+        return cell.getValue().toFixed(2);
+      },
     },
     {
       accessorKey: "Deferred_Qty",
