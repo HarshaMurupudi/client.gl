@@ -16,6 +16,11 @@ export const setPendingJobsLoading = (status) => ({
   payload: status,
 });
 
+export const setJobQunatityLoading = (status) => ({
+  type: 'SET_JOB_QUANTITY_LOADING',
+  payload: status,
+});
+
 export const fetchPendingJobs = (flag) => async (dispatch) => {
   try {
     dispatch(setPendingJobsLoading(true));
@@ -25,6 +30,18 @@ export const fetchPendingJobs = (flag) => async (dispatch) => {
   } catch (error) {
   } finally {
     dispatch(setPendingJobsLoading(false));
+  }
+};
+
+export const fetchPendingJobsWithQuantity = (flag) => async (dispatch) => {
+  try {
+    dispatch(setJobQunatityLoading(true));
+
+    const response = await baseAxios.get('/jobs/pending/quantity');
+    dispatch(setPendingJobs(response.data.jobs));
+  } catch (error) {
+  } finally {
+    dispatch(setJobQunatityLoading(false));
   }
 };
 

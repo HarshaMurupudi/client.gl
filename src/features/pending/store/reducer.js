@@ -1,6 +1,7 @@
 const INITIAL_STATE = {
   pendingJobs: [],
   pendingJobsLoading: true,
+  jobQuantityLoading: false
 };
 
 const jobsReducer = (state = INITIAL_STATE, action) => {
@@ -15,6 +16,11 @@ const jobsReducer = (state = INITIAL_STATE, action) => {
         ...state,
         pendingJobsLoading: action.payload,
       };
+      case 'SET_JOB_QUANTITY_LOADING':
+        return {
+          ...state,
+          jobQuantityLoading: action.payload,
+        };
     default:
       return state;
   }
