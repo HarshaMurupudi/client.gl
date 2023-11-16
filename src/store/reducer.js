@@ -36,4 +36,5 @@ export default combineReducers({
   materialJobs: materialJobsReducer,
   shiplines: shiplinesReducer,
   mantineDataTable: mantineDataTableReducer,
+  attendance: attendanceReducer,
 });

@@ -1,7 +1,7 @@
 import { notifications } from '@mantine/notifications';
 
 import baseAxios from '../../../apis/baseAxios';
-import {delay} from '../../../utils';
+import { delay } from '../../../utils';
 
 const headers = {
   'Content-Type': 'application/json',
@@ -23,20 +23,20 @@ export const fetchAttendance = () => async (dispatch) => {
     dispatch(setAttendanceLoading(true));
 
     const response = await baseAxios.get(`/attendance`);
-    dispatch(setAttendance(response.data.employees));
+    dispatch(setAttendance(response.data.attendance));
   } catch (error) {
   } finally {
     dispatch(setAttendanceLoading(false));
   }
 };
 
-export const saveNotes = (employees) => async (dispatch) => {
+export const saveNotes = (attendance) => async (dispatch) => {
   try {
     dispatch(setAttendanceLoading(true));
 
    await baseAxios.patch('attendance/notes', 
       {
-        data: {employees},
+        data: { attendance },
         headers
       });
   } catch (error) {

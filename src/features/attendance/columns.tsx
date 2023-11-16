@@ -1,48 +1,24 @@
-import React, { useEffect, useState, useMemo } from "react";
-import { format, addMinutes } from "date-fns";
-import { Box, Button, Text, Textarea, Checkbox } from "@mantine/core";
+import { Text } from "@mantine/core";
 
 import { GLTextarea } from "../../components/ReactTableTextarea";
-import { formatDateWithoutTZ } from "../../utils";
-import { CheckboxFilter } from "../../components/TableComponents";
 
 export const getColumns = (
-  value: any,
   editedUsers: any,
   setEditedUsers: any,
-  getTableData: any
 ) => {
-  function isValidDate(d) {
-    // @ts-ignore
-    return d instanceof Date && !isNaN(d);
-  }
-  function formatDate(date: any) {
-    if (date) {
-      if (isValidDate(date)) {
-        return format(addMinutes(date, date.getTimezoneOffset()), "MM/dd/yyyy");
-      } else {
-        return "-";
-      }
-    } else {
-      return "-";
-    }
-  }
 
-  const onSelect = (e: any, cell: any, column: any) => {
-    const { row } = cell;
-
-    if (editedUsers[row.id]) {
-      setEditedUsers({
-        ...editedUsers,
-        [row.id]: { ...editedUsers[row.id], ...{ Job_Plan: e } },
-      });
-    } else {
-      setEditedUsers({
-        ...editedUsers,
-        [row.id]: { ...row.original, ...{ Job_Plan: e } },
-      });
-    }
-  };
+  const formatTime = (date) => {
+    if (date){
+      var hours = date.getUTCHours();
+      var minutes = date.getUTCMinutes();
+      var period = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+      var strTime = hours + ':' + minutes + ' ' + period;
+      return strTime;
+    } 
+    return "-";
+  }
 
   const onBlur = (event: any, cell: any, column: any) => {
     const { row } = cell;
@@ -66,44 +42,70 @@ export const getColumns = (
     }
   };
 
-  const names = [
-    "Thy Suon",
-    "Lyn Erie",
-    "Dalton Breitzman",
-    "Tracey Trudeau",
-    "Sumit Mahajan",
-    "Jon Erie",
-  ];
-
   const columns = [
     {
-      accessorKey: "First",
+      accessorKey: "First_Name",
       header: "First Name",
       enableEditing: false,
       filterVariant: "multi-select",
     },
     {
-      accessorKey: "Last",
+      accessorKey: "Last_Name",
       header: "Last Name",
       enableEditing: false,
       filterVariant: "multi-select",
     },
     {
-      accessorKey: "clockIn",
+      accessorFn: (row: any) => {
+        if (row.Login) {
+          const sDay = new Date(row.Login);
+          return sDay;
+        }
+      },
+      enableEditing: false,
+      id: "Login",
       header: "Clock In",
-      enableEditing: false,
+      enableColumnFilterModes: true,
+      Cell: ({ cell }: { cell: any }) => formatTime(cell.getValue())
     },
     {
-      accessorKey: "clockOut",
+      accessorFn: (row: any) => {
+        if (row.Logout) {
+          const sDay = new Date(row.Logout);
+          return sDay;
+        }
+      },
+      enableEditing: false,
+      id: "Logout",
       header: "Clock Out",
-      enableEditing: false,
-      filterVariant: "multi-select",
+      enableColumnFilterModes: true,
+      Cell: ({ cell }: { cell: any }) => formatTime(cell.getValue()),
     },
     {
-      accessorKey: "attendance_notes",
+      accessorKey: "Attendance_Note",
       header: "Notes",
-      enableEditing: false,
-      filterVariant: "multi-select",
+      enableEditing: true,
+      size: 250,
+      Cell: ({ cell, row }: { cell: any; row: any }) => (
+        <Text>{cell.getValue()}</Text>
+      ),
+      Edit: ({
+        cell,
+        column,
+        table,
+      }: {
+        cell: any;
+        column: any;
+        table: any;
+      }) => {
+        return (
+          <GLTextarea
+            cell={cell}
+            table={table}
+            onTextChange={(e: any) => onBlur(e, cell, column)}
+          />
+        );
+      },
     },
   ];
   return columns;

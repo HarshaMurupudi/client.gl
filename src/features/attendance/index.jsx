@@ -1,48 +1,76 @@
-import React, { useMemo, useState, useRef } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { Box } from "@mantine/core";
+import { Box, Text } from "@mantine/core";
 
-import { attendanceLoading, fetchAttendance } from "./store/actions"
+import { fetchAttendance, saveNotes } from "./store/actions"
 import { MantineDataTable } from "../../components/mantine-data-table";
 import { getColumns } from "./columns";
 
 function Attendance({
-  attendance
+  saveNotes,
+  attendance,
+  fetchAttendance,
+  attendanceLoading,
 }) {
-  const columns = useMemo(() => getColumns(), []);
-  const [currentAutofillSelection, setCurrentAutofillSelection] = useState("");
-  const timeoutRef = useRef(-1);
-  const [value, setValue] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [data, setData] = useState([]);
-  const [dateRange, setDateRange] = useState([null, null]);
+  const [editedUsers, setEditedUsers] = useState({});
 
-  const handleSubmit = async (data) => {
-    if (currentAutofillSelection) {
-      await fetchAttendance({ [currentAutofillSelection]: data.value });
-      setCurrentAutofillSelection("");
-      setValue("");
-      setData([]);
-    }
+  const columns = useMemo(
+    () => getColumns(editedUsers, setEditedUsers),
+    [editedUsers]
+    );
+
+  const handleSaveUsers = async (e, table) => {
+    await saveNotes(Object.values(editedUsers));
+    setEditedUsers({});
   };
 
+  const fetchData = async () => {
+    await fetchAttendance();
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const today = () => {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    let mm = today.getMonth() + 1;
+    let dd = today.getDate();
+    if (dd < 10) dd = '0' + dd;
+    if (mm < 10) mm = '0' + mm;
+    const formattedToday = mm + '/' + dd + '/' + yyyy;
+    return formattedToday;
+  }
+
   return (
-    <Box mt={32}>
+    <Box>
       <MantineDataTable
         title={"Attendance"}
         tableKey={`attendance-data-table`}
+        fetchData={fetchData}
         columns={columns}
         data={attendance || []}
         tableProps={{
-          // editingMode: "cell",
-          enableEditing: false,
-          getRowId: (row, index) => `${row.Employee}_${index}`,
+          editDisplayMode: "table",
+          enableEditing: true,
+          getRowId: (row, index) => `${row.Attendance_Note_ID}_${index}`,
         }}
+        handleSave={handleSaveUsers}
         loading={attendanceLoading}
+        hasRefetch={true}
         hasCustomActionBtn={true}
-        hasActionColumn={true}
-        enableGrouping={false}
+        hasActionColumn={false}
+        isEditable={true}
+        isEdited={Object.keys(editedUsers).length === 0}
+        editedUsers={editedUsers}
+        enableGrouping={true}
       >
+        <Box display={"flex"}>
+          <Text fz="md" fw={400} mr={8}>
+            {today()}
+          </Text>
+        </Box>
       </MantineDataTable>
     </Box>
   );
@@ -55,4 +83,5 @@ const mapStateToProps = (state) => ({
 
 export default connect(mapStateToProps, {
   fetchAttendance,
+  saveNotes,
 })(Attendance);
