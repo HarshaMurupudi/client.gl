@@ -1,5 +1,5 @@
 import { format, addMinutes } from "date-fns";
-import { Box, Button, Text } from "@mantine/core";
+import { Box, Button, Text, Skeleton } from "@mantine/core";
 
 import { GLTextarea } from "../../components/ReactTableTextarea";
 import { CheckboxFilter } from "../../components/TableComponents";
@@ -14,7 +14,8 @@ export const getColumns = (
   fetchPDF: any,
   editedUsers: any,
   setEditedUsers: any,
-  getTableData: any
+  getTableData: any,
+  nowAtLoading: any
 ) => {
   const onQtyClick = (job: any) => {
     window.open(
@@ -61,6 +62,13 @@ export const getColumns = (
     }
   };
 
+  const handleInventoryActionBtn = (row) => {
+    window.open(
+      `/delivery-queue-details/${row.original.Part_Number}`,
+      "_blank"
+    );
+  };
+
   const columns = [
     // {
     //   header: "Job",
@@ -102,6 +110,7 @@ export const getColumns = (
     {
       accessorKey: "Type",
       header: "Job Type",
+      enableEditing: false,
     },
     {
       accessorKey: "Sales_Code",
@@ -211,21 +220,90 @@ export const getColumns = (
     //     </Box>
     //   ),
     //   columns: [
+    // {
+    //   accessorKey: "On_Hand_Qty",
+    //   header: "On Hand Qty",
+    //   filterVariant: "autocomplete",
+    //   enableEditing: false,
+    //   mantineTableBodyCellProps: ({ cell, row }: { cell: any; row: any }) => ({
+    //     onClick: () => {
+    //       onQtyClick(row.original?.Job);
+    //     },
+    //   }),
+    //   Cell: ({ cell, row }: { cell: any; row: any }) => (
+    //     <Button variant="light" size="xs" compact>
+    //       Qty
+    //     </Button>
+    //   ),
+    // },
+    {
+      accessorKey: "Promised_Quantity",
+      header: "Promised Quantity",
+    },
     {
       accessorKey: "On_Hand_Qty",
       header: "On Hand Qty",
-      filterVariant: "autocomplete",
       enableEditing: false,
+      // accessorFn: (row: any) => {
+      //   const Job = row["Now At"] || "";
+      //   return Job;
+      // },
       mantineTableBodyCellProps: ({ cell, row }: { cell: any; row: any }) => ({
         onClick: () => {
-          onQtyClick(row.original?.Job);
+          handleInventoryActionBtn(row);
         },
       }),
-      Cell: ({ cell, row }: { cell: any; row: any }) => (
-        <Button variant="light" size="xs" compact>
-          Qty
-        </Button>
-      ),
+      Cell: ({ cell, row }: { cell: any; row: any }) => {
+        if (nowAtLoading) {
+          return <Skeleton height={8} mt={6} width="70%" radius="xl" />;
+        } else if (cell.getValue() === undefined) {
+          return "-";
+        } else {
+          return (
+            <p
+              style={{
+                textDecoration: "underline",
+                cursor: "pointer",
+                margin: 0,
+              }}
+            >
+              {cell.getValue()}
+            </p>
+          );
+        }
+      },
+      // filterVariant: 'autocomplete',
+    },
+    {
+      accessorKey: "Allocated_Qty",
+      header: "Allocated Qty",
+      enableEditing: false,
+      Cell: ({ cell, row }: { cell: any; row: any }) => {
+        if (nowAtLoading) {
+          return <Skeleton height={8} mt={6} width="70%" radius="xl" />;
+        } else if (cell.getValue() === undefined) {
+          return "-";
+        } else {
+          return cell.getValue();
+        }
+      },
+    },
+    {
+      accessorKey: "Available_Quantity",
+      accessorFn: (row: any) => {
+        return row.On_Hand_Qty - row.Allocated_Qty;
+      },
+      header: "Available Quantity",
+      enableEditing: false,
+      Cell: ({ cell, row }: { cell: any; row: any }) => {
+        if (nowAtLoading) {
+          return <Skeleton height={8} mt={6} width="70%" radius="xl" />;
+        } else if (cell.getValue() === undefined) {
+          return "-";
+        } else {
+          return cell.getValue();
+        }
+      },
     },
     {
       accessorKey: "Rev",
