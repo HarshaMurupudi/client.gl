@@ -65,7 +65,7 @@ function Meetings({
           }}
           loading={meetingsLoading}
           hasRefetch={true}
-          hasActionColumn={true}
+          hasActionColumn={false}
           enableGrouping={false}
           isEditable={canEdit()}
           isEdited={Object.keys(editedUsers).length === 0}
