@@ -33,7 +33,8 @@ function Jobs({
   const CATEGORY_LIST = [
     "All",
     "Engineering",
-    "Print",
+    "ScreenPrint",
+    "DigitalPrint",
     "Converting",
     "Circuit",
     "Finishing",
@@ -43,18 +44,20 @@ function Jobs({
   const categoryWCMap = {
     All: [],
     Engineering: ["A-ADMIN", "A-ART", "A-CUSTOMER", "ECO", "HYTECH"],
-    Print: [
+    ScreenPrint: [
       "D-SCREENS",
       "E-INK",
       "F-MATERIAL",
       "H-CYLINDER",
-      "H-JETRION",
       "H-ROLT",
       "H-SS SEMI",
-      "I-CANON",
-      "I-INDIGO",
       "K-DESPATCH",
       "ROCKWAY",
+    ],
+    DigitalPrint: [
+      "H-JETRION",
+      "I-CANON",
+      "I-INDIGO",
     ],
     Converting: [
       "L-REWIND",

@@ -18,7 +18,6 @@
     - [Note](#note)
     - [Inventory](#inventory)
     - [Material](#material)
-    - [Customer Approval](#customer-approval)
     - [Shiplines](#shiplines)
   - [Open Folder](#open-folder)
   - [Delivery Queue Notes](#delivery-queue-notes)
@@ -54,6 +53,7 @@ This project also uses TypeScript, a popular language that extends JavaScript by
 This project was built using GitHub, a version control platform that keeps track of changes and stores different builds for the application for future deployment. There are separate repositories for the client and server side of the GLI App
 - Client Side: [https://github.com/HarshaMurupudi/client.gl](https://github.com/HarshaMurupudi/client.gl) 
 - Server Side: [https://github.com/HarshaMurupudi/server.gl](https://github.com/HarshaMurupudi/server.gl)
+- Open Folder: [https://github.com/HarshaMurupudi/local.gl](https://github.com/HarshaMurupudi/local.gl)
 > Note that these still require the environment files to properly connect to the database, which are not stored on GitHub.
 
 The GLI App uses the Mantine UI Library. For customization that is not covered in this document refer to their general documentation [here](https://mantine.dev/overview/), and the Mantine-React-Table documentation [here](https://www.mantine-react-table.com/docs).
@@ -633,19 +633,20 @@ The next section is the logic for determining if we need to order material. We t
 Some jobs may have some material on hand but not all of it. While this is cutoff in the picture above, the selected job lists the material as "`278 from inventory & 325 required`". This is determined by adding the estimated quantity and temporary quantity, which would be negative at this point. If the needed temporary quantity is still less than the estimated quantity, then we know that some of the material is in the on hand inventory. 
     
 While we do have an On Order Material value, this does not affect available material for the jobs, as it needs to arrive and be entered into inventory and labeled as on hand. The On Order Material section is only to tell the user if someone has ordered that material yet.
-
----
-### Customer Approval
-  
-
   
 ---
 ### Shiplines
   
-
+The shiplines action button is a simple feature that reroutes the user to a delivery queue page with only that job. If you are in any queue and want to see the shipping details quickly, this is a simple method that repurposes another page that already has the details a user wants.
   
 ---
 ## Open Folder
+
+The open folder action button is a unique feature, as it requires a user to host a separate NodeJS server on their own computer. The reason for this is that the folders for Parts, Jobs, and Quotes are on a shared drive on the General Label network. We don't want all these folders open to anyone on the network. There are versions for Linux, MacOS, and Windows, which come from building the project found at [https://github.com/HarshaMurupudi/local.gl](https://github.com/HarshaMurupudi/local.gl). To build the distributions, clone or download this repository and enter `npm build` from the CMD/Terminal at that directory. 
+
+Let's first look at what a user needs in order to get the feature working. First, they need the files that are specific to their operating system. 
+
+> MacOS, which is very similar but does not need a `Batch` file to open on startup. When the project is built, there are three distributions for each operating system. The MacOS distribution utilizes a Unix Executable File named "`openFolder - MacOS`". General practice has us place this file in the Documents folder for a given user. From there, we can go to `System Preferences > Users & Groups > Current User > Login Items`, and add the file to the user's login items. 
   
 ## Delivery Queue Notes
 
