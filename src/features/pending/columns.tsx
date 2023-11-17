@@ -240,40 +240,40 @@ export const getColumns = (
       accessorKey: "Promised_Quantity",
       header: "Promised Quantity",
     },
-    {
-      accessorKey: "On_Hand_Qty",
-      header: "On Hand Qty",
-      enableEditing: false,
-      // accessorFn: (row: any) => {
-      //   const Job = row["Now At"] || "";
-      //   return Job;
-      // },
-      mantineTableBodyCellProps: ({ cell, row }: { cell: any; row: any }) => ({
-        onClick: () => {
-          handleInventoryActionBtn(row);
-        },
-      }),
-      Cell: ({ cell, row }: { cell: any; row: any }) => {
-        if (nowAtLoading) {
-          return <Skeleton height={8} mt={6} width="70%" radius="xl" />;
-        } else if (cell.getValue() === undefined) {
-          return "-";
-        } else {
-          return (
-            <p
-              style={{
-                textDecoration: "underline",
-                cursor: "pointer",
-                margin: 0,
-              }}
-            >
-              {cell.getValue()}
-            </p>
-          );
-        }
-      },
-      // filterVariant: 'autocomplete',
-    },
+    // {
+    //   accessorKey: "On_Hand_Qty",
+    //   header: "On Hand Qty",
+    //   enableEditing: false,
+    //   // accessorFn: (row: any) => {
+    //   //   const Job = row["Now At"] || "";
+    //   //   return Job;
+    //   // },
+    //   mantineTableBodyCellProps: ({ cell, row }: { cell: any; row: any }) => ({
+    //     onClick: () => {
+    //       handleInventoryActionBtn(row);
+    //     },
+    //   }),
+    //   Cell: ({ cell, row }: { cell: any; row: any }) => {
+    //     if (nowAtLoading) {
+    //       return <Skeleton height={8} mt={6} width="70%" radius="xl" />;
+    //     } else if (cell.getValue() === undefined) {
+    //       return "-";
+    //     } else {
+    //       return (
+    //         <p
+    //           style={{
+    //             textDecoration: "underline",
+    //             cursor: "pointer",
+    //             margin: 0,
+    //           }}
+    //         >
+    //           {cell.getValue()}
+    //         </p>
+    //       );
+    //     }
+    //   },
+    //   // filterVariant: 'autocomplete',
+    // },
     {
       accessorKey: "Allocated_Qty",
       header: "Allocated Qty",
