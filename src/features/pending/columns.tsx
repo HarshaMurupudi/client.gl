@@ -274,37 +274,37 @@ export const getColumns = (
     //   },
     //   // filterVariant: 'autocomplete',
     // },
-    {
-      accessorKey: "Allocated_Qty",
-      header: "Allocated Qty",
-      enableEditing: false,
-      Cell: ({ cell, row }: { cell: any; row: any }) => {
-        if (nowAtLoading) {
-          return <Skeleton height={8} mt={6} width="70%" radius="xl" />;
-        } else if (cell.getValue() === undefined) {
-          return "-";
-        } else {
-          return cell.getValue();
-        }
-      },
-    },
-    {
-      accessorKey: "Available_Quantity",
-      accessorFn: (row: any) => {
-        return row.On_Hand_Qty - row.Allocated_Qty;
-      },
-      header: "Available Quantity",
-      enableEditing: false,
-      Cell: ({ cell, row }: { cell: any; row: any }) => {
-        if (nowAtLoading) {
-          return <Skeleton height={8} mt={6} width="70%" radius="xl" />;
-        } else if (cell.getValue() === undefined) {
-          return "-";
-        } else {
-          return cell.getValue();
-        }
-      },
-    },
+    // {
+    //   accessorKey: "Allocated_Qty",
+    //   header: "Allocated Qty",
+    //   enableEditing: false,
+    //   Cell: ({ cell, row }: { cell: any; row: any }) => {
+    //     if (nowAtLoading) {
+    //       return <Skeleton height={8} mt={6} width="70%" radius="xl" />;
+    //     } else if (cell.getValue() === undefined) {
+    //       return "-";
+    //     } else {
+    //       return cell.getValue();
+    //     }
+    //   },
+    // },
+    // {
+    //   accessorKey: "Available_Quantity",
+    //   accessorFn: (row: any) => {
+    //     return row.On_Hand_Qty - row.Allocated_Qty;
+    //   },
+    //   header: "Available Quantity",
+    //   enableEditing: false,
+    //   Cell: ({ cell, row }: { cell: any; row: any }) => {
+    //     if (nowAtLoading) {
+    //       return <Skeleton height={8} mt={6} width="70%" radius="xl" />;
+    //     } else if (cell.getValue() === undefined) {
+    //       return "-";
+    //     } else {
+    //       return cell.getValue();
+    //     }
+    //   },
+    // },
     {
       accessorKey: "Rev",
       header: "Rev",
