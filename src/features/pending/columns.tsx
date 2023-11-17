@@ -240,71 +240,71 @@ export const getColumns = (
       accessorKey: "Promised_Quantity",
       header: "Promised Quantity",
     },
-    {
-      accessorKey: "On_Hand_Qty",
-      header: "On Hand Qty",
-      enableEditing: false,
-      // accessorFn: (row: any) => {
-      //   const Job = row["Now At"] || "";
-      //   return Job;
-      // },
-      mantineTableBodyCellProps: ({ cell, row }: { cell: any; row: any }) => ({
-        onClick: () => {
-          handleInventoryActionBtn(row);
-        },
-      }),
-      Cell: ({ cell, row }: { cell: any; row: any }) => {
-        if (nowAtLoading) {
-          return <Skeleton height={8} mt={6} width="70%" radius="xl" />;
-        } else if (cell.getValue() === undefined) {
-          return "-";
-        } else {
-          return (
-            <p
-              style={{
-                textDecoration: "underline",
-                cursor: "pointer",
-                margin: 0,
-              }}
-            >
-              {cell.getValue()}
-            </p>
-          );
-        }
-      },
-      // filterVariant: 'autocomplete',
-    },
-    {
-      accessorKey: "Allocated_Qty",
-      header: "Allocated Qty",
-      enableEditing: false,
-      Cell: ({ cell, row }: { cell: any; row: any }) => {
-        if (nowAtLoading) {
-          return <Skeleton height={8} mt={6} width="70%" radius="xl" />;
-        } else if (cell.getValue() === undefined) {
-          return "-";
-        } else {
-          return cell.getValue();
-        }
-      },
-    },
-    {
-      accessorKey: "Available_Quantity",
-      accessorFn: (row: any) => {
-        return row.On_Hand_Qty - row.Allocated_Qty;
-      },
-      header: "Available Quantity",
-      enableEditing: false,
-      Cell: ({ cell, row }: { cell: any; row: any }) => {
-        if (nowAtLoading) {
-          return <Skeleton height={8} mt={6} width="70%" radius="xl" />;
-        } else if (cell.getValue() === undefined) {
-          return "-";
-        } else {
-          return cell.getValue();
-        }
-      },
-    },
+    // {
+    //   accessorKey: "On_Hand_Qty",
+    //   header: "On Hand Qty",
+    //   enableEditing: false,
+    //   // accessorFn: (row: any) => {
+    //   //   const Job = row["Now At"] || "";
+    //   //   return Job;
+    //   // },
+    //   mantineTableBodyCellProps: ({ cell, row }: { cell: any; row: any }) => ({
+    //     onClick: () => {
+    //       handleInventoryActionBtn(row);
+    //     },
+    //   }),
+    //   Cell: ({ cell, row }: { cell: any; row: any }) => {
+    //     if (nowAtLoading) {
+    //       return <Skeleton height={8} mt={6} width="70%" radius="xl" />;
+    //     } else if (cell.getValue() === undefined) {
+    //       return "-";
+    //     } else {
+    //       return (
+    //         <p
+    //           style={{
+    //             textDecoration: "underline",
+    //             cursor: "pointer",
+    //             margin: 0,
+    //           }}
+    //         >
+    //           {cell.getValue()}
+    //         </p>
+    //       );
+    //     }
+    //   },
+    //   // filterVariant: 'autocomplete',
+    // },
+    // {
+    //   accessorKey: "Allocated_Qty",
+    //   header: "Allocated Qty",
+    //   enableEditing: false,
+    //   Cell: ({ cell, row }: { cell: any; row: any }) => {
+    //     if (nowAtLoading) {
+    //       return <Skeleton height={8} mt={6} width="70%" radius="xl" />;
+    //     } else if (cell.getValue() === undefined) {
+    //       return "-";
+    //     } else {
+    //       return cell.getValue();
+    //     }
+    //   },
+    // },
+    // {
+    //   accessorKey: "Available_Quantity",
+    //   accessorFn: (row: any) => {
+    //     return row.On_Hand_Qty - row.Allocated_Qty;
+    //   },
+    //   header: "Available Quantity",
+    //   enableEditing: false,
+    //   Cell: ({ cell, row }: { cell: any; row: any }) => {
+    //     if (nowAtLoading) {
+    //       return <Skeleton height={8} mt={6} width="70%" radius="xl" />;
+    //     } else if (cell.getValue() === undefined) {
+    //       return "-";
+    //     } else {
+    //       return cell.getValue();
+    //     }
+    //   },
+    // },
     {
       accessorKey: "Rev",
       header: "Rev",
