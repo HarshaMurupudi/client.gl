@@ -4,7 +4,7 @@ import PowerBi from "../../features/power-bi";
 
 function Dashboard() {
   return (
-    <Container>
+    <Container fluid>
       <PowerBi />
     </Container>
   );
