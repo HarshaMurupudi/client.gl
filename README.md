@@ -18,7 +18,6 @@
     - [Note](#note)
     - [Inventory](#inventory)
     - [Material](#material)
-    - [Customer Approval](#customer-approval)
     - [Shiplines](#shiplines)
   - [Open Folder](#open-folder)
   - [Delivery Queue Notes](#delivery-queue-notes)
@@ -54,6 +53,7 @@ This project also uses TypeScript, a popular language that extends JavaScript by
 This project was built using GitHub, a version control platform that keeps track of changes and stores different builds for the application for future deployment. There are separate repositories for the client and server side of the GLI App
 - Client Side: [https://github.com/HarshaMurupudi/client.gl](https://github.com/HarshaMurupudi/client.gl) 
 - Server Side: [https://github.com/HarshaMurupudi/server.gl](https://github.com/HarshaMurupudi/server.gl)
+- Open Folder: [https://github.com/HarshaMurupudi/local.gl](https://github.com/HarshaMurupudi/local.gl)
 > Note that these still require the environment files to properly connect to the database, which are not stored on GitHub.
 
 The GLI App uses the Mantine UI Library. For customization that is not covered in this document refer to their general documentation [here](https://mantine.dev/overview/), and the Mantine-React-Table documentation [here](https://www.mantine-react-table.com/docs).
@@ -633,19 +633,86 @@ The next section is the logic for determining if we need to order material. We t
 Some jobs may have some material on hand but not all of it. While this is cutoff in the picture above, the selected job lists the material as "`278 from inventory & 325 required`". This is determined by adding the estimated quantity and temporary quantity, which would be negative at this point. If the needed temporary quantity is still less than the estimated quantity, then we know that some of the material is in the on hand inventory. 
     
 While we do have an On Order Material value, this does not affect available material for the jobs, as it needs to arrive and be entered into inventory and labeled as on hand. The On Order Material section is only to tell the user if someone has ordered that material yet.
-
----
-### Customer Approval
-  
-
   
 ---
 ### Shiplines
   
-
+The shiplines action button is a simple feature that reroutes the user to a delivery queue page with only that job. If you are in any queue and want to see the shipping details quickly, this is a simple method that repurposes another page that already has the details a user wants.
   
 ---
 ## Open Folder
+
+The open folder action button is a unique feature, as it requires a user to host a separate NodeJS server on their own computer. The reason for this is that the folders for Parts, Jobs, and Quotes are on a shared drive on the General Label network. We don't want all these folders open to anyone on the network. 
+  
+There are versions for Linux, MacOS, and Windows, which come from building the project found at [https://github.com/HarshaMurupudi/local.gl](https://github.com/HarshaMurupudi/local.gl). To build the distributions, clone or download this repository and enter `npm build` from the CMD/Terminal at that directory. The image below is what the program looks like on MacOS, but it is identical on other operating systems. 
+
+![openFolderInstance](./documentationImages/openFolderInstance.png)
+
+Let's first look at what a user needs in order to get the feature working. First, they need the files that are specific to their operating system. 
+  
+- MacOS: The MacOS distribution does not need a `Batch` file to open on startup. When the project is built, there are three distributions for each operating system. The MacOS distribution utilizes a Unix Executable File named "`openFolder - MacOS`". General practice has us place this file in the Documents folder for a given user. From there, we can go to `System Preferences > Users & Groups > Current User > Login Items`, and add the file to the user's login items. You can enable the "Hide" option, but the user will still have to minimize the NodeJS instance. This process will be similar on Linux distributions, but using the separate distribution file.
+  
+- Windows: The Windows distribution utilizes an executable file named "`openFolder-Win.exe`". There are a lot more steps in order to have this program open on startup. 
+  - First, we need a batch file that contains: ``` start /min openFolder-Win.exe ".\openFolder-Win.exe" ```.
+  - This is placed in a folder along with the executable. General practice has been to place this folder within the user's `Program Files` that is on the same drive as their Windows OS. Then we create a shortcut for the `Batch` file, *not* the executable itself. A prompt will show up that will move the shortcut to the user's desktop.
+  - Next, open the windows run prompt by pressing `Windows Key + R`. In this box, type in "`Shell:common startup`" and hit enter. This will bring up the startup shortcuts folder, which is where we place the shortcut we just created. Test that this shortcut is working by running it. If it works properly, you will get a prompt from NodeJS asking for permissions, which you must allow. The next time this computer is restarted, the NodeJS application should open as minimized in the taskbar.
+
+Note that this program **must** stay running for this feature to work. If the program stops, you need to restart it.
+
+---
+
+Now we can take a look at how the `openFolder` program works. It utilizes JavaScript and NodeJS to implement simple logic that opens folders from the shared network drive. Parts, Jobs, and Quotes are in separate files that are then routed through the `index.js` file. Let's take a look at the `jobs.js` file to get an idea of the general structure.
+
+```JavaScript
+const express = require("express");
+const fs = require("fs");
+
+const router = express.Router();
+
+router.get("/folders/jobs/:jobID", async (req, res) => {
+  try {
+    const { jobID } = req.params;
+    var isWin = process.platform === "win32";
+
+    const filePath = isWin
+      ? `\\\\gl-fs01\\GLIOrders\\${jobID}\\`
+      : `/Volumes/GLIOrders/${jobID}/`;
+    const execPath = isWin ? `start "" "${filePath}"` : `open "${filePath}"`;
+
+    if (fs.existsSync(filePath)) {
+      await require("child_process").exec(execPath);
+
+      res.status(200).json({
+        status: "success",
+      });
+    } else {
+      res.status(400).json({
+        status: "Error",
+        message: "No folder",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({
+      status: "Error",
+      message: error.message,
+      code: error.code,
+    });
+  }
+});
+module.exports = router;
+```
+  
+Note that the router is directed to "`/folder/jobs/:jobID`". The first two folders are the same for other options, and then it routes to `:partID` and `:quoteID`, respectively. Next, see that it checks if the operating system is windows. This is important because the file path and command structure between Windows and MacOS/Linux are different. `filePath` and `execPath` are set for their respective operation system, and then a require function is run to execute the open folder command.
+
+Within [client.gl/src/components/mantine-data-table/index.tsx](../client.gl/src/components/mantine-data-table/index.tsx), the Open Folder action is called by the following code. This call communicates with the NodeJS instance on the user's computer. If the server file is not running, it will tell the user to run that file. If there is no folder for that specific job, it will show the no folder error that comes from the executable. 
+
+```TypeScript
+const handleFolderOpen = async (row, key) => {
+    const id = row.original[key];
+    await openFolder(id, key);
+  };
+```
   
 ## Delivery Queue Notes
 

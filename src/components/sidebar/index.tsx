@@ -65,6 +65,7 @@ const mockdata = [
       { label: "E-INK", link: "/e-ink" },
       { label: "H-CYLINDER", link: "/h-cylinder" },
       { label: "H-SS SEMI", link: "/h-ss-semi" },
+      { label: "H-SS-SEMIS", link: "/h-ss-semis"},
       { label: "K-DESPATCH", link: "/k-despatch" },
     ],
   },
