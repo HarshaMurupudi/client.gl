@@ -34,6 +34,7 @@ const EInk = lazy(() => import("../pages/print/E-INK"));
 const HCylinder = lazy(() => import("../pages/print/H-CYLINDER"));
 const KDespatch = lazy(() => import("../pages/print/K-DESPATCH"));
 const HSSSemi = lazy(() => import("../pages/screen-print/H-SS-SEMI"));
+const HSSSemis = lazy(() => import("../pages/screen-print/H-SS-SEMIS"));
 
 const FMaterial = lazy(() => import("../pages/f-material/F-MATERIAL"));
 
@@ -315,6 +316,18 @@ export const publicRoutes = [
         <PrivateRoute>
           <AppLayout>
             <HSSSemi />
+          </AppLayout>
+        </PrivateRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/h-ss-semis",
+    element: (
+      <Suspense fallback={<div>Loading</div>}>
+        <PrivateRoute>
+          <AppLayout>
+            <HSSSemis />
           </AppLayout>
         </PrivateRoute>
       </Suspense>
