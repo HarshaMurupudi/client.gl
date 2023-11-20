@@ -51,6 +51,7 @@ function Jobs({
       "H-CYLINDER",
       "H-ROLT",
       "H-SS SEMI",
+      "H-SS-SEMIS",
       "K-DESPATCH",
       "ROCKWAY",
     ],
