@@ -34,6 +34,7 @@ const mockdata = [
       { label: "PO Review", link: "/po" },
       { label: "Tracking", link: "/tracking" },
       { label: "Production Meeting", link: "/productionMeeting" },
+      { label: "Employee Review", link: "/employeeReview"}
     ],
   },
   {
