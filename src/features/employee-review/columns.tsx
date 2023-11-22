@@ -94,7 +94,7 @@ export const getColumns = (
       header: "Date",
       enableEditing: false,
       filterVariant: "multi-select",
-      size: 100,
+      size: 85,
       Cell: ({ cell }: { cell: any; }) => (
         <Text>{formatDate(cell.getValue())}</Text>
       ),
@@ -104,7 +104,7 @@ export const getColumns = (
       header: "Employee",
       enableEditing: false,
       filterVariant: "multi-select",
-      size: 150,
+      size: 125,
     },
     {
       accessorKey: "Report_Type",
@@ -116,8 +116,8 @@ export const getColumns = (
     {
       accessorKey: "Report_Note",
       header: "Report",
-      enableEditing: false,
-      size: 200,
+      enableEditing: true,
+      size: 250,
       Cell: ({ cell, row }: { cell: any; row: any }) => (
         <Text>{cell.getValue()}</Text>
       ),
@@ -168,7 +168,7 @@ export const getColumns = (
     {
       accessorKey: "Reviewed_By",
       header: "Reviewed By",
-      filterVariant: "multi-select",
+      filterVariant: "text",
       enableEditing: true,
       // editVariant: "multi-select",
       Edit: ({

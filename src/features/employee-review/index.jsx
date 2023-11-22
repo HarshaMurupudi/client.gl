@@ -43,7 +43,6 @@ function EmployeeReview({
 
   const fetchPageData = async () => {
     await fetchReports();
-    fetchNeedsReview(needsReview);
   };
 
   const createNewRow = async () => {
@@ -65,6 +64,7 @@ function EmployeeReview({
     setReportsLoading(true);
     await delay(10);
     setNeedsReview(value);
+    fetchNeedsReview(value);
 
     await delay(300);
     setReportsLoading(false);
@@ -92,7 +92,7 @@ function EmployeeReview({
     validate: {
       employee: (value) => (value === null ? 'You must select an employee' : null),
       reportType: (value) => (value === null ? 'You must select a report type' : null),
-      reportDetails: (value) => (value === null ? 'You must submit report details' : null),
+      reportDetails: (value) => (value === null || value === "" ? 'You must submit report details' : null),
       disclaimer: (value) => (value === false ? 'You must accept the report disclaimer' : null)
     },
 
@@ -215,7 +215,6 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps, {
-  // setModalVisibility,
   setReportsLoading,
   fetchNeedsReview,
   fetchReports,
