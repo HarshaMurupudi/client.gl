@@ -10,6 +10,7 @@ const Contracts = lazy(() => import("../pages/contracts"));
 const Operations = lazy(() => import("../pages/operations"));
 const PO = lazy(() => import("../pages/po"));
 const Tracking = lazy(() => import("../pages/tracking"));
+const EmployeeAttendance = lazy(() => import("../pages/attendance"));
 const Meeting = lazy(() => import("../pages/meeting"));
 const Dashboard = lazy(() => import("../pages/dashboard"));
 const PendingJobs = lazy(() => import("../pages/pending"));
@@ -34,6 +35,7 @@ const EInk = lazy(() => import("../pages/print/E-INK"));
 const HCylinder = lazy(() => import("../pages/print/H-CYLINDER"));
 const KDespatch = lazy(() => import("../pages/print/K-DESPATCH"));
 const HSSSemi = lazy(() => import("../pages/screen-print/H-SS-SEMI"));
+const HSSSemis = lazy(() => import("../pages/screen-print/H-SS-SEMIS"));
 
 const FMaterial = lazy(() => import("../pages/f-material/F-MATERIAL"));
 
@@ -321,6 +323,18 @@ export const publicRoutes = [
     ),
   },
   {
+    path: "/h-ss-semis",
+    element: (
+      <Suspense fallback={<div>Loading</div>}>
+        <PrivateRoute>
+          <AppLayout>
+            <HSSSemis />
+          </AppLayout>
+        </PrivateRoute>
+      </Suspense>
+    ),
+  },
+  {
     path: "/k-despatch",
     element: (
       <Suspense fallback={<div>Loading</div>}>
@@ -451,6 +465,18 @@ export const publicRoutes = [
         <PrivateRoute>
           <AppLayout>
             <PDmod01 />
+          </AppLayout>
+        </PrivateRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/attendance",
+    element: (
+      <Suspense fallback={<div>Loading</div>}>
+        <PrivateRoute>
+          <AppLayout>
+            <EmployeeAttendance />
           </AppLayout>
         </PrivateRoute>
       </Suspense>
