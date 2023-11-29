@@ -24,6 +24,7 @@ function Training({
   fetchTraining,
   fetchEmployees,
   saveNotes,
+  saveLogNotes,
   trainingLog,
   training,
   employees,
@@ -71,31 +72,6 @@ function Training({
     return employeeList.includes(employee) ? true : false;
   };
 
-  const employeesList = [
-    "Anibal Soares","Asann Phansen",
-    "Bill Allan","Bob Crowe",
-    "Brian Kohout","Cathleen Johnson",
-    "Dalton Breitzman","Dan Mikkelson",
-    "Dennis Clark","Erik Johnson",
-    "Garrett Mezzenga","Griselda  Cruz",
-    "Jason Mezzenga","Jennifer Welker",
-    "Jon Erie","Josh Stromberg",
-    "Lim Heang Hong","Lynette Erie",
-    "Mariam Fall","Mat Welch",
-    "Michael Baskfield","Mike Dircks",
-    "Nate Baskfield","Paul Stromberg",
-    "Pring Khun","Robin Aldrich",
-    "Saroeum Soeun","Scott Bohm",
-    "Sengly Kry","Slot Khay",
-    "Somera Suon","Sophana Hing",
-    "Spencer Erie","Sokhen Khun",
-    "Steve Homan","Sumit Mahajan",
-    "Susan Baskfield","Thomas Buchanan",
-    "Thomas Erickson","Thy Suon",
-    "Tim Phay","Tracey Trudeau",
-    "Uziel Cruz-Lopez","Zac Harding",
-  ];
-
   const trainees = [
     { value: 'all', label: 'All Employees', group: 'Departments'},
     { value: 'circuits', label: 'Circuits', group: 'Departments'},
@@ -112,15 +88,29 @@ function Training({
 
   const trainingTitles = ["Photoshop", "Laser", "Shipping Standards"];
 
-  const handleFormSubmit = async (form) => {
-    const data = [form.getTransformedValues()];
-    // if (form === masterForm) {
-    // await saveNotes(data);
-    // } else {
-    //   await saveLogNotes(data);
-    // }
-    // form.reset();
-    // fetchPageData();
+  const handleFormSubmit = async (event, form, isLogForm) => {
+    event.preventDefault()
+    const newData = form.getTransformedValues();
+  
+    setEditedUsers((prevEditedUsers) => {
+      return { ...prevEditedUsers, [newData.Training_ID]: newData };
+    });
+  
+    if (isLogForm) {
+      closeEmployeeTraining();
+      const departments = employees.filter(
+        (employee) => employee.department === newData.Employee_Name
+      );
+      newData.Needs_Repeat = newData.Needs_Repeat=== null ? "No" : "Yes";
+
+      await saveLogNotes([newData]);
+      setEditedUsers({});
+    } else {
+      closeMasterTraining();
+      await saveNotes([newData]);
+      setEditedUsers({});
+    }
+    // form.reset()
   };
 
   const masterForm = useForm({
@@ -135,11 +125,13 @@ function Training({
 
     transformValues: (values) => (
       {"Trainer": values.trainer, "Training_Description": values.trainingDesc, "Training_Title": values.trainingTitle, "Training_Type": values.trainingType}
-    )
+    ),
+
+    onSubmit: () => handleFormSubmit(masterForm, false)
   });
 
   const logForm = useForm({
-    initialValues: {date: null, trainer: null, trainingTitle: null, trainingDesc: null, trainingType: null, needsRepeat: null, repeatAfter: null, trainees: null},
+    initialValues: {date: null, trainer: null, trainingTitle: null, trainingType: null, needsRepeat: null, repeatAfter: null, trainees: null, trainingNote: null},
 
     validate: {
       date: (value) => (value === null ? 'You must enter a training date' : null),
@@ -149,7 +141,7 @@ function Training({
     },
 
     transformValues: (values) => (
-      {"Date": values.date, "Trainer": values.trainer, "Training_Description": values.trainingDesc, "Training_Title": values.trainingTitle, "Needs_Repeat": values.needsRepeat, "Repeat_After": values.repeatAfter, "Trainees": values.trainees}
+      {"Training_ID": null,"Date": values.date, "Trainer": values.trainer, "Training_Title": values.trainingTitle, "Needs_Repeat": values.needsRepeat, "Repeat_After": values.repeatAfter, "Employee_Name": values.trainees[0], "Note": values.trainingNote}
     )
   });
 
@@ -168,7 +160,7 @@ function Training({
         overlayProps={{
           blur: 1,
         }}>
-        <form onSubmit={masterForm.onSubmit(handleFormSubmit(masterForm))}>
+        <form >
           <Textarea
             withAsterisk
             mb={16}
@@ -203,7 +195,7 @@ function Training({
             <Button 
               type="submit"
               disabled={!masterForm.isValid()}
-              onClick={close}
+              onClick={(event) => handleFormSubmit(event, masterForm, false)}
               color="red" 
               mb={8} >
                 Submit
@@ -254,8 +246,9 @@ function Training({
         overlayProps={{
           blur: 1,
         }}>
-        <form onSubmit={logForm.onSubmit(handleFormSubmit(logForm))}>
+        <form>
           <DatePickerInput
+            mb={16}
             label="Date of Completion"
             placeholder="Pick Date"
             isClearable={true}
@@ -286,7 +279,6 @@ function Training({
             {...logForm.getInputProps('trainingTitle')}
           />
           <Textarea
-            withAsterisk
             mb={32}
             label="Training Description"
             placeholder="Description..."
@@ -296,7 +288,7 @@ function Training({
             mb={8}
             withAsterisk
             label="Will this need to be repeated?"
-            {...masterForm.getInputProps('needsRepeat')}
+            {...logForm.getInputProps('needsRepeat')}
           />
           <Textarea
             autosize
@@ -307,7 +299,7 @@ function Training({
             <Button 
               type="submit"
               disabled={!logForm.isValid()}
-              onClick={close}
+              onClick={(event) => handleFormSubmit(event, logForm, true)}
               color="red" 
               mt={32}
               mb={8} >
@@ -367,4 +359,5 @@ export default connect(mapStateToProps, {
   fetchEmployees,
   fetchTraining,
   saveNotes,
+  saveLogNotes
 })(Training);
