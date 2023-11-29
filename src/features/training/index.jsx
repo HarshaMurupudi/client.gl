@@ -7,13 +7,12 @@ import { useForm } from "@mantine/form";
 import { 
   fetchTraining, 
   saveNotes,
-  addNewRow
-  } from "./store/actions";
-import { 
-  fetchTrainingLog, 
+  addNewRow,
+  fetchEmployees,
+  fetchTrainingLog,
   saveLogNotes,
   addNewLogRow
-  } from "./trainingLogStore/actions";
+  } from "./store/actions";
 import { getTrainingColumns, getLogColumns } from "./columns";
 import { delay } from "../../utils";
 import { DatePickerInput } from "@mantine/dates";
@@ -23,10 +22,11 @@ function Training({
   trainingLoading,
   fetchTrainingLog,
   fetchTraining,
-  saveLogNotes,
+  fetchEmployees,
   saveNotes,
   trainingLog,
   training,
+  employees,
   user,
 }) {
   const [editedUsers, setEditedUsers] = useState({});
@@ -36,19 +36,20 @@ function Training({
   const [employeeTrainingOpened, { open: openEmployeeTraining, close: closeEmployeeTraining }] = useDisclosure(false);
 
   const trainingColumns = useMemo(
-    () => getTrainingColumns(editedUsers, setEditedUsers, training, trainingLog, trainingLogLoading),
-    [editedUsers, training, trainingLog, trainingLogLoading],
+    () => getTrainingColumns(editedUsers, setEditedUsers),
+    [editedUsers, setEditedUsers],
   );
 
   const employeeColumns = useMemo(
-    () => getLogColumns(editedUsers, setEditedUsers, training, trainingLog, trainingLogLoading),
-    [editedUsers, training, trainingLog, trainingLogLoading],
+    () => getLogColumns(editedUsers, setEditedUsers),
+    [editedUsers, setEditedUsers],
   );
 
   const fetchPageData = async () => {
     await fetchTraining();
     await fetchTrainingLog();
-  };
+    await fetchEmployees();
+    };
 
   const createNewRow = async () => {
     await addNewRow();
@@ -58,8 +59,9 @@ function Training({
     fetchPageData();
   }, []);
 
-  const handleSaveUsers = async (e, table) => {
+  const handleSaveUsers = async () => {
     await saveNotes(Object.values(editedUsers));
+    // await saveLogNotes(Object.values(editedUsers))
     setEditedUsers({});
   };
 
@@ -69,7 +71,30 @@ function Training({
     return employeeList.includes(employee) ? true : false;
   };
 
-  const employees = ["Spencer Erie", "Sumit Mahajan"];
+  const employeesList = [
+    "Anibal Soares","Asann Phansen",
+    "Bill Allan","Bob Crowe",
+    "Brian Kohout","Cathleen Johnson",
+    "Dalton Breitzman","Dan Mikkelson",
+    "Dennis Clark","Erik Johnson",
+    "Garrett Mezzenga","Griselda  Cruz",
+    "Jason Mezzenga","Jennifer Welker",
+    "Jon Erie","Josh Stromberg",
+    "Lim Heang Hong","Lynette Erie",
+    "Mariam Fall","Mat Welch",
+    "Michael Baskfield","Mike Dircks",
+    "Nate Baskfield","Paul Stromberg",
+    "Pring Khun","Robin Aldrich",
+    "Saroeum Soeun","Scott Bohm",
+    "Sengly Kry","Slot Khay",
+    "Somera Suon","Sophana Hing",
+    "Spencer Erie","Sokhen Khun",
+    "Steve Homan","Sumit Mahajan",
+    "Susan Baskfield","Thomas Buchanan",
+    "Thomas Erickson","Thy Suon",
+    "Tim Phay","Tracey Trudeau",
+    "Uziel Cruz-Lopez","Zac Harding",
+  ];
 
   const trainees = [
     { value: 'all', label: 'All Employees', group: 'Departments'},
@@ -89,13 +114,13 @@ function Training({
 
   const handleFormSubmit = async (form) => {
     const data = [form.getTransformedValues()];
-    if (form === masterForm) {
-      await saveNotes(data);
-    } else {
-      await saveLogNotes(data);
-    }
-    form.reset();
-    fetchPageData();
+    // if (form === masterForm) {
+    // await saveNotes(data);
+    // } else {
+    //   await saveLogNotes(data);
+    // }
+    // form.reset();
+    // fetchPageData();
   };
 
   const masterForm = useForm({
@@ -109,7 +134,7 @@ function Training({
     },
 
     transformValues: (values) => (
-      {"Trainer": value.trainer, "Training_Description": values.trainingDesc, "Training_Title": values.trainingTitle, "Training_Type": values.trainingType}
+      {"Trainer": values.trainer, "Training_Description": values.trainingDesc, "Training_Title": values.trainingTitle, "Training_Type": values.trainingType}
     )
   });
 
@@ -329,14 +354,17 @@ function Training({
 
 const mapStateToProps = (state) => ({
   training: state.getIn(["training", "training"]),
+  employees: state.getIn(["employees", "employees"]),
   trainingLog: state.getIn(["trainingLog", "trainingLog"]),
   trainingLoading: state.getIn(["training", "trainingLoading"]),
+  employeesLoading: state.getIn(["employees", "employeesLoading"]),
   trainingLogLoading: state.getIn(["trainingLog", "trainingLogLoading"]),
   user: state.getIn(["user","user"]),
 });
 
 export default connect(mapStateToProps, {
   fetchTrainingLog,
+  fetchEmployees,
   fetchTraining,
   saveNotes,
 })(Training);

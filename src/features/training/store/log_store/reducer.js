@@ -3,7 +3,7 @@ const INITIAL_STATE = {
   trainingLogLoading: false,
 };
 
-const trainingLogReducer = (state = INITIAL_STATE, action) => {
+export const trainingLogReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case 'SET_TRAINING_LOG':
       return {
@@ -15,7 +15,7 @@ const trainingLogReducer = (state = INITIAL_STATE, action) => {
         ...state,
         trainingLogLoading: action.payload,
       };
-    case 'ADD_NEW_ROW':
+    case 'ADD_NEW_LOG_ROW':
       return {
         ...state,
         trainingLog: [...state.training, {Training_ID: null, Date: null, Training_Name: null, Training_Type: null, Needs_Repeat: null, Repeat_After: null, Trainees: null}]

@@ -48,3 +48,69 @@ export const saveNotes = (training) => async (dispatch) => {
     dispatch(setTrainingLoading(false));
   }
 };
+
+export const setTrainingLog = (status) => ({
+  type: 'SET_TRAINING_LOG',
+  payload: status,
+});
+
+export const setTrainingLogLoading = (status) => ({
+  type: 'SET_TRAINING_LOG_LOADING',
+  payload: status,
+});
+
+export const addNewLogRow = () => ({
+  type: 'ADD_NEW_LOG_ROW',
+});
+
+export const fetchTrainingLog = (flag) => async (dispatch) => {
+  try {
+    dispatch(setTrainingLogLoading(true));
+
+    const response = await baseAxios.get('/training/log');
+    dispatch(setTrainingLog(response.data.trainingLog));
+  } catch (error) {
+  } finally {
+    dispatch(setTrainingLogLoading(false));
+  }
+};
+
+export const saveLogNotes = (trainingLog) => async (dispatch) => {
+  try {
+    dispatch(setTrainingLogLoading(true));
+
+   await baseAxios.patch('training/log/notes', 
+      {
+        data: {trainingLog},
+        headers
+      });
+  } catch (error) {
+    console.log(error);
+  } finally {
+    await delay(1200)
+    dispatch(setTrainingLogLoading(false));
+  }
+};
+
+export const setEmployees = (status) => ({
+  type: 'SET_EMPLOYEES',
+  payload: status,
+});
+
+export const setEmployeesLoading = (status) => ({
+  type: 'SET_EMPLOYEES_LOADING',
+  payload: status,
+});
+
+
+export const fetchEmployees = (flag) => async (dispatch) => {
+  try {
+    dispatch(setEmployeesLoading(true));
+
+    const response = await baseAxios.get('/training/employees');
+    dispatch(setEmployees(response.data.employees));
+  } catch (error) {
+  } finally {
+    dispatch(setEmployeesLoading(false));
+  }
+};

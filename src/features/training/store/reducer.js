@@ -1,6 +1,8 @@
 const INITIAL_STATE = {
   training: [],
   trainingLoading: false,
+  employees: [],
+  employeesLoading: false
 };
 
 const trainingReducer = (state = INITIAL_STATE, action) => {

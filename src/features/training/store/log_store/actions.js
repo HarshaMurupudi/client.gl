@@ -1,5 +1,5 @@
-import baseAxios from '../../../apis/baseAxios';
-import {delay} from '../../../utils';
+import baseAxios from '../../../../apis/baseAxios';
+import {delay} from '../../../../utils';
 
 const headers = {
   'Content-Type': 'application/json',
@@ -17,7 +17,7 @@ export const setTrainingLogLoading = (status) => ({
 });
 
 export const addNewLogRow = () => ({
-  type: 'ADD_NEW_ROW',
+  type: 'ADD_NEW_LOG_ROW',
 });
 
 export const fetchTrainingLog = (flag) => async (dispatch) => {

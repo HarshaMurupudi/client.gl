@@ -20,7 +20,8 @@ import { reducer as mantineDataTableReducer } from "../components/mantine-data-t
 import { reducer as attendanceReducer } from "../features/attendance/store";
 import { reducer as meetingReducer } from "../features/meeting/store";
 import { reducer as trainingReducer } from "../features/training/store";
-import { reducer as trainingLogReducer } from "../features/training/trainingLogStore";
+import { reducer as trainingLogReducer } from "../features/training/store/log_store";
+import { reducer as employeesReducer } from "../features/training/store/employees_store";
 
 export default combineReducers({
   job: jobsReducer,
@@ -41,6 +42,7 @@ export default combineReducers({
   meeting: meetingReducer,
   training: trainingReducer,
   trainingLog: trainingLogReducer,
+  employees: employeesReducer,
   mantineDataTable: mantineDataTableReducer,
   attendance: attendanceReducer,
 });
