@@ -133,8 +133,26 @@ export const openFolder = (id, key) => async (dispatch) => {
 export const createJobFolders = (job) => async (dispatch) => {
   try {
     await baseAxios.post(`jobs/folder/${job}`);
+    notifications.show({
+      title: "Success",
+      message: "Folders created",
+      color: "green",
+    });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
+    if (error.response.data.message) {
+      notifications.show({
+        title: "Error",
+        message: error.response.data.message,
+        color: "red",
+      });
+    } else {
+      notifications.show({
+        title: "Error",
+        message: "Failed to create folders",
+        color: "red",
+      });
+    }
   } finally {
     dispatch(fetchAutoCreateJobs());
   }
@@ -143,8 +161,27 @@ export const createJobFolders = (job) => async (dispatch) => {
 export const createPartFolders = (part) => async (dispatch) => {
   try {
     await baseAxios.post(`parts/folder/${part}`);
+
+    notifications.show({
+      title: "Success",
+      message: "Folders created",
+      color: "green",
+    });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
+    if (error.response.data.message) {
+      notifications.show({
+        title: "Error",
+        message: error.response.data.message,
+        color: "red",
+      });
+    } else {
+      notifications.show({
+        title: "Error",
+        message: "Failed to create folders",
+        color: "red",
+      });
+    }
   } finally {
     dispatch(fetchAutoCreateParts());
   }
