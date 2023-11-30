@@ -11,6 +11,7 @@ import {
   formatDateWithoutTZ,
   formatDate,
   getShipByDateColumn,
+  getEarlyShipDateColumn
 } from "../../utils";
 
 export const getColumns = (
@@ -318,6 +319,7 @@ export const getColumns = (
       ),
     },
     getShipByDateColumn(),
+    getEarlyShipDateColumn(),
     {
       accessorKey: "Now At",
       header: "Now At",
