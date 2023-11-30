@@ -4,17 +4,8 @@ import { useDisclosure } from "@mantine/hooks";
 import { Box, Select, MultiSelect, Button, Modal, Textarea, Text, Checkbox } from "@mantine/core";
 import { MantineDataTable } from "../../components/mantine-data-table";
 import { useForm } from "@mantine/form";
-import { 
-  fetchTraining, 
-  saveNotes,
-  addNewRow,
-  fetchEmployees,
-  fetchTrainingLog,
-  saveLogNotes,
-  addNewLogRow
-  } from "./store/actions";
+import { fetchTraining, fetchNames, saveNotes, fetchEmployees, fetchTrainingLog, saveLogNotes } from "./store/actions";
 import { getTrainingColumns, getLogColumns } from "./columns";
-import { delay } from "../../utils";
 import { DatePickerInput } from "@mantine/dates";
 
 function Training({
@@ -23,11 +14,13 @@ function Training({
   fetchTrainingLog,
   fetchTraining,
   fetchEmployees,
+  fetchNames,
   saveNotes,
   saveLogNotes,
   trainingLog,
   training,
   employees,
+  names,
   user,
 }) {
   const [editedUsers, setEditedUsers] = useState({});
@@ -36,24 +29,15 @@ function Training({
 
   const [employeeTrainingOpened, { open: openEmployeeTraining, close: closeEmployeeTraining }] = useDisclosure(false);
 
-  const trainingColumns = useMemo(
-    () => getTrainingColumns(editedUsers, setEditedUsers),
-    [editedUsers, setEditedUsers],
-  );
+  const trainingColumns = useMemo(() => getTrainingColumns(editedUsers, setEditedUsers), [editedUsers, setEditedUsers]);
 
-  const employeeColumns = useMemo(
-    () => getLogColumns(editedUsers, setEditedUsers),
-    [editedUsers, setEditedUsers],
-  );
+  const employeeColumns = useMemo(() => getLogColumns(editedUsers, setEditedUsers), [editedUsers, setEditedUsers]);
 
   const fetchPageData = async () => {
+    await fetchNames();
     await fetchTraining();
     await fetchTrainingLog();
     await fetchEmployees();
-    };
-
-  const createNewRow = async () => {
-    await addNewRow();
   };
 
   useEffect(() => {
@@ -62,59 +46,131 @@ function Training({
 
   const handleSaveUsers = async () => {
     await saveNotes(Object.values(editedUsers));
-    // await saveLogNotes(Object.values(editedUsers))
     setEditedUsers({});
   };
 
-  const canEdit = () => {
-    const { employee } = user;
-    const employeeList = ["51040", "Spencer Erie"];
-    return employeeList.includes(employee) ? true : false;
-  };
+  const uniqueEntries = new Set();
 
   const trainees = [
-    { value: 'all', label: 'All Employees', group: 'Departments'},
-    { value: 'circuits', label: 'Circuits', group: 'Departments'},
-    { value: 'printing', label: 'Printing', group: 'Departments'},
-    { value: 'screens', label: 'Screens', group: 'Departments'},
-    { value: 'sales', label: 'Sales', group: 'Departments'},
-    { value: 'shipping', label: 'Shipping', group: 'Departments'},
-    ...employees.map(employee => ({ value: employee, label: employee, group: 'Employees' })),
-  ];
+    { value: "All Employees", label: "All Employees", group: 'Departments' },
+    ...employees.map(employee => {
+      const departmentEntry = { value: employee.Department, label: employee.Department, group: 'Departments' };
 
-  const trainers = ["Spencer Erie"]
+      if (!uniqueEntries.has(departmentEntry.value) && departmentEntry.value !== null) {
+        uniqueEntries.add(departmentEntry.value);
+        return departmentEntry;
+      }
 
-  const types = ["Safety", "Press", "Misc."];
+      return null;
+    }),
+    ...names.map(name => {
+      const traineeEntry = { value: name, label: name, group: 'Employees' };
 
-  const trainingTitles = ["Photoshop", "Laser", "Shipping Standards"];
+      if (!uniqueEntries.has(traineeEntry.value)) {
+        uniqueEntries.add(traineeEntry.value);
+        return traineeEntry;
+      }
 
-  const handleFormSubmit = async (event, form, isLogForm) => {
-    event.preventDefault()
-    const newData = form.getTransformedValues();
-  
-    setEditedUsers((prevEditedUsers) => {
-      return { ...prevEditedUsers, [newData.Training_ID]: newData };
-    });
-  
-    if (isLogForm) {
-      closeEmployeeTraining();
-      const departments = employees.filter(
-        (employee) => employee.department === newData.Employee_Name
-      );
-      newData.Needs_Repeat = newData.Needs_Repeat=== null ? "No" : "Yes";
+      return null;
+    }),
+  ].filter(Boolean);
 
-      await saveLogNotes([newData]);
-      setEditedUsers({});
-    } else {
-      closeMasterTraining();
-      await saveNotes([newData]);
-      setEditedUsers({});
-    }
-    // form.reset()
+  uniqueEntries.clear();
+
+  const getUniqueEntries = (data, property, group) => {
+    const uniqueEntries = new Set();
+
+    return [
+      ...data.map(entry => {
+        const entryData = { value: entry[property], label: entry[property], group };
+
+        if (!uniqueEntries.has(entryData.value)) {
+          uniqueEntries.add(entryData.value);
+          return entryData;
+        }
+
+        return null;
+      }),
+    ].filter(Boolean);
   };
 
+  const trainers = getUniqueEntries(training, "Trainer", "Entered Trainers");
+  const trainingTitles = getUniqueEntries(training, "Training_Title", "Entered Training");
+
+  const handleFormSubmit = async (event, form, isLogForm) => {
+    event.preventDefault();
+    const newData = form.getTransformedValues();
+  
+    await fetchEmployees();
+  
+    const isDepartment = employees && employees.some(employee => employee.Department === newData.Employee_Name);
+  
+    const handleFormSubmission = async (entries, isLogForm) => {
+      setEditedUsers((prevEditedUsers) => ({ ...prevEditedUsers, [newData.Training_ID]: newData }));
+  
+      if (isLogForm) {
+        closeEmployeeTraining();
+        entries.forEach(entry => {
+          entry.Needs_Repeat = entry.Needs_Repeat === null ? "No" : "Yes";
+        });
+  
+        await saveLogNotes(entries);
+      } else {
+        closeMasterTraining();
+        await saveNotes(entries);
+      }
+  
+      setEditedUsers({});
+    };
+  
+    const processTrainees = async (traineeValues) => {
+      const entriesForTrainees = traineeValues.map(trainee => ({
+        ...newData,
+        Employee_Name: trainee,
+      }));
+  
+      await handleFormSubmission(entriesForTrainees, isLogForm);
+      form.reset();
+      fetchPageData();
+    };
+  
+    if (Array.isArray(newData.Employee_Name)) {
+      const departmentNames = [];
+      const additionalEmployees = [];
+  
+      newData.Employee_Name.forEach(name => {
+        const isDept = employees.some(employee => employee.Department === name);
+        isDept ? departmentNames.push(name) : additionalEmployees.push(name);
+      });
+  
+      const employeesFromDepartments = departmentNames.flatMap(deptName =>
+        employees.filter(employee => employee.Department === deptName)
+      );
+  
+      const allEmployeeValues = [
+        ...employeesFromDepartments.map(employee => `${employee.First_Name} ${employee.Last_Name}`),
+        ...additionalEmployees,
+      ];
+  
+      await processTrainees(allEmployeeValues);
+    } else if (newData.Employee_Name === "All Employees") {
+      const allEmployeeValues = employees.map(employee => `${employee.First_Name} ${employee.Last_Name}`);
+      await processTrainees(allEmployeeValues);
+    } else if (isDepartment) {
+      const employeesInDepartment = employees.filter(employee => employee.Department === newData.Employee_Name);
+      const traineeValuesForDepartment = employeesInDepartment.map(employee => `${employee.First_Name} ${employee.Last_Name}`);
+      await processTrainees(traineeValuesForDepartment);
+    } else {
+      await processTrainees([newData.Employee_Name]);
+    }
+  };
+  
+  
+  
+  
+  
   const masterForm = useForm({
-    initialValues: {date: null, trainer: null, trainingDesc: null, trainingTitle: null, trainingType: null, needsRepeat: null, repeatAfter: null, trainees: null},
+    initialValues: { date: null, trainer: null, trainingDesc: null, trainingTitle: null, trainingType: null, needsRepeat: null, repeatAfter: null, trainees: null },
 
     validate: {
       trainer: (value) => (value === null ? "You must enter the trainer's name" : null),
@@ -123,15 +179,20 @@ function Training({
       trainingDesc: (value) => (value === null ? 'You must enter a training description' : null),
     },
 
-    transformValues: (values) => (
-      {"Trainer": values.trainer, "Training_Description": values.trainingDesc, "Training_Title": values.trainingTitle, "Training_Type": values.trainingType}
-    ),
+    transformValues: (values) => ({
+      "Training_ID": null,
+      "Date": new Date(),
+      "Trainer": values.trainer,
+      "Training_Description": values.trainingDesc,
+      "Training_Title": values.trainingTitle,
+      "Training_Type": values.trainingType
+    }),
 
-    onSubmit: () => handleFormSubmit(masterForm, false)
+    onSubmit: () => handleFormSubmit(masterForm, false),
   });
 
   const logForm = useForm({
-    initialValues: {date: null, trainer: null, trainingTitle: null, trainingType: null, needsRepeat: null, repeatAfter: null, trainees: null, trainingNote: null},
+    initialValues: { date: null, trainer: null, trainingTitle: null, trainingType: null, needsRepeat: null, repeatAfter: null, trainees: null, trainingNote: null },
 
     validate: {
       date: (value) => (value === null ? 'You must enter a training date' : null),
@@ -140,12 +201,13 @@ function Training({
       trainees: (value) => (value === null ? 'You must select the trainees' : null),
     },
 
-    transformValues: (values) => (
-      {"Training_ID": null,"Date": values.date, "Trainer": values.trainer, "Training_Title": values.trainingTitle, "Needs_Repeat": values.needsRepeat, "Repeat_After": values.repeatAfter, "Employee_Name": values.trainees[0], "Note": values.trainingNote}
-    )
+    transformValues: (values) => ({
+      "Training_ID": null, "Date": values.date, "Trainer": values.trainer, "Training_Title": values.trainingTitle,
+      "Needs_Repeat": values.needsRepeat, "Repeat_After": values.repeatAfter, "Employee_Name": values.trainees, "Note": values.trainingNote
+    })
   });
 
-  const userName = ( user.First_Name + " " + user.Last_Name );
+  const userName = `${user.First_Name} ${user.Last_Name}`;
 
   return (
     <Box>
@@ -177,12 +239,12 @@ function Training({
             autosize
             {...masterForm.getInputProps('trainingTitle')}
           />
-          <Select
+          <Textarea
             withAsterisk
             mb={16}
-            label="Select Training Type"
+            label="Enter Training Type"
             placeholder="Training Type"
-            data={(types || []).map((type) => ({ value: type, label: type }))}
+            autosize
             {...masterForm.getInputProps('trainingType')}
           />
           <Textarea
@@ -259,7 +321,7 @@ function Training({
             mb={16}
             label="Select the Trainer"
             placeholder="Training Name"
-            data={(trainers || []).map((type) => ({ value: type, label: type }))}
+            data={(trainers)}
             {...logForm.getInputProps('trainer')}
           />          
           <MultiSelect
@@ -275,14 +337,14 @@ function Training({
             mb={16}
             label="Select the Training"
             placeholder="Training Title"
-            data={(trainingTitles || []).map((type) => ({ value: type, label: type }))}
+            data={trainingTitles}
             {...logForm.getInputProps('trainingTitle')}
           />
           <Textarea
             mb={32}
             label="Training Description"
             placeholder="Description..."
-            {...logForm.getInputProps('trainingDesc')}
+            {...logForm.getInputProps('trainingNote')}
           />
           <Checkbox
             mb={8}
@@ -339,12 +401,12 @@ function Training({
         </MantineDataTable>
       </Box>
     </Box>
-
-    
   );
 }
 
 const mapStateToProps = (state) => ({
+  names: state.getIn(["names", "names"]),
+  namesLoading: state.getIn(["names", "namesLoading"]),
   training: state.getIn(["training", "training"]),
   employees: state.getIn(["employees", "employees"]),
   trainingLog: state.getIn(["trainingLog", "trainingLog"]),
@@ -358,6 +420,7 @@ export default connect(mapStateToProps, {
   fetchTrainingLog,
   fetchEmployees,
   fetchTraining,
+  fetchNames,
   saveNotes,
   saveLogNotes
 })(Training);

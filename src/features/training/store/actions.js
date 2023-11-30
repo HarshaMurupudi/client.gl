@@ -16,10 +16,6 @@ export const setTrainingLoading = (status) => ({
   payload: status,
 });
 
-export const addNewRow = () => ({
-  type: 'ADD_NEW_ROW',
-});
-
 export const fetchTraining = (flag) => async (dispatch) => {
   try {
     dispatch(setTrainingLoading(true));
@@ -57,10 +53,6 @@ export const setTrainingLog = (status) => ({
 export const setTrainingLogLoading = (status) => ({
   type: 'SET_TRAINING_LOG_LOADING',
   payload: status,
-});
-
-export const addNewLogRow = () => ({
-  type: 'ADD_NEW_LOG_ROW',
 });
 
 export const fetchTrainingLog = (flag) => async (dispatch) => {
@@ -102,7 +94,6 @@ export const setEmployeesLoading = (status) => ({
   payload: status,
 });
 
-
 export const fetchEmployees = (flag) => async (dispatch) => {
   try {
     dispatch(setEmployeesLoading(true));
@@ -112,5 +103,27 @@ export const fetchEmployees = (flag) => async (dispatch) => {
   } catch (error) {
   } finally {
     dispatch(setEmployeesLoading(false));
+  }
+};
+
+export const setNames = (status) => ({
+  type: 'SET_NAMES',
+  payload: status,
+});
+
+export const setNamesLoading = (status) => ({
+  type: 'SET_NAMES_LOADING',
+  payload: status,
+});
+
+export const fetchNames = (flag) => async (dispatch) => {
+  try {
+    dispatch(setNamesLoading(true));
+
+    const response = await baseAxios.get('/training/employees');
+    dispatch(setNames(response.data.names));
+  } catch (error) {
+  } finally {
+    dispatch(setNamesLoading(false));
   }
 };

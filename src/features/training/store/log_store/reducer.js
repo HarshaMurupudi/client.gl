@@ -15,11 +15,6 @@ export const trainingLogReducer = (state = INITIAL_STATE, action) => {
         ...state,
         trainingLogLoading: action.payload,
       };
-    case 'ADD_NEW_LOG_ROW':
-      return {
-        ...state,
-        trainingLog: [...state.training, {Training_ID: null, Date: null, Training_Name: null, Training_Type: null, Needs_Repeat: null, Repeat_After: null, Trainees: null}]
-      }
     default:
       return state;
   }

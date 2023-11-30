@@ -211,6 +211,15 @@ export const getLogColumns = (
         <Text>{cell.getValue()}</Text>
       ),
     },
+    // {
+    //   accessorKey: "Department",
+    //   header: "Department",
+    //   enableEditing: false,
+    //   filterVariant: "multi-select",
+    //   Cell: ({ cell }: { cell: any; }) => (
+    //     <Text>{cell.getValue()}</Text>
+    //   ),
+    // },
     {
       accessorKey: "Training_Title",
       header: "Training Title",

@@ -1,8 +1,6 @@
 const INITIAL_STATE = {
   training: [],
   trainingLoading: false,
-  employees: [],
-  employeesLoading: false
 };
 
 const trainingReducer = (state = INITIAL_STATE, action) => {
@@ -17,11 +15,6 @@ const trainingReducer = (state = INITIAL_STATE, action) => {
         ...state,
         trainingLoading: action.payload,
       };
-    case 'ADD_NEW_ROW':
-      return {
-        ...state,
-        training: [...state.training, {Training_ID: null, Date: null, Training_Name: null, Training_Type: null, Needs_Repeat: null, Repeat_After: null, Trainees: null}]
-      }
     default:
       return state;
   }
