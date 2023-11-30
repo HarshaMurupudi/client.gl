@@ -19,6 +19,8 @@ import { reducer as shiplinesReducer } from "../features/shiplines/store";
 import { reducer as mantineDataTableReducer } from "../components/mantine-data-table/store";
 import { reducer as attendanceReducer } from "../features/attendance/store";
 import { reducer as meetingReducer } from "../features/meeting/store";
+import  {reducer as autoCreateJobFolderReducer} from "../features/auto-create/store"
+import  {reducer as autoCreatePartFolderReducer} from "../features/auto-create-part-folder/store"
 
 export default combineReducers({
   job: jobsReducer,
@@ -39,4 +41,6 @@ export default combineReducers({
   meeting: meetingReducer,
   mantineDataTable: mantineDataTableReducer,
   attendance: attendanceReducer,
+  autoCreateJobFolder: autoCreateJobFolderReducer,
+  autoCreatePartFolder: autoCreatePartFolderReducer
 });

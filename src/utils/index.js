@@ -91,3 +91,48 @@ export const getShipByDateColumn = (
     },
   };
 };
+
+export const getEarlyShipDateColumn = (
+  promiseDateDatatype,
+  title = "Early Ship"
+) => {
+  return {
+    id: "earlyShipDate",
+    enableEditing: false,
+    accessorFn: (row) => {
+      let offsetTime = null;
+      if (promiseDateDatatype === "model") {
+        offsetTime = row.Deliveries
+          ? new Date(row.Deliveries[0]?.Promised_Date)
+          : null;
+      } else {
+        offsetTime = row.Promised_Date ? new Date(row.Promised_Date) : null;
+      }
+
+      const dayOfWeekTZOffset = offsetTime
+        ? addMinutes(offsetTime, offsetTime.getTimezoneOffset())
+        : null;
+      const subDays = row.Lead_Days + (row.Numeric2 || 0);
+      const currentDate = dayOfWeekTZOffset;
+      const nDate = currentDate ? new Date(currentDate) : null;
+      const sDay = nDate ? subBusDays(nDate, subDays) : null;
+
+      return sDay;
+    },
+    header: title,
+    filterVariant: "date",
+    sortingFn: "datetime",
+    sortUndefined: false,
+    enableColumnFilterModes: false,
+    Cell: ({ cell }) => {
+      const dayOfWeekTZOffset =
+        cell.getValue() && isValidDate(cell.getValue())
+          ? addMinutes(cell.getValue(), cell.getValue().getTimezoneOffset())
+          : null;
+      const currentDate = dayOfWeekTZOffset;
+      const nDate = currentDate ? new Date(currentDate) : null;
+
+      return <Text c={getDateColor(nDate)}>{formatDate(cell.getValue())}</Text>;
+    },
+  };
+};
