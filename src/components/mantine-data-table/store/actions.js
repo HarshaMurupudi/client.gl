@@ -4,6 +4,8 @@ import baseAxios from "../../../apis/baseAxios";
 import { localAxios } from "../../../apis/baseAxios";
 import { notifications } from "@mantine/notifications";
 import { delay } from "../../../utils";
+import { fetchAutoCreateJobs } from "../../../features/auto-create/store/actions";
+import { fetchAutoCreateParts } from "../../../features/auto-create-part-folder/store/actions";
 
 export const setMantineDataLoading = (status) => ({
   type: "SET_MANTINE_DATA_TABLE_LOADING",
@@ -125,5 +127,25 @@ export const openFolder = (id, key) => async (dispatch) => {
   } finally {
     // await delay(1000);
     dispatch(setMantineDataLoading(false));
+  }
+};
+
+export const createJobFolders = (job) => async (dispatch) => {
+  try {
+    await baseAxios.post(`jobs/folder/${job}`);
+  } catch (error) {
+    console.log(error);
+  } finally {
+    dispatch(fetchAutoCreateJobs());
+  }
+};
+
+export const createPartFolders = (part) => async (dispatch) => {
+  try {
+    await baseAxios.post(`parts/folder/${part}`);
+  } catch (error) {
+    console.log(error);
+  } finally {
+    dispatch(fetchAutoCreateParts());
   }
 };

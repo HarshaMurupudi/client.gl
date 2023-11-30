@@ -35,6 +35,7 @@ const mockdata = [
       { label: "Tracking", link: "/tracking" },
       { label: "Attendance", link: "/attendance" },
       { label: "Production Meeting", link: "/productionMeeting" },
+      { label: "Folders", link: "/jobs/latest" },
     ],
   },
   {
@@ -51,9 +52,9 @@ const mockdata = [
       { label: "A-ART", link: "/a-art" },
       { label: "QC", link: "/qc" },
       { label: "A-CUSTOMER", link: "/a-customer" },
-      { label: "HYTECH", link: "/hytech"},
-      { label: "ECO", link: "/eco"},
-      { label: "FAI", link: "/fai"},
+      { label: "HYTECH", link: "/hytech" },
+      { label: "ECO", link: "/eco" },
+      { label: "FAI", link: "/fai" },
     ],
   },
   {
@@ -65,7 +66,7 @@ const mockdata = [
       { label: "E-INK", link: "/e-ink" },
       { label: "H-CYLINDER", link: "/h-cylinder" },
       { label: "H-SS SEMI", link: "/h-ss-semi" },
-      { label: "H-SS-SEMIS", link: "/h-ss-semis"},
+      { label: "H-SS-SEMIS", link: "/h-ss-semis" },
       { label: "K-DESPATCH", link: "/k-despatch" },
     ],
   },
@@ -122,9 +123,7 @@ const mockdata = [
     label: "LAM",
     icon: IconCalendarStats,
     initiallyOpened: false,
-    links: [
-      { label: "N-LAM", link: "/n-lam" },
-    ],
+    links: [{ label: "N-LAM", link: "/n-lam" }],
   },
   {
     label: "Shipping",
@@ -148,7 +147,6 @@ const mockdata = [
       { label: "Q-Lam", link: "/q-lam" },
       { label: "N-LAM-AUTO", link: "/n-lam-auto" },
       { label: "V-PICKPLC2", link: "/v-pickplc2" },
-      
     ],
   },
   {
