@@ -21,8 +21,8 @@ const DeliveryQueueDetails = lazy(
 const MaterialRequirements = lazy(
   () => import("../pages/material-requirement")
 );
-const Shiplines =  lazy(() => import("../features/shiplines/page"))
-
+const Shiplines = lazy(() => import("../features/shiplines/page"));
+const AutoCreateFolders = lazy(() => import("../pages/auto-create"));
 const Aart = lazy(() => import("../pages/a-art"));
 const Hytech = lazy(() => import("../pages/hytech"));
 const Qc = lazy(() => import("../pages/qc"));
@@ -36,7 +36,6 @@ const EInk = lazy(() => import("../pages/print/E-INK"));
 const HCylinder = lazy(() => import("../pages/print/H-CYLINDER"));
 const KDespatch = lazy(() => import("../pages/print/K-DESPATCH"));
 const HSSSemi = lazy(() => import("../pages/screen-print/H-SS-SEMI"));
-const HSSSemis = lazy(() => import("../pages/screen-print/H-SS-SEMIS"));
 
 const FMaterial = lazy(() => import("../pages/f-material/F-MATERIAL"));
 
@@ -330,18 +329,6 @@ export const publicRoutes = [
         <PrivateRoute>
           <AppLayout>
             <HSSSemi />
-          </AppLayout>
-        </PrivateRoute>
-      </Suspense>
-    ),
-  },
-  {
-    path: "/h-ss-semis",
-    element: (
-      <Suspense fallback={<div>Loading</div>}>
-        <PrivateRoute>
-          <AppLayout>
-            <HSSSemis />
           </AppLayout>
         </PrivateRoute>
       </Suspense>
@@ -825,6 +812,18 @@ export const publicRoutes = [
         <PrivateRoute>
           <AppLayout>
             <Shiplines />
+          </AppLayout>
+        </PrivateRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/jobs/latest",
+    element: (
+      <Suspense fallback={<div>Loading</div>}>
+        <PrivateRoute>
+          <AppLayout>
+            <AutoCreateFolders />
           </AppLayout>
         </PrivateRoute>
       </Suspense>
