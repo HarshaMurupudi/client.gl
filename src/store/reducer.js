@@ -19,6 +19,10 @@ import { reducer as shiplinesReducer } from "../features/shiplines/store";
 import { reducer as mantineDataTableReducer } from "../components/mantine-data-table/store";
 import { reducer as attendanceReducer } from "../features/attendance/store";
 import { reducer as meetingReducer } from "../features/meeting/store";
+import { reducer as trainingReducer } from "../features/training/store";
+import { reducer as trainingLogReducer } from "../features/training/store/log_store";
+import { reducer as employeesReducer } from "../features/training/store/employees_store";
+import { reducer as namesReducer } from "../features/training/store/names_store";
 import  {reducer as autoCreateJobFolderReducer} from "../features/auto-create/store"
 import  {reducer as autoCreatePartFolderReducer} from "../features/auto-create-part-folder/store"
 
@@ -39,6 +43,10 @@ export default combineReducers({
   materialJobs: materialJobsReducer,
   shiplines: shiplinesReducer,
   meeting: meetingReducer,
+  training: trainingReducer,
+  trainingLog: trainingLogReducer,
+  names: namesReducer,
+  employees: employeesReducer,
   mantineDataTable: mantineDataTableReducer,
   attendance: attendanceReducer,
   autoCreateJobFolder: autoCreateJobFolderReducer,
