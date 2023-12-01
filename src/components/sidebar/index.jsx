@@ -120,6 +120,7 @@ function NavbarNestedBasic({ width, handleLogout, user }) {
           label: "Folders",
           link: "/jobs/latest",
         },
+        { label: "Training", link: "/training" },
       ],
     },
     {
