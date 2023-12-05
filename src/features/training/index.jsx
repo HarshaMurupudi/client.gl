@@ -137,25 +137,29 @@ function Training({
     if (Array.isArray(newData.Employee_Name)) {
       const departmentNames = [];
       const additionalEmployees = [];
-  
-      newData.Employee_Name.forEach(name => {
-        const isDept = employees.some(employee => employee.Department === name);
-        isDept ? departmentNames.push(name) : additionalEmployees.push(name);
-      });
-  
-      const employeesFromDepartments = departmentNames.flatMap(deptName =>
-        employees.filter(employee => employee.Department === deptName)
-      );
-  
-      const allEmployeeValues = [
-        ...employeesFromDepartments.map(employee => `${employee.First_Name} ${employee.Last_Name}`),
-        ...additionalEmployees,
-      ];
-  
-      await processTrainees(allEmployeeValues);
-    } else if (newData.Employee_Name === "All Employees") {
-      const allEmployeeValues = employees.map(employee => `${employee.First_Name} ${employee.Last_Name}`);
-      await processTrainees(allEmployeeValues);
+
+      if (newData.Employee_Name.includes('All Employees')) {
+        const allEmployeeValues = employees.map(employee => 
+          `${employee.First_Name} ${employee.Last_Name}`,
+        );
+        await processTrainees(allEmployeeValues);
+      } else { 
+        newData.Employee_Name.forEach(name => {
+          const isDept = employees.some(employee => employee.Department === name);
+          isDept ? departmentNames.push(name) : additionalEmployees.push(name);
+        });
+    
+        const employeesFromDepartments = departmentNames.flatMap(deptName =>
+          employees.filter(employee => employee.Department === deptName)
+        );
+    
+        const allEmployeeValues = [
+          ...employeesFromDepartments.map(employee => `${employee.First_Name} ${employee.Last_Name}`),
+          ...additionalEmployees,
+        ];
+    
+        await processTrainees(allEmployeeValues);
+      }
     } else if (isDepartment) {
       const employeesInDepartment = employees.filter(employee => employee.Department === newData.Employee_Name);
       const traineeValuesForDepartment = employeesInDepartment.map(employee => `${employee.First_Name} ${employee.Last_Name}`);
