@@ -87,18 +87,55 @@ export const getTrainingColumns = (
     {
       accessorKey: "Training_Title",
       header: "Training Title",
-      enableEditing: false,
+      enableEditing: true,
       filterVariant: "multi-select",
-      Cell: ({ cell }: { cell: any; }) => (
+      Cell: ({ cell, row }: { cell: any; row: any }) => (
         <Text>{cell.getValue()}</Text>
       ),
+      Edit: ({
+        cell,
+        column,
+        table,
+      }: {
+        cell: any;
+        column: any;
+        table: any;
+      }) => {
+        return (
+          <GLTextarea
+            cell={cell}
+            table={table}
+            onTextChange={(e: any) => onBlur(e, cell, column)}
+          />
+        );
+      },
     },
     {
       accessorKey: "Training_Type",
       header: "Training Type",
-      enableEditing: false,
+      enableEditing: true,
       size: 100,
       filterVariant: "multi-select",
+      Cell: ({ cell, row }: { cell: any; row: any }) => (
+        <Text>{cell.getValue()}</Text>
+      ),
+      Edit: ({
+        cell,
+        column,
+        table,
+      }: {
+        cell: any;
+        column: any;
+        table: any;
+      }) => {
+        return (
+          <GLTextarea
+            cell={cell}
+            table={table}
+            onTextChange={(e: any) => onBlur(e, cell, column)}
+          />
+        );
+      },
     },
     {
       accessorKey: "Training_Description",
