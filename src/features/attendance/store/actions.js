@@ -33,7 +33,6 @@ export const fetchAttendance = () => async (dispatch) => {
 export const saveNotes = (attendance) => async (dispatch) => {
   try {
     dispatch(setAttendanceLoading(true));
-
    await baseAxios.patch('attendance/notes', 
       {
         data: { attendance },

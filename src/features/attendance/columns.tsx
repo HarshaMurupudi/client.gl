@@ -14,11 +14,14 @@ export const getColumns = (
       var period = hours >= 12 ? 'PM' : 'AM';
       hours = hours % 12;
       hours = hours ? hours : 12;
+      minutes = minutes < 10 ? '0'+ String(minutes) : minutes;
       var strTime = hours + ':' + minutes + ' ' + period;
       return strTime;
     } 
     return "-";
   }
+
+
 
   const onBlur = (event: any, cell: any, column: any) => {
     const { row } = cell;
@@ -48,12 +51,30 @@ export const getColumns = (
       header: "First Name",
       enableEditing: false,
       filterVariant: "multi-select",
+      Cell: ({ cell, row }: { cell: any; row: any }) => {
+        const clockInDate = row.original.Login ? new Date(row.original.Login) : null;
+        const date = formatTime(clockInDate);
+        const textStyle = {
+          color: date === "-" ? "#ff0000" : "black",
+        };
+    
+        return <p style={{ margin: 0 }}><span style={textStyle}>{cell.getValue()}</span></p>;
+      },
     },
     {
       accessorKey: "Last_Name",
       header: "Last Name",
       enableEditing: false,
       filterVariant: "multi-select",
+      Cell: ({ cell, row }: { cell: any; row: any }) => {
+        const clockInDate = row.original.Login ? new Date(row.original.Login) : null;
+        const date = formatTime(clockInDate);
+        const textStyle = {
+          color: date === "-" ? "#ff0000" : "black",
+        };
+    
+        return <p style={{ margin: 0 }}><span style={textStyle}>{cell.getValue()}</span></p>;
+      },
     },
     {
       accessorFn: (row: any) => {

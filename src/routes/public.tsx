@@ -12,6 +12,7 @@ const PO = lazy(() => import("../pages/po"));
 const Tracking = lazy(() => import("../pages/tracking"));
 const EmployeeAttendance = lazy(() => import("../pages/attendance"));
 const Meeting = lazy(() => import("../pages/meeting"));
+const Calendar = lazy(() => import("../pages/calendar"))
 const Dashboard = lazy(() => import("../pages/dashboard"));
 const PendingJobs = lazy(() => import("../pages/pending"));
 const DeliveryQueueDetails = lazy(
@@ -182,6 +183,18 @@ export const publicRoutes = [
         <PrivateRoute>
           <AppLayout>
             <Meeting />
+          </AppLayout>
+        </PrivateRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/calendar",
+    element: (
+      <Suspense fallback={<div>Loading</div>}>
+        <PrivateRoute>
+          <AppLayout>
+            <Calendar />
           </AppLayout>
         </PrivateRoute>
       </Suspense>
