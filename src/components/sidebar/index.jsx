@@ -107,10 +107,20 @@ function NavbarNestedBasic({ width, handleLogout, user }) {
         { label: "Tracking", link: "/tracking" },
         { label: "Attendance", link: "/attendance" },
         { label: "Production Meeting", link: "/productionMeeting" },
-        ["000061", "BASKSU", "305900", "55001"].includes(user.Employee) && {
+        [
+          "000061",
+          "BASKSU",
+          "305900",
+          "55001",
+          "51004",
+          "51009",
+          "304300",
+          "51002",
+        ].includes(user.Employee) && {
           label: "Folders",
           link: "/jobs/latest",
         },
+        { label: "Training", link: "/training" },
       ],
     },
     {
