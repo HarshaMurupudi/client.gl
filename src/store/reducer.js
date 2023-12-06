@@ -23,8 +23,9 @@ import { reducer as trainingReducer } from "../features/training/store";
 import { reducer as trainingLogReducer } from "../features/training/store/log_store";
 import { reducer as employeesReducer } from "../features/training/store/employees_store";
 import { reducer as namesReducer } from "../features/training/store/names_store";
-import  {reducer as autoCreateJobFolderReducer} from "../features/auto-create/store"
-import  {reducer as autoCreatePartFolderReducer} from "../features/auto-create-part-folder/store"
+import { reducer as autoCreateJobFolderReducer} from "../features/auto-create/store"
+import { reducer as autoCreatePartFolderReducer} from "../features/auto-create-part-folder/store"
+import { reducer as requestSiteReducer } from "../features/request-site/store";
 
 export default combineReducers({
   job: jobsReducer,
@@ -50,5 +51,6 @@ export default combineReducers({
   mantineDataTable: mantineDataTableReducer,
   attendance: attendanceReducer,
   autoCreateJobFolder: autoCreateJobFolderReducer,
-  autoCreatePartFolder: autoCreatePartFolderReducer
+  autoCreatePartFolder: autoCreatePartFolderReducer,
+  requestSite: requestSiteReducer,
 });

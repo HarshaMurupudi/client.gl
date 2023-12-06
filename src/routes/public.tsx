@@ -10,6 +10,7 @@ const Contracts = lazy(() => import("../pages/contracts"));
 const Operations = lazy(() => import("../pages/operations"));
 const PO = lazy(() => import("../pages/po"));
 const Tracking = lazy(() => import("../pages/tracking"));
+const RequestPage = lazy(() => import("../pages/request-site"));
 const EmployeeAttendance = lazy(() => import("../pages/attendance"));
 const Meeting = lazy(() => import("../pages/meeting"));
 const Training = lazy(() => import("../pages/training"));
@@ -195,6 +196,18 @@ export const publicRoutes = [
         <PrivateRoute>
           <AppLayout>
             <Meeting />
+          </AppLayout>
+        </PrivateRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/requestPage",
+    element: (
+      <Suspense fallback={<div>Loading</div>}>
+        <PrivateRoute>
+          <AppLayout>
+            <RequestPage />
           </AppLayout>
         </PrivateRoute>
       </Suspense>

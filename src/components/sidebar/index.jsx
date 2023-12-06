@@ -121,6 +121,7 @@ function NavbarNestedBasic({ width, handleLogout, user }) {
           link: "/jobs/latest",
         },
         { label: "Training", link: "/training" },
+        { label: "Requests", link: "/requestPage"},
       ],
     },
     {
