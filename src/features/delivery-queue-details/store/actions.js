@@ -10,11 +10,13 @@ export const setDeliveryQueueDetailsLoading = (status) => ({
   payload: status,
 });
 
-export const fetchDeliveryQueueDetails = (partID) => async (dispatch) => {
+export const fetchDeliveryQueueDetails = (partID, jobID) => async (dispatch) => {
   try {
     dispatch(setDeliveryQueueDetailsLoading(true));
-    const response = await baseAxios.get(`/inventory/part-number/${partID}`);
-    dispatch(setDeliveryQueueDetails(response.data.parts));
+    const response = await baseAxios.get(`/inventory/part-number/${partID}`, {
+      params: {jobID: jobID}
+    });
+    dispatch(setDeliveryQueueDetails(response.data.inventory));
   } catch (error) {
     console.log(error);
   } finally {

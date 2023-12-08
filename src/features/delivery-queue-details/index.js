@@ -16,13 +16,13 @@ function DeliveryQueueDetails({
   fetchPDFByJob,
 }) {
   const params = useParams();
-  const partID = params.partID;
+  const [partID, jobID] = params.partID.split("_");
 
   const columns = useMemo(() => getColumns(fetchPDF), []);
 
   useEffect(() => {
     const fetchPageData = async () => {
-      await fetchDeliveryQueueDetails(partID);
+      await fetchDeliveryQueueDetails(partID, jobID);
     };
 
     fetchPageData();
@@ -30,11 +30,14 @@ function DeliveryQueueDetails({
 
   return (
     <Box>
+      <Box>
+        On hand quantity: {deliveryQueueDetails.onHandSum}
+      </Box>
       <MantineDataTable
         title={"Inventory"}
         tableKey={`inventory-queue-data-table`}
         columns={columns}
-        data={deliveryQueueDetails}
+        data={deliveryQueueDetails.parts}
         tableProps={{
           editDisplayMode: "table",
           enableEditing: false,
