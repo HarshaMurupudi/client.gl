@@ -1,6 +1,6 @@
 import React from 'react';
 
-import RequestSite from '../../features/request-site';
+import RequestSite from '../../features/requests';
 
 function RequestPage() {
   return (

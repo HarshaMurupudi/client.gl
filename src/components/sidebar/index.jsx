@@ -107,6 +107,8 @@ function NavbarNestedBasic({ width, handleLogout, user }) {
         { label: "Tracking", link: "/tracking" },
         { label: "Attendance", link: "/attendance" },
         { label: "Production Meeting", link: "/productionMeeting" },
+        { label: "Training", link: "/training" },
+        { label: "Requests", link: "/requestPage"},
         [
           "000061",
           "BASKSU",
@@ -120,8 +122,6 @@ function NavbarNestedBasic({ width, handleLogout, user }) {
           label: "Folders",
           link: "/jobs/latest",
         },
-        { label: "Training", link: "/training" },
-        { label: "Requests", link: "/requestPage"},
       ],
     },
     {

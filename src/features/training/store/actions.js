@@ -70,7 +70,7 @@ export const fetchTrainingLog = (flag) => async (dispatch) => {
 export const saveLogNotes = (trainingLog) => async (dispatch) => {
   try {
     dispatch(setTrainingLogLoading(true));
-
+   console.log(trainingLog);
    await baseAxios.patch('training/log', 
       {
         data: {trainingLog},

@@ -3,14 +3,14 @@ const INITIAL_STATE = {
   requestsLoading: false,
 };
 
-const requestsReducer = (state = INITIAL_STATE, action) => {
+export const requestsReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case 'SET_TRAINING':
+    case 'SET_REQUESTS':
       return {
         ...state,
-        requests: [...action.payload],
+        requests: action.payload,
       };
-    case 'SET_TRAINING_LOADING':
+    case 'SET_REQUESTS_LOADING':
       return {
         ...state,
         requestsLoading: action.payload,
