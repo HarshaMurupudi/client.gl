@@ -15,6 +15,7 @@ const Meeting = lazy(() => import("../pages/meeting"));
 const Training = lazy(() => import("../pages/training"));
 const Dashboard = lazy(() => import("../pages/dashboard"));
 const PendingJobs = lazy(() => import("../pages/pending"));
+const OnHold = lazy(() => import("../pages/onHold"));
 const DeliveryQueueDetails = lazy(
   () => import("../features/delivery-queue-details")
 );
@@ -207,6 +208,18 @@ export const publicRoutes = [
         <PrivateRoute>
           <AppLayout>
             <PendingJobs />
+          </AppLayout>
+        </PrivateRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/onHold",
+    element: (
+      <Suspense fallback={<div>Loading</div>}>
+        <PrivateRoute>
+          <AppLayout>
+            <OnHold />
           </AppLayout>
         </PrivateRoute>
       </Suspense>
