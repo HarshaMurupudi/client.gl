@@ -19,7 +19,7 @@ function AutoCreateArtFolder({ searchJobs, createPartFolders }) {
       let jobs = [];
 
       jobs = await searchJobs("Part_Number", val);
-      console.log(jobs);
+      // console.log(jobs);
 
       setData(jobs);
     }
@@ -34,7 +34,7 @@ function AutoCreateArtFolder({ searchJobs, createPartFolders }) {
   };
 
   const handleSubmit = async () => {
-    console.log(value);
+    // console.log(value);
     await createPartFolders(value);
     // await fetchTracking({ [currentAutofillSelection]: data.value });
     // setValue("");
@@ -61,7 +61,7 @@ function AutoCreateArtFolder({ searchJobs, createPartFolders }) {
           handleKeyDown={handleKeyDown}
           // disable={isDisabled("Part_Number")}
         />
-        <Button variant="filled" onClick={() => handleSubmit()}>
+        <Button variant="filled" disabled onClick={() => handleSubmit()}>
           Create
         </Button>
       </Grid.Col>
