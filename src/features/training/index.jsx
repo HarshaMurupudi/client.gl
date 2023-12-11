@@ -49,6 +49,11 @@ function Training({
     setEditedUsers({});
   };
 
+  const handleLogSave = async () => {
+    await saveLogNotes(Object.values(editedUsers));
+    setEditedUsers({});
+  };
+
   const uniqueEntries = new Set();
 
   const trainees = [
@@ -168,10 +173,6 @@ function Training({
       await processTrainees([newData.Employee_Name]);
     }
   };
-  
-  
-  
-  
   
   const masterForm = useForm({
     initialValues: { date: null, trainer: null, trainingDesc: null, trainingTitle: null, trainingType: null, needsRepeat: null, repeatAfter: null, trainees: null },
@@ -394,7 +395,7 @@ function Training({
           enableGrouping={false}
           isEditable={true}
           isEdited={Object.keys(editedUsers).length === 0}
-          handleSave={handleSaveUsers}
+          handleSave={handleLogSave}
           hasCustomActionBtn={true}
         >
           <Box display={"flex"}>
