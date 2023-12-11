@@ -28,13 +28,10 @@ export const fetchRequests = (flag) => async (dispatch) => {
   }
 };
 
-const newData = [];
-
 export const saveNotes = (form, formName) => async (dispatch) => {
   try {
     dispatch(setRequestsLoading(true));
     form = [form];
-    // form = newData;
     if (formName == "shop"){
       await baseAxios.patch('requests/shop', 
         {

@@ -26,6 +26,7 @@ import { reducer as namesReducer } from "../features/training/store/names_store"
 import { reducer as autoCreateJobFolderReducer } from "../features/auto-create/store";
 import { reducer as autoCreatePartFolderReducer } from "../features/auto-create-part-folder/store";
 import { reducer as requestsReducer } from "../features/requests/store";
+import { reducer as approvalReducer } from "../features/requestApproval/store";
 
 export default combineReducers({
   job: jobsReducer,
@@ -53,4 +54,5 @@ export default combineReducers({
   autoCreateJobFolder: autoCreateJobFolderReducer,
   autoCreatePartFolder: autoCreatePartFolderReducer,
   requests: requestsReducer,
+  approval: approvalReducer,
 });
