@@ -116,6 +116,8 @@ function NavbarNestedBasic({ width, handleLogout, user }) {
           "51009",
           "304300",
           "51002",
+          "51040",
+          "303100"
         ].includes(user.Employee) && {
           label: "Folders",
           link: "/jobs/latest",

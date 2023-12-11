@@ -1,5 +1,5 @@
 const INITIAL_STATE = {
-  deliveryQueueDetails: { parts: [], onHandSum: 0 },
+  deliveryQueueDetails: { parts: [], allocatedJobs: [], onHandSum: 0, allocatedTotal:0 },
   deliveryQueueDetailsLoading: true,
 };
 

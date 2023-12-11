@@ -87,7 +87,7 @@ export const getColumns = (
 
   const handleInventoryActionBtn = (row) => {
     window.open(
-      `/delivery-queue-details/${row.original.Part_Number}`,
+      `/delivery-queue-details/${row.original.Part_Number}_${row.original.Job}`,
       "_blank"
     );
   };
