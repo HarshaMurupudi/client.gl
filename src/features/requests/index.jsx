@@ -28,22 +28,19 @@ function RequestSite({
     fetchPageData();  
   }, []);
 
+  let closeForms = {
+    shop: closeShopRequest,
+    eco: closeEcoRequest,
+    maintenance: closeMaintenanceRequest,
+    improvement: closeImprovementRequest,
+  };
+
   const handleFormSubmit = async (event, form, formName) => {
     event.preventDefault();
+    closeForms = closeForms[formName];
     const newData = form.getTransformedValues();
-    if (formName === "shop") {
-      closeShopRequest();
-      await saveNotes(newData, formName);
-    } else if (formName === "eco") {
-      closeEcoRequest();
-      await saveNotes(newData, formName);
-    } else if (formName === "maintenance") {
-      closeMaintenanceRequest();
-      await saveNotes(newData, formName);
-    } else if (formName === "improvement") {
-      closeImprovementRequest();
-      await saveNotes(newData, formName);
-    }
+    closeForms();
+    await saveNotes(newData, formName);
     form.reset()
   };
 

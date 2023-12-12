@@ -12,15 +12,42 @@ function RequestApproval({
   requestsLoading,
   fetchRequests,
   saveNotes,
+  user
 }) {
   const [editedUsers, setEditedUsers] = useState({});
 
-  const fetchPageData = async () => {
+  const userName = `${user.First_Name} ${user.Last_Name}`;
+
+  const assignedApprovers = {
+    "Sumit Mahajan": ["shop", "eco", "improvement", "maintenance"],
+    "Jon Erie": ["shop"],
+    "Jason Mezzenga": ["maintenance"],
+    "Nate Baskfield": ["improvement"],
+    "Bill Allen": ["eco"],
+    "Mat Welch": ["eco"],
+    "Scott Bohm": ["eco"],
+  };
+  
+
+  const currentUserTypes = assignedApprovers[userName] || [];
+
+  const filteredRequests = useMemo(() => {
+    if (requests) {
+      return requests.filter(request =>
+        currentUserTypes.includes(request.Request_Type)
+      );
+    } else {
+      return [];
+    }
+  }, [requests, currentUserTypes]);
+
+
+  const fetchData = async () => {
     await fetchRequests();
   };
 
   useEffect(() => {
-    fetchPageData();
+    fetchData();
   }, []);
 
   const columns = useMemo(
@@ -28,12 +55,11 @@ function RequestApproval({
       getColumns(
         editedUsers,
         setEditedUsers,
-        requests,
       ),
     [editedUsers]
   );
 
-  const handleSaveUsers = async () => {
+  const handleSave = async () => {
     await saveNotes(Object.values(editedUsers));
     setEditedUsers({});
   };
@@ -44,17 +70,26 @@ function RequestApproval({
         title={"Request Approval"}
         tableKey={`request-approval-data-table`}
         columns={columns}
-        data={requests || []}
+        data={filteredRequests}
         tableProps={{
-          // editingMode: "cell",
+          editDisplayMode: "table",
           enableEditing: true,
           getRowId: (row, index) => `${row.Request_ID}_${index}`,
         }}
-        handleSaveUsers={handleSaveUsers}
+        initialState={{
+          sorting: [
+            { id: "Status", desc: true },
+            { id: "Submission_Date", desc: true },
+          ],
+        }}
+        handleSave={handleSave}
         loading={requestsLoading}
-        hasCustomActionBtn={true}
+        hasRefetch={true}
         hasActionColumn={true}
         enableGrouping={false}
+        hasCustomActionBtn={true}
+        isEditable={true}
+        isEdited={Object.keys(editedUsers).length === 0}
       >
       </MantineDataTable>
     </Box>
@@ -62,7 +97,8 @@ function RequestApproval({
 }
 
 const mapStateToProps = (state) => ({
-  requests: state.getIn(["request", "requests"]),
+  user: state.getIn(["user","user"]),
+  requests: state.getIn(["requests", "requests"]),
   requestsLoading: state.getIn(["requests", "requestsLoading"]),
 });
 

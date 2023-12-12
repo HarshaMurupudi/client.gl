@@ -23,7 +23,6 @@ export const fetchRequests = (partID) => async (dispatch) => {
     dispatch(setRequestsLoading(true));
 
     const response = await baseAxios.get(`/requests/entries`);
-    console.log(response.data.entries);
     dispatch(setRequests(response.data.entries));
   } catch (error) {
   } finally {
@@ -35,32 +34,32 @@ export const saveNotes = (requests) => async (dispatch) => {
   try {
     dispatch(setRequestsLoading(true));
 
-   const shop = requests.filter(request => request.Request_Type === 'shop');
-   const eco = requests.filter(request => request.Request_Type === 'eco');
-   const maintenance = requests.filter(request => request.Request_Type === 'maintenance');
-   const improvement = requests.filter(request => request.Request_Type === 'improvement');
-   if (shop){
+   let shop = requests.filter(request => request.Request_Type === 'shop');
+   let eco = requests.filter(request => request.Request_Type === 'eco');
+   let maintenance = requests.filter(request => request.Request_Type === 'maintenance');
+   let improvement = requests.filter(request => request.Request_Type === 'improvement');
+   if (shop.length > 0){
     await baseAxios.patch('requests/shop', 
     {
-      data: {shop},
+      data: {form: shop},
       headers
     });
-   } if (eco){
+   } if (eco.length > 0){
     await baseAxios.patch('requests/eco', 
     {
-      data: {eco},
+      data: {form: eco},
       headers
     });
-   } if (maintenance){
+   } if (maintenance.length > 0){
     await baseAxios.patch('requests/maintenance', 
     {
-      data: {maintenance},
+      data: {form: maintenance},
       headers
     });
-   } if (improvement){
+   } if (improvement.length > 0){
     await baseAxios.patch('requests/improvement', 
     {
-      data: {improvement},
+      data: {form: improvement},
       headers
     });
    }
@@ -73,6 +72,6 @@ export const saveNotes = (requests) => async (dispatch) => {
     })
   } finally {
     await delay(1200)
-    dispatch(setVendorLoading(false));
+    dispatch(setRequestsLoading(false));
   }
 };
