@@ -42,34 +42,6 @@ export const getColumns = (
       header: "On Hand Qty",
       enableEditing: false,
     },
-    // {
-    //   accessorKey: "Allocated_Qty",
-    //   header: "Allocated Qty",
-    //   accessorFn: (row: any) => {
-    //     return row.Allocated_Qty ? row.Allocated_Qty : 0;
-    //   },
-    //   enableEditing: false,
-    //   Cell: ({ cell, row }: { cell: any; row: any }) => (
-    //     <Text>{cell.getValue()}</Text>
-    //   ),
-    // },
-    // {
-    //   accessorKey: "Available_Quantity",
-    //   accessorFn: (row: any) => {
-    //     return row.On_Hand_Qty - row.Allocated_Qty;
-    //   },
-    //   header: "Available Quantity",
-    //   enableEditing: false,
-    //   Cell: ({ cell, row }: { cell: any; row: any }) => {
-    //     const {} = row;
-    //     return <Text>{cell.getValue()}</Text>;
-    //   },
-    // },
-    {
-      accessorKey: "Job",
-      header: "Job",
-      enableEditing: false,
-    },
   ];
 
   return columns;
