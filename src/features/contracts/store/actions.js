@@ -10,6 +10,11 @@ export const setContractsLoading = (status) => ({
   payload: status,
 });
 
+export const setContractsOnHandLoading = (status) => ({
+  type: 'SET_CONTRACTS_WITH_ON_HAND_LOADING',
+  payload: status,
+});
+
 export const fetchContracts = (data) => async (dispatch) => {
   try {
     dispatch(setContractsLoading(true));
@@ -22,6 +27,21 @@ export const fetchContracts = (data) => async (dispatch) => {
     console.log(error);
   } finally {
     dispatch(setContractsLoading(false));
+  }
+};
+
+export const fetchContractsWithOnHand = (data) => async (dispatch) => {
+  try {
+    dispatch(setContractsOnHandLoading(true));
+
+    const response = await baseAxios.get('/jobs/on-hand-qty', {
+      params: data,
+    });
+    dispatch(setContracts(response.data.jobs));
+  } catch (error) {
+    console.log(error);
+  } finally {
+    dispatch(setContractsOnHandLoading(false));
   }
 };
 
