@@ -7,7 +7,7 @@ import { Box } from "@mantine/core";
 import { MantineDataTable } from "../../components/mantine-data-table";
 import { getColumns } from "./columns";
 
-function RequestApproval({
+function EcoApproval({
   requests,
   requestsLoading,
   fetchRequests,
@@ -16,30 +16,49 @@ function RequestApproval({
 }) {
   const [editedUsers, setEditedUsers] = useState({});
 
-  const userName = `${user.First_Name} ${user.Last_Name}`;
+  let userName = `${user.First_Name} ${user.Last_Name}`;
 
-  const assignedApprovers = {
-    "Sumit Mahajan": ["shop", "eco", "improvement", "maintenance"],
-    "Jon Erie": ["shop"],
-    "Jason Mezzenga": ["maintenance"],
-    "Nate Baskfield": ["improvement"],
-    "Bill Allen": ["eco"],
-    "Mat Welch": ["eco"],
-    "Scott Bohm": ["eco"],
+  const assignees = {
+    "Sumit Mahajan": {
+      name: "Sumit Mahajan",
+      email: "sumitm@general-label.com"
+    },
+    "Spencer Erie": {
+      name: "Spencer Erie",
+      email: "spencererie01@gmail.com"
+    },
+    "Bill Allen": {
+      name: "Bill Allen",
+      email: "bill@general-label.com"
+    },
+    "Mat Welch": {
+      name: "Mat Welch",
+      email: "mat@general-label.com"
+    },
+    "Scott Bohm": {
+      name: "Scott Bohm",
+      email: "scottb@general-label.com"
+    },
+    "Spencer Erie": {
+      name: "Spencer Erie",
+      email: "spencererie01@gmail.com"
+    }
   };
   
-
-  const currentUserTypes = assignedApprovers[userName] || [];
-
   const filteredRequests = useMemo(() => {
     if (requests) {
-      return requests.filter(request =>
-        currentUserTypes.includes(request.Request_Type)
-      );
+      if (user.First_Name === "Smit") { // Admin View
+        return requests;
+      } else {
+        userName = "Spencer Erie";
+        return requests.filter(request =>
+          assignees[userName].email.includes(request.Assigned_To)
+        );
+      }
     } else {
       return [];
     }
-  }, [requests, currentUserTypes]);
+  }, [requests, userName, assignees]);
 
 
   const fetchData = async () => {
@@ -64,13 +83,19 @@ function RequestApproval({
     setEditedUsers({});
   };
 
+  // const canEdit = () => {
+  //   const { Employee } = user;
+  //   const employeeList = ["51040"];
+  //   return employeeList.includes(Employee) ? true : false;
+  // };
+
   return (
     <Box>
       <MantineDataTable
         title={"Request Approval"}
         tableKey={`request-approval-data-table`}
         columns={columns}
-        data={filteredRequests}
+        data={filteredRequests || []}
         tableProps={{
           editDisplayMode: "table",
           enableEditing: true,
@@ -88,7 +113,7 @@ function RequestApproval({
         hasActionColumn={true}
         enableGrouping={false}
         hasCustomActionBtn={true}
-        isEditable={true}
+        // isEditable={canEdit()}
         isEdited={Object.keys(editedUsers).length === 0}
       >
       </MantineDataTable>
@@ -105,4 +130,4 @@ const mapStateToProps = (state) => ({
 export default connect(mapStateToProps, {
   fetchRequests,
   saveNotes,
-})(RequestApproval);
+})(EcoApproval);

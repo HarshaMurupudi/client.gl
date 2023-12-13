@@ -108,8 +108,9 @@ function NavbarNestedBasic({ width, handleLogout, user }) {
         { label: "Attendance", link: "/attendance" },
         { label: "Production Meeting", link: "/productionMeeting" },
         { label: "Training", link: "/training" },
-        { label: "Requests", link: "/request"},
-        { label: "Request Approval", link: "/request/approval"},
+        { label: "Submit Request", link: "/request" },
+        { label: "Approve Requests", link: "/request/approval" },
+        { label: "Approve ECO", link: "/request/approval/eco" },
         [
           "000061",
           "BASKSU",

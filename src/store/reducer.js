@@ -27,6 +27,7 @@ import { reducer as autoCreateJobFolderReducer } from "../features/auto-create/s
 import { reducer as autoCreatePartFolderReducer } from "../features/auto-create-part-folder/store";
 import { reducer as requestsReducer } from "../features/requests/store";
 import { reducer as approvalReducer } from "../features/requestApproval/store";
+import { reducer as ecoReducer } from "../features/ecoApproval/store"
 
 export default combineReducers({
   job: jobsReducer,
@@ -55,4 +56,5 @@ export default combineReducers({
   autoCreatePartFolder: autoCreatePartFolderReducer,
   requests: requestsReducer,
   approval: approvalReducer,
+  ecoApproval: ecoReducer
 });
