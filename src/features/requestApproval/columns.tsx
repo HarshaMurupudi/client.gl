@@ -50,6 +50,10 @@ export const getColumns = (
     }
   }
 
+  const capitalize = (word) => {
+    return word.charAt(0).toUpperCase() + word.slice(1);
+  }
+
   const onSelect = (e: any, cell: any, column: any) => {
     const { row } = cell;
 
@@ -112,6 +116,9 @@ export const getColumns = (
       size: 135,
       enableEditing: false,
       filterVariant: "multi-select",
+      Cell: ({ cell, row }: { cell: any; row: any }) => (
+        <Text>{capitalize(cell.getValue())}</Text>
+      ),
     },
     {
       id: "Submission_Date",
