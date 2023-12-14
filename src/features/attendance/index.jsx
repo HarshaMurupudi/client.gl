@@ -169,7 +169,7 @@ function Attendance({
 
 const mapStateToProps = (state) => ({
   attendance: state.getIn(["attendance", "attendance"]),
-  events: state.getIn(["event", "events"]),
+  events: state.getIn(["calendar", "events"]),
   attendanceLoading: state.getIn(["attendance", "attendanceLoading"]),
 });
 
