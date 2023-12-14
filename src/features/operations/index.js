@@ -61,9 +61,9 @@ function Operations({
   const onWorkCenterClick = async (row) => {
     setSelectedOperation({
       Job_Operation: row.Job_Operation,
-      Note_Text: row.Note_Text,
+      Note_Text: row.Note_Text || '',
       Work_Center: row.Work_Center,
-      Floor_Notes: row.Floor_Notes,
+      Floor_Notes: row.Floor_Notes || '',
     });
 
     await fetchOperationTimes(row.Job_Operation);

@@ -13,16 +13,18 @@ const Tracking = lazy(() => import("../pages/tracking"));
 const EmployeeAttendance = lazy(() => import("../pages/attendance"));
 const Meeting = lazy(() => import("../pages/meeting"));
 const Calendar = lazy(() => import("../pages/calendar"))
+const Training = lazy(() => import("../pages/training"));
 const Dashboard = lazy(() => import("../pages/dashboard"));
 const PendingJobs = lazy(() => import("../pages/pending"));
+const OnHold = lazy(() => import("../pages/onHold"));
 const DeliveryQueueDetails = lazy(
   () => import("../features/delivery-queue-details")
 );
 const MaterialRequirements = lazy(
   () => import("../pages/material-requirement")
 );
-const Shiplines =  lazy(() => import("../features/shiplines/page"))
-
+const Shiplines = lazy(() => import("../features/shiplines/page"));
+const AutoCreateFolders = lazy(() => import("../pages/auto-create"));
 const Aart = lazy(() => import("../pages/a-art"));
 const Hytech = lazy(() => import("../pages/hytech"));
 const Qc = lazy(() => import("../pages/qc"));
@@ -177,6 +179,18 @@ export const publicRoutes = [
     ),
   },
   {
+    path: "/training",
+    element: (
+      <Suspense fallback={<div>Loading</div>}>
+        <PrivateRoute>
+          <AppLayout>
+            <Training />
+          </AppLayout>
+        </PrivateRoute>
+      </Suspense>
+    ),
+  },
+  {
     path: "/productionMeeting",
     element: (
       <Suspense fallback={<div>Loading</div>}>
@@ -207,6 +221,18 @@ export const publicRoutes = [
         <PrivateRoute>
           <AppLayout>
             <PendingJobs />
+          </AppLayout>
+        </PrivateRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/onHold",
+    element: (
+      <Suspense fallback={<div>Loading</div>}>
+        <PrivateRoute>
+          <AppLayout>
+            <OnHold />
           </AppLayout>
         </PrivateRoute>
       </Suspense>
@@ -812,6 +838,18 @@ export const publicRoutes = [
         <PrivateRoute>
           <AppLayout>
             <Shiplines />
+          </AppLayout>
+        </PrivateRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/jobs/latest",
+    element: (
+      <Suspense fallback={<div>Loading</div>}>
+        <PrivateRoute>
+          <AppLayout>
+            <AutoCreateFolders />
           </AppLayout>
         </PrivateRoute>
       </Suspense>

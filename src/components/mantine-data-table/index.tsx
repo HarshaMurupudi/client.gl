@@ -37,6 +37,8 @@ import {
   fetchCustomerApprovalPDF,
   fetchZundCutFilePDF,
   openFolder,
+  createJobFolders,
+  createPartFolders,
 } from "./store/actions";
 
 interface Props {
@@ -80,6 +82,8 @@ const DataTable = ({
   fetchCustomerApprovalPDF,
   fetchZundCutFilePDF,
   openFolder,
+  createJobFolders,
+  createPartFolders,
 }: Props) => {
   const navigate = useNavigate();
   const isFirstRender = useRef(true);
@@ -213,14 +217,18 @@ const DataTable = ({
       window.open(`/operations/${selecetedRowID}`, "_blank");
     } else if (type === "customer-approval") {
       await fetchCustomerApprovalPDF(Part_Number);
-    } else if ((type = "zund-cut-file")) {
+    } else if (type === "zund-cut-file") {
       await fetchZundCutFilePDF(Part_Number);
+    } else if (type === "auto-create-job-folders") {
+      await createJobFolders(row.original.Job);
+    } else if (type === "auto-create-part-folders") {
+      await createPartFolders(row.original.Part_Number);
     }
   };
 
   const handleInventoryActionBtn = (row) => {
     window.open(
-      `/delivery-queue-details/${row.original.Part_Number}`,
+      `/delivery-queue-details/${row.original.Part_Number}_${row.original.Job}`,
       "_blank"
     );
   };
@@ -375,6 +383,20 @@ const DataTable = ({
           <Menu.Item onClick={() => handleMaterialActionBtn(row, "shiplines")}>
             Shiplines
           </Menu.Item>
+          {tableKey === `auto-create-folders-jobs-data-table` && (
+            <Menu.Item
+              onClick={() => handleActionBtn(row, "auto-create-job-folders")}
+            >
+              Create Job Folders
+            </Menu.Item>
+          )}
+          {tableKey === `auto-create-folders-parts-data-table` && (
+            <Menu.Item
+              onClick={() => handleActionBtn(row, "auto-create-part-folders")}
+            >
+              Create Part Folders
+            </Menu.Item>
+          )}
           {/* <Menu.Item onClick={() => handleFolderOpen(row, "Part_Number")}>
             Open Part Folder
           </Menu.Item>
@@ -452,4 +474,6 @@ export const MantineDataTable = connect(mapStateToProps, {
   fetchCustomerApprovalPDF,
   fetchZundCutFilePDF,
   openFolder,
+  createJobFolders,
+  createPartFolders,
 })(DataTable);

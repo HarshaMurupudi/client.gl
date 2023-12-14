@@ -4,6 +4,8 @@ import baseAxios from "../../../apis/baseAxios";
 import { localAxios } from "../../../apis/baseAxios";
 import { notifications } from "@mantine/notifications";
 import { delay } from "../../../utils";
+import { fetchAutoCreateJobs } from "../../../features/auto-create/store/actions";
+import { fetchAutoCreateParts } from "../../../features/auto-create-part-folder/store/actions";
 
 export const setMantineDataLoading = (status) => ({
   type: "SET_MANTINE_DATA_TABLE_LOADING",
@@ -125,5 +127,62 @@ export const openFolder = (id, key) => async (dispatch) => {
   } finally {
     // await delay(1000);
     dispatch(setMantineDataLoading(false));
+  }
+};
+
+export const createJobFolders = (job) => async (dispatch) => {
+  try {
+    await baseAxios.post(`jobs/folder/${job}`);
+    notifications.show({
+      title: "Success",
+      message: "Folders created",
+      color: "green",
+    });
+  } catch (error) {
+    // console.log(error);
+    if (error.response.data.message) {
+      notifications.show({
+        title: "Error",
+        message: error.response.data.message,
+        color: "red",
+      });
+    } else {
+      notifications.show({
+        title: "Error",
+        message: "Failed to create folders",
+        color: "red",
+      });
+    }
+  } finally {
+    dispatch(fetchAutoCreateJobs());
+  }
+};
+
+export const createPartFolders = (part) => async (dispatch) => {
+  try {
+    await baseAxios.post(`parts/folder/${part}`);
+
+    notifications.show({
+      title: "Success",
+      message: "Folders created",
+      color: "green",
+    });
+  } catch (error) {
+    // console.log(error);
+    if (error.response.data.message) {
+      notifications.show({
+        title: "Error",
+        message: error.response.data.message,
+        color: "red",
+      });
+    } else {
+      notifications.show({
+        title: "Error",
+        message: "Failed to create folders",
+        color: "red",
+      });
+    }
+  } finally {
+    dispatch(fetchAutoCreateParts());
   }
 };

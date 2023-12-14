@@ -1,6 +1,7 @@
 const INITIAL_STATE = {
   contracts: [],
   contractsLoading: false,
+  contractsWithOnHandLaoding: false
 };
 
 const jobsReducer = (state = INITIAL_STATE, action) => {
@@ -14,6 +15,11 @@ const jobsReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         contractsLoading: action.payload,
+      };
+    case 'SET_CONTRACTS_WITH_ON_HAND_LOADING':
+      return {
+        ...state,
+        contractsWithOnHandLaoding: action.payload,
       };
     default:
       return state;

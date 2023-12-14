@@ -59,6 +59,7 @@ function Login({ login, isAuthenticated, authLoading, loading }) {
            id='password'
            name='password'
            label='Password'
+           type='password'
            placeholder='Password'
            value={formik.values.password}
            onChange={formik.handleChange}

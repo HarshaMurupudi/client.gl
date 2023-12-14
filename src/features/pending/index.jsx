@@ -3,7 +3,11 @@ import { connect } from "react-redux";
 import { Box, Skeleton, Text, Flex, Button } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 
-import { fetchPendingJobs, saveNotes } from "./store/actions";
+import {
+  fetchPendingJobs,
+  saveNotes,
+  fetchPendingJobsWithQuantity,
+} from "./store/actions";
 import { fetchPDF } from "../jobs/store/actions";
 import { MantineDataTable } from "../../components/mantine-data-table";
 import { getColumns } from "./columns";
@@ -11,20 +15,23 @@ import { getColumns } from "./columns";
 function PendingJobs({
   pendingJob,
   pendingJobsLoading,
+  jobQuantityLoading,
   fetchPendingJobs,
   fetchPDF,
   saveNotes,
+  fetchPendingJobsWithQuantity,
 }) {
   const [editedUsers, setEditedUsers] = useState({});
   const [selectedJob, setSelectedJob] = useState("");
   let navigate = useNavigate();
 
   const columns = useMemo(
-    () => getColumns(fetchPDF, editedUsers, setEditedUsers, pendingJob),
-    [editedUsers, pendingJob]
+    () => getColumns(fetchPDF, editedUsers, setEditedUsers, pendingJob, jobQuantityLoading),
+    [editedUsers, pendingJob, jobQuantityLoading]
   );
   const fetchData = async () => {
     await fetchPendingJobs();
+    fetchPendingJobsWithQuantity();
   };
 
   useEffect(() => {
@@ -85,10 +92,12 @@ function PendingJobs({
 const mapStateToProps = (state) => ({
   pendingJob: state.getIn(["pendingJob", "pendingJobs"]),
   pendingJobsLoading: state.getIn(["pendingJob", "pendingJobsLoading"]),
+  jobQuantityLoading: state.getIn(["pendingJob", "jobQuantityLoading"]),
 });
 
 export default connect(mapStateToProps, {
   fetchPendingJobs,
   fetchPDF,
   saveNotes,
+  fetchPendingJobsWithQuantity,
 })(PendingJobs);

@@ -269,6 +269,13 @@ export const getColumns = (
     },
     {
       accessorKey: "Status",
+      accessorFn: (row: any) => {
+        if (value === "Open") {
+          return row["Status"];
+        } else {
+          return row["JobOperationStatus"];
+        }
+      },
       header: "Status",
       enableEditing: false,
       filterVariant: "multi-select",
