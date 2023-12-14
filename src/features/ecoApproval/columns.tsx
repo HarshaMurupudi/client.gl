@@ -17,7 +17,7 @@ export const getColumns = (
       description: ""
     },
     {
-      label: "Approved",
+      label: "Completed",
       value: "Completed",
       description: ""
     },
@@ -35,23 +35,13 @@ export const getColumns = (
 
   const assignees = [
     {
-      label: "Sumit Mahajan",
-      value: "sumitm@general-label.com",
+      label: "Bill Allen",
+      value: "bill@general-label.com",
       description: ""
     },
     {
       label: "Jon Erie",
       value: "jerie@general-label.com",
-      description: ""
-    },
-    {
-      label: "Spencer Erie",
-      value: "spencererie01@gmail.com",
-      description: ""
-    },
-    {
-      label: "Bill Allen",
-      value: "bill@general-label.com",
       description: ""
     },
     {
@@ -62,6 +52,21 @@ export const getColumns = (
     {
       label: "Scott Bohm",
       value: "scottb@general-label.com",
+      description: ""
+    },
+    {
+      label: "Sumit Mahajan",
+      value: "sumitm@general-label.com",
+      description: ""
+    },
+    {
+      label: "Spencer Erie",
+      value: "spencererie01@gmail.com",
+      description: ""
+    },
+    {
+      label: "N/A",
+      value: "",
       description: ""
     },
   ];
@@ -134,15 +139,6 @@ export const getColumns = (
       });
     }
   };
-
-  const names = [
-    "Thy Suon",
-    "Lyn Erie",
-    "Dalton Breitzman",
-    "Tracey Trudeau",
-    "Sumit Mahajan",
-    "Jon Erie",
-  ];
 
   const columns = [
     {
@@ -355,7 +351,7 @@ export const getColumns = (
     },
     {
       accessorKey: "Approval_Comment",
-      header: "Comments",
+      header: "Approval Comment",
       enableEditing: true,
       size: 300,
       filterVariant: "multi-select",

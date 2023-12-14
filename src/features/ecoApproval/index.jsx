@@ -47,7 +47,7 @@ function EcoApproval({
   
   const filteredRequests = useMemo(() => {
     if (requests) {
-      if (user.First_Name === "Smit") { // Admin View
+      if (user.First_Name === "Sumit") { // Admin View
         return requests;
       } else {
         userName = "Spencer Erie";
@@ -83,16 +83,16 @@ function EcoApproval({
     setEditedUsers({});
   };
 
-  // const canEdit = () => {
-  //   const { Employee } = user;
-  //   const employeeList = ["51040"];
-  //   return employeeList.includes(Employee) ? true : false;
-  // };
+  const canEdit = () => {
+    const { Employee } = user;
+    const employeeList = ["51040"];
+    return employeeList.includes(Employee) ? true : false;
+  };
 
   return (
     <Box>
       <MantineDataTable
-        title={"Request Approval"}
+        title={"ECO Request Approval"}
         tableKey={`request-approval-data-table`}
         columns={columns}
         data={filteredRequests || []}
@@ -113,7 +113,7 @@ function EcoApproval({
         hasActionColumn={true}
         enableGrouping={false}
         hasCustomActionBtn={true}
-        // isEditable={canEdit()}
+        isEditable={canEdit()}
         isEdited={Object.keys(editedUsers).length === 0}
       >
       </MantineDataTable>

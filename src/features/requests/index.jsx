@@ -45,7 +45,14 @@ function RequestSite({
   };
 
   const priorities = ["Low", "Medium", "High"];
-  const ecoTypes = ["Type 1", "Type 2", "Membrane Switch", "Overlay, Label, Decal"];
+  const ecoTypes = [
+    "Converting",
+    "Membrane Switch", 
+    "Overlay", 
+    "Label", 
+    "Decal", 
+    "Printed Electronics"
+  ];
 
   const shopRequestForm = useForm({
     initialValues: { initiator: null, subject: null, part_number: null, job_number: null, work_center: null, priority: null, request: null },

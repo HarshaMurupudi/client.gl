@@ -16,6 +16,7 @@ import {
   IconFileAnalytics,
   IconCalendarStats,
   IconFingerprint,
+  IconProgressCheck,
 } from "@tabler/icons-react";
 
 import { UserButton } from "../UserButton";
@@ -108,9 +109,6 @@ function NavbarNestedBasic({ width, handleLogout, user }) {
         { label: "Attendance", link: "/attendance" },
         { label: "Production Meeting", link: "/productionMeeting" },
         { label: "Training", link: "/training" },
-        { label: "Submit Request", link: "/request" },
-        { label: "Approve Requests", link: "/request/approval" },
-        { label: "Approve ECO", link: "/request/approval/eco" },
         [
           "000061",
           "BASKSU",
@@ -125,6 +123,16 @@ function NavbarNestedBasic({ width, handleLogout, user }) {
           link: "/jobs/latest",
         },
       ],
+    },
+    {
+      label: "Requests",
+      icon: IconProgressCheck,
+      initiallyOpened: false,
+      links: [
+        { label: "Submit Request", link: "/request" },
+        { label: "Approve Requests", link: "/request/approval" },
+        { label: "Approve ECO", link: "/request/approval/eco" },
+      ]
     },
     {
       label: "Job Planning",

@@ -2,15 +2,15 @@ import React, { useEffect, useState, useMemo } from "react";
 import { connect } from "react-redux";
 import { useLocation } from "react-router-dom";
 
-import { fetchRequests, saveNotes } from "./store/actions";
+import { fetchApproval, saveNotes } from "./store/actions";
 import { Box } from "@mantine/core";
 import { MantineDataTable } from "../../components/mantine-data-table";
 import { getColumns } from "./columns";
 
 function RequestApproval({
-  requests,
-  requestsLoading,
-  fetchRequests,
+  approval,
+  approvalLoading,
+  fetchApproval,
   saveNotes,
   user
 }) {
@@ -32,18 +32,18 @@ function RequestApproval({
   const currentUserTypes = assignedApprovers[userName] || [];
 
   const filteredRequests = useMemo(() => {
-    if (requests) {
-      return requests.filter(request =>
-        currentUserTypes.includes(request.Request_Type)
+    if (approval) {
+      return approval.filter(app =>
+        currentUserTypes.includes(app.Request_Type) && app.Status !== "Reject"
       );
     } else {
       return [];
     }
-  }, [requests, currentUserTypes]);
+  }, [approval, currentUserTypes]);
 
 
   const fetchData = async () => {
-    await fetchRequests();
+    await fetchApproval();
   };
 
   useEffect(() => {
@@ -83,7 +83,7 @@ function RequestApproval({
           ],
         }}
         handleSave={handleSave}
-        loading={requestsLoading}
+        loading={approvalLoading}
         hasRefetch={true}
         hasActionColumn={true}
         enableGrouping={false}
@@ -98,11 +98,11 @@ function RequestApproval({
 
 const mapStateToProps = (state) => ({
   user: state.getIn(["user","user"]),
-  requests: state.getIn(["requests", "requests"]),
-  requestsLoading: state.getIn(["requests", "requestsLoading"]),
+  approval: state.getIn(["approval", "approval"]),
+  approvalLoading: state.getIn(["approval", "approvalLoading"]),
 });
 
 export default connect(mapStateToProps, {
-  fetchRequests,
+  fetchApproval,
   saveNotes,
 })(RequestApproval);

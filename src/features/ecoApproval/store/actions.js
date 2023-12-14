@@ -30,9 +30,10 @@ export const fetchRequests = (partID) => async (dispatch) => {
   }
 };
 
-export const saveNotes = (eco) => async (dispatch) => {
+export const saveNotes = (requests) => async (dispatch) => {
   try {
     dispatch(setRequestsLoading(true));
+    let eco = requests.filter(request => request.Request_Type === 'eco');
     if (eco.length > 0){
       await baseAxios.patch('requests/eco', 
       {

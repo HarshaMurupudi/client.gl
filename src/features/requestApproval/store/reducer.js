@@ -1,19 +1,19 @@
 const INITIAL_STATE = {
-  requests: [],
-  requestsLoading: true,
+  approval: [],
+  approvalLoading: true,
 };
 
 const approvalReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case 'SET_REQUESTS':
+    case 'SET_APPROVAL':
       return {
         ...state,
-        requests: action.payload,
+        approval: action.payload,
       };
-    case 'SET_REQUESTS_LOADING':
+    case 'SET_APPROVAL_LOADING':
       return {
         ...state,
-        requestsLoading: action.payload,
+        approvalLoading: action.payload,
       };
     default:
       return state;

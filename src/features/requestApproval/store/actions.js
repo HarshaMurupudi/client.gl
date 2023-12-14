@@ -8,31 +8,31 @@ const headers = {
   Accept: 'application/json'
 }
 
-export const setRequests = (status) => ({
-  type: 'SET_REQUESTS',
+export const setApproval = (status) => ({
+  type: 'SET_APPROVAL',
   payload: status,
 });
 
-export const setRequestsLoading = (status) => ({
-  type: 'SET_REQUESTS_LOADING',
+export const setApprovalLoading = (status) => ({
+  type: 'SET_APPROVAL_LOADING',
   payload: status,
 });
 
-export const fetchRequests = (partID) => async (dispatch) => {
+export const fetchApproval = (partID) => async (dispatch) => {
   try {
-    dispatch(setRequestsLoading(true));
+    dispatch(setApprovalLoading(true));
 
     const response = await baseAxios.get(`/requests/entries`);
-    dispatch(setRequests(response.data.entries));
+    dispatch(setApproval(response.data.entries));
   } catch (error) {
   } finally {
-    dispatch(setRequestsLoading(false));
+    dispatch(setApprovalLoading(false));
   }
 };
 
 export const saveNotes = (requests) => async (dispatch) => {
   try {
-    dispatch(setRequestsLoading(true));
+    dispatch(setApprovalLoading(true));
 
    let shop = requests.filter(request => request.Request_Type === 'shop');
    let eco = requests.filter(request => request.Request_Type === 'eco');
@@ -72,6 +72,6 @@ export const saveNotes = (requests) => async (dispatch) => {
     })
   } finally {
     await delay(1200)
-    dispatch(setRequestsLoading(false));
+    dispatch(setApprovalLoading(false));
   }
 };
