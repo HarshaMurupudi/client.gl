@@ -88,7 +88,7 @@ function GLCalendar({
 }
 
 const mapStateToProps = (state) => ({
-  events: state.getIn(["event", "events"]),
+  events: state.getIn(["calendar", "events"]),
   user: state.getIn(["user","user"]),
 });
 
