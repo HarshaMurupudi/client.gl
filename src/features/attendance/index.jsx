@@ -1,18 +1,72 @@
 import { useMemo, useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { Box, Text } from "@mantine/core";
+import { Box, Text, Button, Modal, LoadingOverlay } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 
-import { fetchAttendance, saveNotes } from "./store/actions"
+import { fetchAttendance, saveNotes } from "./store/actions";
+import { fetchEvents } from "../calendar/store/actions";
 import { MantineDataTable } from "../../components/mantine-data-table";
 import { getColumns } from "./columns";
+
+import { Calendar, dateFnsLocalizer } from 'react-big-calendar'
+import '../calendar/store/react-big-calendar.css';
+import format from 'date-fns/format'
+import parse from 'date-fns/parse'
+import startOfWeek from 'date-fns/startOfWeek'
+import getDay from 'date-fns/getDay'
+import enUS from 'date-fns/locale/en-US'
+
+const eventsTest = [
+  {
+      "title": "Sumit Mahajan - Vacation",
+      "allDay": true,
+      "start": "2023-11-30T00:00:00.000Z",
+      "end": "2023-11-30T00:00:00.000Z"
+  },
+  {
+      "title": "Sumit Mahajan - Vacation",
+      "allDay": true,
+      "start": "2023-12-29T00:00:00.000Z",
+      "end": "2023-12-29T00:00:00.000Z"
+  },
+  {
+      "title": "Scott Bohm - Vacation",
+      "allDay": true,
+      "start": "2023-12-26T00:00:00.000Z",
+      "end": "2023-12-27T00:00:00.000Z"
+  },
+  {
+      "title": "Paul Stromberg - Vacation",
+      "allDay": true,
+      "start": "2024-01-08T00:00:00.000Z",
+      "end": "2024-01-08T00:00:00.000Z"
+  }
+];
+
+const locales = {
+  'en-US': enUS,
+};
+
+const localizer = dateFnsLocalizer({
+  format,
+  parse,
+  startOfWeek,
+  getDay,
+  locales,
+});
 
 function Attendance({
   saveNotes,
   attendance,
   fetchAttendance,
   attendanceLoading,
+  fetchEvents,
+  events
 }) {
   const [editedUsers, setEditedUsers] = useState({});
+
+  const [calendarOpened, { open: openCalendar, close: closeCalendar }] = useDisclosure(false);
+  const [eventsLoading, setEventsLoading] = useState(true);
 
   const columns = useMemo(
     () => getColumns(editedUsers, setEditedUsers),
@@ -26,6 +80,9 @@ function Attendance({
 
   const fetchData = async () => {
     await fetchAttendance();
+    setEventsLoading(true);
+    await fetchEvents();
+    setEventsLoading(false);
   };
 
   useEffect(() => {
@@ -45,43 +102,79 @@ function Attendance({
 
   return (
     <Box>
-      <MantineDataTable
-        title={"Attendance"}
-        tableKey={`attendance-data-table`}
-        fetchData={fetchData}
-        columns={columns}
-        data={attendance || []}
-        tableProps={{
-          editDisplayMode: "table",
-          enableEditing: true,
-          getRowId: (row, index) => `${row.Attendance_Note_ID}_${index}`,
-        }}
-        handleSave={handleSaveUsers}
-        loading={attendanceLoading}
-        hasRefetch={true}
-        hasCustomActionBtn={true}
-        hasActionColumn={false}
-        isEditable={true}
-        isEdited={Object.keys(editedUsers).length === 0}
-        editedUsers={editedUsers}
-        enableGrouping={true}
+      <Modal
+      withCloseButton={false}
+      closeOnClickOutside={true}
+      opened={calendarOpened}
+      onClose={closeCalendar}
+      // title="Employee Calendar"
+      centered
+      overlayProps={{
+        blur: 2,
+      }}
+      size={"100%"}
+      // fullScreen
       >
-        <Box display={"flex"}>
-          <Text fz="md" fw={400} mr={8}>
-            {today()}
-          </Text>
-        </Box>
-      </MantineDataTable>
+        <LoadingOverlay
+          visible={eventsLoading}
+          zIndex={1000}
+          overlayprops={{ radius: "sm", blur: 2 }}
+        />
+          <Calendar
+            localizer={localizer}
+            events={events}
+            startAccessor="start"
+            endAccessor="end"
+            style={{ height: 800 }}
+          />
+      </Modal>
+      <Box>
+        <MantineDataTable
+          title={"Attendance"}
+          tableKey={`attendance-data-table`}
+          fetchData={fetchData}
+          columns={columns}
+          data={attendance || []}
+          tableProps={{
+            editDisplayMode: "table",
+            enableEditing: true,
+            getRowId: (row, index) => `${row.Attendance_Note_ID}_${index}`,
+          }}
+          initialState={{
+            sorting: [{ id: "Login", desc: false }],
+          }}
+          handleSave={handleSaveUsers}
+          loading={attendanceLoading}
+          hasRefetch={true}
+          hasCustomActionBtn={true}
+          hasActionColumn={false}
+          isEditable={true}
+          isEdited={Object.keys(editedUsers).length === 0}
+          editedUsers={editedUsers}
+          enableGrouping={true}
+        >
+          <Box display={"flex"}>
+            <Text fz="md" fw={400} mr={16} mt={6}>
+              {today()}
+            </Text>
+            <Button onClick={openCalendar} variant="filled">
+              Calendar
+            </Button>
+          </Box>
+        </MantineDataTable>
+      </Box>
     </Box>
   );
 }
 
 const mapStateToProps = (state) => ({
   attendance: state.getIn(["attendance", "attendance"]),
+  events: state.getIn(["event", "events"]),
   attendanceLoading: state.getIn(["attendance", "attendanceLoading"]),
 });
 
 export default connect(mapStateToProps, {
   fetchAttendance,
   saveNotes,
+  fetchEvents
 })(Attendance);

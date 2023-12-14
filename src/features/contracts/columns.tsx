@@ -1,5 +1,6 @@
 import { Box, Button, Text, Textarea, Skeleton } from "@mantine/core";
 import { format, addMinutes } from "date-fns";
+import { CheckboxFilter } from "../../components/TableComponents";
 
 import {
   formatDate,
@@ -16,7 +17,7 @@ const handleInventoryActionBtn = (row) => {
   );
 };
 
-export const getColumns = (fetchPDF: any, contractsWithOnHandLaoding: any) => {
+export const getColumns = (fetchPDF: any, getTableData: any, contractsWithOnHandLaoding: any) => {
   const onFetchPDFClick = (partNumber: any) => {
     fetchPDF(partNumber);
   };
@@ -159,6 +160,37 @@ export const getColumns = (fetchPDF: any, contractsWithOnHandLaoding: any) => {
       accessorKey: "Customer_PO",
       header: "Customer PO",
       enableEditing: false,
+    },
+    {
+      accessorKey: "Sales_Code",
+      accessorFn: (row: any) => {
+        return row.Sales_Code ? row.Sales_Code : "-";
+      },
+      header: "Sales Code",
+      enableEditing: false,
+      filterVariant: "multi-select",
+      // mantineFilterMultiSelectProps
+      Filter: ({ column, table }) => (
+        <CheckboxFilter
+          column={column}
+          options={[
+            ...new Set(
+              getTableData.map((item) => item.Sales_Code).filter((item) => item)
+            ),
+          ]}
+        />
+      ),
+      filterFn: (row, id, filterValue) => {
+        if (filterValue.length > 0) {
+          if (row.getValue(id)) {
+            return filterValue.includes(row.getValue(id));
+          } else {
+            return false;
+          }
+        } else {
+          return true;
+        }
+      },
     },
     {
       accessorKey: "Unit_Price",

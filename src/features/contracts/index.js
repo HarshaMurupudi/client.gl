@@ -27,7 +27,7 @@ function Contracts({
 }) {
   const navigate = useNavigate();
   const columns = useMemo(
-    () => getColumns(fetchPDF, contractsWithOnHandLaoding),
+    () => getColumns(fetchPDF, contracts, contractsWithOnHandLaoding),
     []
   );
   const timeoutRef = useRef(-1);
