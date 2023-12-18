@@ -52,7 +52,8 @@ function PendingJobs({
   };
   const routeChange = () => {
     let path = `/po-details/${selectedJob}`;
-    navigate(path);
+    // navigate(path);
+    window.open(path, "_blank", "noreferrer");
   };
 
   return (
