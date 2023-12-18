@@ -2,6 +2,7 @@ const INITIAL_STATE = {
   poDetails: [],
   pdfs: [],
   poDetailsLoading: true,
+  poPdfsLoading: false,
 };
 
 const jobsReducer = (state = INITIAL_STATE, action) => {
@@ -20,6 +21,11 @@ const jobsReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         poDetailsLoading: action.payload,
+      };
+    case "SET_PO_PDFS_LOADING":
+      return {
+        ...state,
+        poPdfsLoading: action.payload,
       };
     default:
       return state;

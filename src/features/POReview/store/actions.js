@@ -12,6 +12,10 @@ export const setPOLoading = (status) => ({
   type: "SET_PO_DETAILS_LOADING",
   payload: status,
 });
+export const setPOPDFLoading = (status) => ({
+  type: "SET_PO_PDFS_LOADING",
+  payload: status,
+});
 
 export const setPDFS = (pdfs) => ({
   type: "SET_PDFS",
@@ -33,6 +37,7 @@ export const fetchPODetails = (jobId) => async (dispatch) => {
 export const fetchPOPDF = (jobID) => async (dispatch) => {
   try {
     //   dispatch(setPDFLoading(true));
+    dispatch(setPOPDFLoading(true));
 
     // Check for avalability and file number
     let pdfData = [];
@@ -58,7 +63,7 @@ export const fetchPOPDF = (jobID) => async (dispatch) => {
     console.log(error);
     alert("no file");
   } finally {
-    //   dispatch(setPDFLoading(false));
+    dispatch(setPOPDFLoading(false));
   }
 };
 
