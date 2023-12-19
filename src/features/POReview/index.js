@@ -118,6 +118,7 @@ function POReviewComponent({
     Revenue: "Revenue",
     Act_NRE_Charges: "Act NRE Charges",
     Est_NRE_Charges: "Est NRE Charges",
+    Customer_PO_LN: "PO Line",
   };
 
   const poLabelToValueMapper = (details) => {
@@ -142,6 +143,7 @@ function POReviewComponent({
       Requested_Date: details["Requested_Date"],
       Promised_Date: details["Promised_Date"],
       Promised_Quantity: details["Promised_Quantity"],
+      Customer_PO_LN: details["Customer_PO_LN"],
       Unit_Price: details["Unit_Price"]
         ? "$" + details["Unit_Price"]
         : undefined,
@@ -209,7 +211,7 @@ function POReviewComponent({
                             <tr key={key}>
                               <td>{poKeyToLabelMapper[key]}</td>
                               <td>
-                                {isDate(value)
+                                {isDate(value) && !(key === "Part_Number" || key === "Line2")
                                   ? formatDate(new Date(value))
                                   : poLabelToValueMapper(po)[key] || "-"}
                               </td>
