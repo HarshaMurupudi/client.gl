@@ -16,6 +16,7 @@ const Training = lazy(() => import("../pages/training"));
 const Dashboard = lazy(() => import("../pages/dashboard"));
 const PendingJobs = lazy(() => import("../pages/pending"));
 const OnHold = lazy(() => import("../pages/onHold"));
+const DieCutSPC = lazy(() => import("../pages/spc-diecut"));
 const DeliveryQueueDetails = lazy(
   () => import("../features/delivery-queue-details")
 );
@@ -220,6 +221,18 @@ export const publicRoutes = [
         <PrivateRoute>
           <AppLayout>
             <OnHold />
+          </AppLayout>
+        </PrivateRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/diecut-spc",
+    element: (
+      <Suspense fallback={<div>Loading</div>}>
+        <PrivateRoute>
+          <AppLayout>
+            <DieCutSPC />
           </AppLayout>
         </PrivateRoute>
       </Suspense>

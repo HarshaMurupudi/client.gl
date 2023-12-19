@@ -192,6 +192,7 @@ function NavbarNestedBasic({ width, handleLogout, user }) {
         { label: "L-REWIND", link: "/l-rewind" },
         { label: "O-ZUNDPLOT", link: "/o-zundplot" },
         { label: "P-DIECUT", link: "/p-diecut" },
+        { label: "SPC-DIECUT", link: "/diecut-spc"},
         { label: "P-DMOD01", link: "/p-dmod01" },
         { label: "Q-WS400XY", link: "/q-ws400xy" },
       ],

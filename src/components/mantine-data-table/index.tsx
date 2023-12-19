@@ -76,6 +76,7 @@ const DataTable = ({
   setModalText,
   hasActionColumn,
   enableGrouping,
+  enableExpanding,
   customOnRowSelection,
   isBasicTable = false,
   columnFilters,
@@ -272,6 +273,7 @@ const DataTable = ({
     enableStickyHeader: true,
     enableFacetedValues: true,
     enableMultiSort: true,
+    enableExpanding: enableExpanding,
     isMultiSortEvent: () => true, //now no need to hold `shift` key to multi-sort
     maxMultiSortColCount: 3, //prevent more than 3 columns from being sorted at once
     // columnFilterDisplayMode: 'popover',
