@@ -455,7 +455,7 @@ function RequestSite({
             <Button 
               type="submit"
               disabled={!safetyReportForm.isValid()}
-              onClick={(event) => handleFormSubmit(event, safetyReportForm, "shop")}
+              onClick={(event) => handleFormSubmit(event, safetyReportForm, "safety")}
               color="red" 
               mb={8} >
                 Submit

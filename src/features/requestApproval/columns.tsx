@@ -8,6 +8,7 @@ import { GLSelect } from "../../components/select";
 export const getColumns = (
   editedUsers: any,
   setEditedUsers: any,
+  user: any,
 ) => {
 
   const states = [
@@ -56,16 +57,31 @@ export const getColumns = (
 
   const onSelect = (e: any, cell: any, column: any) => {
     const { row } = cell;
-
+  
+    let updatedRowData;
+  
+    if (e === "Completed") {
+      updatedRowData = {
+        ...row.original,
+        Status: e,
+        Approver: user,
+      };
+    } else {
+      updatedRowData = {
+        ...row.original,
+        Status: e,
+      };
+    }
+  
     if (editedUsers[row.id]) {
       setEditedUsers({
         ...editedUsers,
-        [row.id]: { ...editedUsers[row.id], ...{ Status: e } },
+        [row.id]: updatedRowData,
       });
     } else {
       setEditedUsers({
         ...editedUsers,
-        [row.id]: { ...row.original, ...{ Status: e } },
+        [row.id]: updatedRowData,
       });
     }
   };

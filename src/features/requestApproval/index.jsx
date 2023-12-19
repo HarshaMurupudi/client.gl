@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { useLocation } from "react-router-dom";
 
 import { fetchApproval, saveNotes } from "./store/actions";
-import { Box } from "@mantine/core";
+import { Box, Button } from "@mantine/core";
 import { MantineDataTable } from "../../components/mantine-data-table";
 import { getColumns } from "./columns";
 
@@ -15,31 +15,35 @@ function RequestApproval({
   user
 }) {
   const [editedUsers, setEditedUsers] = useState({});
+  const [showApproved, setShowApproved] = useState(false);
 
   const userName = `${user.First_Name} ${user.Last_Name}`;
 
   const assignedApprovers = {
-    "Sumit Mahajan": ["shop", "eco", "improvement", "maintenance"],
+    "Sumit Mahajan": ["shop", "eco", "improvement", "maintenance", "safety"],
     "Jon Erie": ["shop"],
-    "Jason Mezzenga": ["maintenance"],
-    "Nate Baskfield": ["improvement"],
+    "Jason Mezzenga": ["maintenance", "safety"],
+    "Nate Baskfield": ["improvement", "safety"],
+    "Susan Baskfield" : ["safety"],
     "Bill Allen": ["eco"],
     "Mat Welch": ["eco"],
     "Scott Bohm": ["eco"],
   };
   
-
   const currentUserTypes = assignedApprovers[userName] || [];
 
   const filteredRequests = useMemo(() => {
     if (approval) {
-      return approval.filter(app =>
-        currentUserTypes.includes(app.Request_Type) && app.Status !== "Reject"
+      return approval.filter(
+        (app) =>
+          currentUserTypes.includes(app.Request_Type) &&
+          app.Status !== "Reject" &&
+          (showApproved || app.Status !== "Completed")
       );
     } else {
       return [];
     }
-  }, [approval, currentUserTypes]);
+  }, [approval, currentUserTypes, showApproved]);
 
 
   const fetchData = async () => {
@@ -48,13 +52,14 @@ function RequestApproval({
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [showApproved]);
 
   const columns = useMemo(
     () =>
       getColumns(
         editedUsers,
         setEditedUsers,
+        userName,
       ),
     [editedUsers]
   );
@@ -85,12 +90,16 @@ function RequestApproval({
         handleSave={handleSave}
         loading={approvalLoading}
         hasRefetch={true}
+        fetchData={fetchData}
         hasActionColumn={true}
         enableGrouping={false}
         hasCustomActionBtn={true}
         isEditable={true}
         isEdited={Object.keys(editedUsers).length === 0}
       >
+        <Button onClick={() => setShowApproved(!showApproved)}>
+          {showApproved ? "Open Requests" : "All Requests"}
+        </Button>
       </MantineDataTable>
     </Box>
   );

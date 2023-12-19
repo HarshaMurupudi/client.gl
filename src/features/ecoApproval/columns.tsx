@@ -17,7 +17,7 @@ export const getColumns = (
       description: ""
     },
     {
-      label: "Completed",
+      label: "Approved",
       value: "Completed",
       description: ""
     },

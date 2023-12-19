@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { useLocation } from "react-router-dom";
 
 import { fetchRequests, saveNotes } from "./store/actions";
-import { Box } from "@mantine/core";
+import { Box, Button } from "@mantine/core";
 import { MantineDataTable } from "../../components/mantine-data-table";
 import { getColumns } from "./columns";
 
@@ -15,6 +15,7 @@ function EcoApproval({
   user
 }) {
   const [editedUsers, setEditedUsers] = useState({});
+  const [showApproved, setShowApproved] = useState(false);
 
   let userName = `${user.First_Name} ${user.Last_Name}`;
 
@@ -48,17 +49,19 @@ function EcoApproval({
   const filteredRequests = useMemo(() => {
     if (requests) {
       if (user.First_Name === "Sumit") { // Admin View
-        return requests;
-      } else {
-        userName = "Spencer Erie";
         return requests.filter(request =>
-          assignees[userName].email.includes(request.Assigned_To)
+          showApproved || request.Status !== "Completed"
+        );
+      } else {
+        return requests.filter(request =>
+          assignees[userName].email.includes(request.Assigned_To) &&
+          (showApproved || request.Status !== "Completed")
         );
       }
     } else {
       return [];
     }
-  }, [requests, userName, assignees]);
+  }, [requests, userName, assignees, showApproved]);
 
 
   const fetchData = async () => {
@@ -67,7 +70,7 @@ function EcoApproval({
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [showApproved]);
 
   const columns = useMemo(
     () =>
@@ -116,6 +119,9 @@ function EcoApproval({
         isEditable={canEdit()}
         isEdited={Object.keys(editedUsers).length === 0}
       >
+        <Button onClick={() => setShowApproved(!showApproved)}>
+          {showApproved ? "Open Requests" : "All Requests"}
+        </Button>
       </MantineDataTable>
     </Box>
   );

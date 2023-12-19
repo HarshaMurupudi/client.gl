@@ -38,6 +38,7 @@ export const saveNotes = (requests) => async (dispatch) => {
    let eco = requests.filter(request => request.Request_Type === 'eco');
    let maintenance = requests.filter(request => request.Request_Type === 'maintenance');
    let improvement = requests.filter(request => request.Request_Type === 'improvement');
+   let safety = requests.filter(request => request.Request_Type === 'safety');
    if (shop.length > 0){
     await baseAxios.patch('requests/shop', 
     {
@@ -60,6 +61,12 @@ export const saveNotes = (requests) => async (dispatch) => {
     await baseAxios.patch('requests/improvement', 
     {
       data: {form: improvement},
+      headers
+    });
+   } if (safety.length > 0){
+    await baseAxios.patch('requests/safety', 
+    {
+      data: {form: safety},
       headers
     });
    }
