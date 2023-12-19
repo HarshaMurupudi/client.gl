@@ -103,13 +103,13 @@ export const getColumns = (
     },
     {
       accessorKey: "Lamination",
-      header: "Lamination?",
+      header: "Lamination",
       enableEditing: false,
       filterVariant: "multi-select",
     },
     {
       accessorKey: "Adhesive",
-      header: "Adhesive?",
+      header: "Adhesive",
       enableEditing: false,
       filterVariant: "multi-select",
     },

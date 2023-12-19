@@ -1,12 +1,16 @@
 import { useMemo, useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { Box, Button, Text, Select, MultiSelect, Textarea, Checkbox, Autocomplete } from "@mantine/core";
+import { useForm, Controller } from 'react-hook-form';
+import { Box, Button, Text } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
+
+import { Select, Textarea } from "react-hook-form-mantine";
+
 
 import { fetchAttendance, saveNotes } from "./store/actions"
 import { MantineDataTable } from "../../components/mantine-data-table";
 import { getColumns } from "./columns";
 import { Modal } from "@mantine/core";
-import { useForm } from "@mantine/form";
 import { DatePickerInput } from "@mantine/dates";
 import { useDisclosure } from "@mantine/hooks";
 
@@ -18,15 +22,16 @@ function DieCutSPC({
   attendanceLoading,
 }) {
   const [dieFormOpened, { open: openDieForm, close: closeDieForm }] = useDisclosure(false);
+  const { register, handleSubmit, watch, formState: { errors }, control } = useForm();
 
   const [editedUsers, setEditedUsers] = useState({});
 
   const columns = useMemo(
     () => getColumns(editedUsers, setEditedUsers),
     [editedUsers]
-    );
+  );
 
-  const handleSaveUsers = async (e, table) => {
+  const handleSaveUsers = async () => {
     await saveNotes(Object.values(editedUsers));
     setEditedUsers({});
   };
@@ -51,28 +56,57 @@ function DieCutSPC({
   }
   const userName = `${user.First_Name} ${user.Last_Name}`;
 
-  const dieForm = useForm({
-    initialValues: { die_number: null, date: null, art_number: null, material: null, lamination: null, adhesive: null, platen: null, signature: null, note: null },
+  const transformValues = (data) => {
+    // "Die_Number": data.die_number,
+    // "Date": data.date,
+    // "Art_Number": data.art_number,
+    // "Material": data.material,
+    // "Lamination": data.lamination,
+    // "Adhesive": data.adhesive,
+    // "Platen": data.platen,
+    // "Pad": data.pad,
+    // "Bears": data.bears,
+    // "Makeready": data.makeready,
+    // "Signature": userName,
+    // "Note": data.note
+    console.log(data)
+  }
+  
+  const isValid = (data) => {
+    const requiredFields = [
+      "Die_Number",
+      "Date",
+      "Art_Number",
+      "Material",
+      "Lamination",
+      "Adhesive",
+      "Platen",
+      "Pad",
+      "Bears",
+      "Makeready",
+    ];
+    for (const field of requiredFields) {
+      if (data[field] === null || data[field] === undefined || data[field] === "") {
+        return false;
+      }
+    }
+    return true;
+  };
 
-    validate: {
-      Die_Number: (value) => (value === null ? 'You must enter the Die Number' : null),
-      date: (value) => (value === null ? 'You must enter the Date of the run' : null),
-      Art_Number: (value) => (value === null ? "You must enter the Art Number" : null),
-      Material: (value) => (value === null ? 'You must select the Material' : null),
-    },
-
-    transformValues: (values) => ({
-      "Die_Number": values.die_number, 
-      "Date": values.date, 
-      "Art_Number": values.art_number, 
-      "Material": values.material, 
-      "Lamination": values.lamination, 
-      "Adhesive": values.adhesive, 
-      "Platen": values.platen, 
-      "Signature": values.signature, 
-      "Note": values.note
-    })
-  });
+  const onSubmit = (data) => {
+    data = transformValues(data);
+    console.log(data);
+    if (isValid(data)) {
+      // handleSaveUsers(data);
+      closeDieForm(); // Close the modal after submitting
+    } else {
+      notifications.show({
+        title: "Error",
+        message: "Invalid form data. Please fill in all required fields.",
+        color: "red",
+      });
+    }
+  };
 
   return (
     <Box>
@@ -80,101 +114,103 @@ function DieCutSPC({
         withCloseButton
         closeOnClickOutside={false}
         closeOnEscape={false}
-        opened={dieFormOpened} 
-        onClose={closeDieForm} 
+        opened={dieFormOpened}
+        onClose={closeDieForm}
         title="Die Cut Entry Form"
         centered
         overlayProps={{
           blur: 1,
         }}>
-        <form>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <DatePickerInput
-            mb={16}
+            withAsterisk
+            mb={8}
             label="Date of Run"
             placeholder="Pick Date"
             isClearable={true}
             defaultLevel="decade"
-            {...dieForm.getInputProps('date')}
+            control={control}
           />
           <Select
             withAsterisk
-            mb={16}
+            mb={8}
             label="Die Number"
             placeholder="Select or Enter Die Number..."
-            data={["test"]}
-            {...dieForm.getInputProps('die_number')}
+            data={["219", "45"]}
+            control={control}
           />
           <Select
             withAsterisk
-            mb={16}
+            mb={8}
             label="Art Number"
             placeholder="Search and Select Art Number..."
-            data={["test"]}
+            data={["9845", "512"]}
             searchable
-            {...dieForm.getInputProps('art_number')}
+            control={control}
           />
           <Select
             withAsterisk
-            mb={16}
+            mb={8}
             label="Material"
             placeholder="Search and Select Material..."
-            data={["test"]}
+            data={["123123", "456456"]}
             searchable
-            {...dieForm.getInputProps('material')}
+            control={control}
           />          
           <Select
             withAsterisk
-            mb={16}
+            mb={8}
             label="Lamination"
             placeholder="Select Lamination..."
-            data={["test"]}
-            {...dieForm.getInputProps('lamination')}
+            data={["Yes", "No"]}
+            control={control}
           />
           <Select
             withAsterisk
-            mb={16}
+            mb={8}
             label="Adhesive"
             placeholder="Select Adhesive..."
-            data={["test"]}
-            {...dieForm.getInputProps('adhesive')}
+            data={["Yes", "No"]}
+            control={control}
           />
           <Select
             withAsterisk
-            mb={16}
+            mb={8}
             label="Cut Type"
             placeholder="Select Cut Type..."
-            data={["test"]}
-            {...dieForm.getInputProps('cut_type')}
+            data={["TC", "KS"]}
+            control={control}
           />
           <Select
             withAsterisk
-            mb={16}
+            mb={8}
             label="Press"
             placeholder="Select Press..."
-            data={["test"]}
-            {...dieForm.getInputProps('press')}
+            data={["Thompson", "Standard", "Chandler"]}
+            control={control}
           />
           <Textarea
+            withAsterisk
             label="Platen Set"
+            mb={8}
             placeholder="Enter Platen Set..."
             autosize
-            {...dieForm.getInputProps('platen')}
+            control={control}
           />
           <Textarea
             label="Note"
+            mb={8}
             placeholder="Notes..."
             autosize
-            {...dieForm.getInputProps('note')}
+            control={control}
           />
-            <Button 
-              type="submit"
-              disabled={!dieForm.isValid()}
-              // onClick={(event) => handleFormSubmit(event, dieForm, true)}
-              color="red" 
-              mt={32}
-              mb={8} >
-                Submit
-            </Button>
+          <Button
+            type="submit"
+            onClick={onSubmit}
+            mt={16}
+            mb={8}>
+            Submit
+          </Button>
           <Text size={12} opacity={.5}>
             Submit as {userName}
           </Text>
