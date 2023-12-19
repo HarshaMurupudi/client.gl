@@ -14,6 +14,8 @@ function RequestSite({
 }) {
   const [shopRequestOpened, { open: openShopRequest, close: closeShopRequest }] = useDisclosure(false);
 
+  const [safetyReportOpened, { open: openSafetyReport, close: closeSafetyReport }] = useDisclosure(false);
+
   const [ecoRequestOpened, { open: openEcoRequest, close: closeEcoRequest }] = useDisclosure(false);
 
   const [maintenanceRequestOpened, { open: openMaintenanceRequest, close: closeMaintenanceRequest }] = useDisclosure(false);
@@ -31,6 +33,7 @@ function RequestSite({
   let closeForms = {
     shop: closeShopRequest,
     eco: closeEcoRequest,
+    safety: closeSafetyReport,
     maintenance: closeMaintenanceRequest,
     improvement: closeImprovementRequest,
   };
@@ -85,6 +88,35 @@ function RequestSite({
     }),
 
     onSubmit: () => handleFormSubmit(shopRequestForm, "shop"), 
+  });
+
+  const safetyReportForm = useForm({
+    initialValues: { initiator: null, subject: null, part_number: null, job_number: null, work_center: null, priority: null, request: null },
+
+    validate: {
+      initiator: (value) => (value === null ? "Initiator Required" : null),
+      subject: (value) => (value === null ? 'Subject Required' : null),
+      workCenter: (value) => (value === null ? 'Work Center Required' : null),
+      priority: (value) => (value === null ? 'Priority Required' : null),
+      request: (value) => (value === null ? 'Report Description Required' : null),
+    },
+
+    transformValues: (values) => ({
+      "Request_ID": null,
+      "Request_Type": "safety",
+      "Submission_Date": new Date(),
+      "Status": "New",
+      "Initiator": values.initiator,
+      "Subject": values.subject,
+      "Work_Center": values.work_center,
+      "Priority": values.priority,
+      "Request": values.request,
+      "Approver": null,
+      "Approval_Comment": null,
+      "Approval_Date": null,
+    }),
+
+    onSubmit: () => handleFormSubmit(safetyReportForm, "safety"), 
   });
 
   const ecoRequestForm = useForm({
@@ -370,6 +402,73 @@ function RequestSite({
         withCloseButton
         closeOnClickOutside={false}
         closeOnEscape={false}
+        opened={safetyReportOpened} 
+        onClose={closeSafetyReport} 
+        title="Safety Report Form"
+        centered
+        overlayProps={{
+          blur: 1,
+        }}>
+        <form>
+          <Select
+            withAsterisk
+            mb={16}
+            label="Select Initiator"
+            placeholder="Initiator"
+            data={requests.names}
+            autosize
+            {...safetyReportForm.getInputProps('initiator')}
+          />
+          <Textarea
+            withAsterisk
+            mb={16}
+            label="Subject"
+            placeholder="Subject..."
+            autosize
+            {...safetyReportForm.getInputProps('subject')}
+          />
+          <Select
+            withAsterisk
+            mb={16}
+            label="Select Work Center"
+            placeholder="Work Center"
+            data={requests.workCenters}
+            autosize
+            {...safetyReportForm.getInputProps('work_center')}
+          />
+          <Select
+            withAsterisk
+            mb={16}
+            label="Select Priority"
+            placeholder="Priority"
+            data={priorities}
+            autosize
+            {...safetyReportForm.getInputProps('priority')}
+          />
+          <Textarea
+            withAsterisk
+            mb={16}
+            label="Enter the Request Description"
+            placeholder="Request Description..."
+            {...safetyReportForm.getInputProps('request')}
+          />
+            <Button 
+              type="submit"
+              disabled={!safetyReportForm.isValid()}
+              onClick={(event) => handleFormSubmit(event, safetyReportForm, "shop")}
+              color="red" 
+              mb={8} >
+                Submit
+            </Button>
+          <Text size={12} opacity={.5}>
+            Submit as {userName}
+          </Text>
+        </form>
+      </Modal>
+      <Modal
+        withCloseButton
+        closeOnClickOutside={false}
+        closeOnEscape={false}
         opened={maintenanceRequestOpened} 
         onClose={closeMaintenanceRequest} 
         title="Maintenance Request Form"
@@ -529,6 +628,9 @@ function RequestSite({
             </Button>
             <Button onClick={openEcoRequest} variant="filled" size="xl">
               ECO Request Form
+            </Button>
+            <Button onClick={openSafetyReport} variant="filled" size="xl">
+              Safety Report Form
             </Button>
             <Button onClick={openMaintenanceRequest} variant="filled" size="xl">
               Maintenance Request Form

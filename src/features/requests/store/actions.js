@@ -44,6 +44,12 @@ export const saveNotes = (form, formName) => async (dispatch) => {
           data: {form},
           headers
         });
+    } else if (formName == "safety") {
+      await baseAxios.patch('requests/safety', 
+        {
+          data: {form},
+          headers
+        });
     } else if (formName == "maintenance") {
       await baseAxios.patch('requests/maintenance', 
         {

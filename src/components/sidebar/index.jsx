@@ -108,6 +108,7 @@ function NavbarNestedBasic({ width, handleLogout, user }) {
         { label: "Tracking", link: "/tracking" },
         { label: "Attendance", link: "/attendance" },
         { label: "Production Meeting", link: "/productionMeeting" },
+        { label: "Safety Reports", link: "/safetyReports"},
         { label: "Training", link: "/training" },
         [
           "000061",
