@@ -128,8 +128,10 @@ export const getColumns = (fetchPDF: any) => {
       id: "requestedDate",
       enableEditing: false,
       accessorFn: (row: any) => {
-        const sDay = new Date(row.Requested_Date);
-        return sDay;
+        if (row.Promised_Date){
+          const sDay = new Date(row.Promised_Date);
+          return sDay;
+        }
       },
       header: "Requested Date",
       filterVariant: "date",
@@ -139,8 +141,10 @@ export const getColumns = (fetchPDF: any) => {
     },
     {
       accessorFn: (row: any) => {
-        const sDay = new Date(row.Promised_Date);
-        return sDay;
+        if (row.Promised_Date){
+          const sDay = new Date(row.Promised_Date);
+          return sDay;
+        }
       },
       enableEditing: false,
       id: "promisedDate",

@@ -636,7 +636,7 @@ function RequestSite({
               Maintenance Request Form
             </Button>
             <Button onClick={openImprovementRequest} variant="filled" size="xl">
-              Improvement Suggestion Form
+              Continuous Improvement Form
             </Button>
           </Stack>
     </Flex>

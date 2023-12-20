@@ -183,7 +183,7 @@ export const getColumns = (
       enableEditing: false,
       filterVariant: "multi-select",
       accessorFn: (row: any) => {
-        const Part_Number = row.Part_Number || "";
+        const Part_Number = row.Part_Number || "-";
         return Part_Number;
       },
     },
@@ -193,7 +193,7 @@ export const getColumns = (
       enableEditing: false,
       filterVariant: "multi-select",
       accessorFn: (row: any) => {
-        const Job_Number = row.Job_Number || "";
+        const Job_Number = row.Job_Number || "-";
         return Job_Number;
       },
     },
@@ -203,7 +203,7 @@ export const getColumns = (
       filterVariant: "multi-select",
       enableEditing: false,
       accessorFn: (row: any) => {
-        const Work_Center = row.Work_Center || "";
+        const Work_Center = row.Work_Center || "-";
         return Work_Center;
       },
     },

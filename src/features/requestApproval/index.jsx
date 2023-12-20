@@ -25,9 +25,7 @@ function RequestApproval({
     "Jason Mezzenga": ["maintenance", "safety"],
     "Nate Baskfield": ["improvement", "safety"],
     "Susan Baskfield" : ["safety"],
-    "Bill Allen": ["eco"],
-    "Mat Welch": ["eco"],
-    "Scott Bohm": ["eco"],
+    "Lyn Erie" : ["safety"]
   };
   
   const currentUserTypes = assignedApprovers[userName] || [];

@@ -50,7 +50,8 @@ function EcoApproval({
     if (requests) {
       if (user.First_Name === "Sumit") { // Admin View
         return requests.filter(request =>
-          showApproved || request.Status !== "Completed"
+          request.Status !== "Reject" &&
+          (showApproved || request.Status !== "Completed")
         );
       } else {
         return requests.filter(request =>
