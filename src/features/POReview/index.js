@@ -214,7 +214,8 @@ function POReviewComponent({
                               <td>{poKeyToLabelMapper[key]}</td>
                               <td>
                                 {isDate(value) &&
-                                !(key === "Part_Number" || key === "Line2")
+                                (key === "Requested_Date" ||
+                                  key === "Promised_Date")
                                   ? formatDate(new Date(value))
                                   : poLabelToValueMapper(po)[key] || "-"}
                               </td>
