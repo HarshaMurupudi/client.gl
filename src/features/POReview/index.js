@@ -147,7 +147,9 @@ function POReviewComponent({
       Unit_Price: details["Unit_Price"]
         ? "$" + details["Unit_Price"]
         : undefined,
-      Revenue: details["Revenue"] ? "$" + details["Revenue"] : undefined,
+      Revenue: details["Revenue"]
+        ? "$" + details["Revenue"].toFixed(2)
+        : undefined,
       Act_NRE_Charges: details["Act_NRE_Charges"]
         ? "$" + details["Act_NRE_Charges"]
         : undefined,
@@ -211,7 +213,8 @@ function POReviewComponent({
                             <tr key={key}>
                               <td>{poKeyToLabelMapper[key]}</td>
                               <td>
-                                {isDate(value) && !(key === "Part_Number" || key === "Line2")
+                                {isDate(value) &&
+                                !(key === "Part_Number" || key === "Line2")
                                   ? formatDate(new Date(value))
                                   : poLabelToValueMapper(po)[key] || "-"}
                               </td>
