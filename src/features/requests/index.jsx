@@ -1,0 +1,655 @@
+import { useEffect, useState, useMemo } from "react";
+import { connect } from "react-redux";
+import { useDisclosure } from "@mantine/hooks";
+import { Flex, Box, Select, Button, Modal, Textarea, Text, Stack, LoadingOverlay } from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { fetchRequests, saveNotes } from "./store/actions";
+
+function RequestSite({
+  requestsLoading,
+  fetchRequests,
+  requests,
+  saveNotes,
+  user,
+}) {
+  const [shopRequestOpened, { open: openShopRequest, close: closeShopRequest }] = useDisclosure(false);
+
+  const [safetyReportOpened, { open: openSafetyReport, close: closeSafetyReport }] = useDisclosure(false);
+
+  const [ecoRequestOpened, { open: openEcoRequest, close: closeEcoRequest }] = useDisclosure(false);
+
+  const [maintenanceRequestOpened, { open: openMaintenanceRequest, close: closeMaintenanceRequest }] = useDisclosure(false);
+
+  const [improvementRequestOpened, { open: openImprovementRequest, close: closeImprovementRequest }] = useDisclosure(false);
+
+  const fetchPageData = async () => {
+    await fetchRequests(); // Employee Names and Work Centers
+  };
+
+  useEffect(() => {
+    fetchPageData();  
+  }, []);
+
+  let closeForms = {
+    shop: closeShopRequest,
+    eco: closeEcoRequest,
+    safety: closeSafetyReport,
+    maintenance: closeMaintenanceRequest,
+    improvement: closeImprovementRequest,
+  };
+
+  const handleFormSubmit = async (event, form, formName) => {
+    event.preventDefault();
+    closeForms = closeForms[formName];
+    const newData = form.getTransformedValues();
+    closeForms();
+    await saveNotes(newData, formName);
+    form.reset()
+  };
+
+  const priorities = ["Low", "Medium", "High"];
+  const ecoTypes = [
+    "Converting",
+    "Membrane Switch", 
+    "Overlay", 
+    "Label", 
+    "Decal", 
+    "Printed Electronics"
+  ];
+
+  const shopRequestForm = useForm({
+    initialValues: { initiator: null, subject: null, part_number: null, job_number: null, work_center: null, priority: null, request: null },
+
+    validate: {
+      initiator: (value) => (value === null ? "Initiator Required" : null),
+      subject: (value) => (value === null ? 'Subject Required' : null),
+      part_number: (value) => (value === null ? 'Part Number Required' : null),
+      job_number: (value) => (value === null ? 'Job Number Required' : null),
+      work_center: (value) => (value === null ? 'Work Center Required' : null),
+      priority: (value) => (value === null ? 'Priority Required' : null),
+      request: (value) => (value === null ? 'Request Description Required' : null),
+    },
+
+    transformValues: (values) => ({
+      "Request_ID": null,
+      "Request_Type": "shop",
+      "Submission_Date": new Date(),
+      "Status": "New",
+      "Initiator": values.initiator,
+      "Subject": values.subject,
+      "Part_Number": values.part_number,
+      "Job_Number": values.job_number,
+      "Work_Center": values.work_center,
+      "Priority": values.priority,
+      "Request": values.request,
+      "Approver": "Sumit Mahajan",
+      "Approval_Comment": null,
+      "Approval_Date": null,
+    }),
+
+    onSubmit: () => handleFormSubmit(shopRequestForm, "shop"), 
+  });
+
+  const safetyReportForm = useForm({
+    initialValues: { initiator: null, subject: null, part_number: null, job_number: null, work_center: null, priority: null, request: null },
+
+    validate: {
+      initiator: (value) => (value === null ? "Initiator Required" : null),
+      subject: (value) => (value === null ? 'Subject Required' : null),
+      workCenter: (value) => (value === null ? 'Work Center Required' : null),
+      priority: (value) => (value === null ? 'Priority Required' : null),
+      request: (value) => (value === null ? 'Report Description Required' : null),
+    },
+
+    transformValues: (values) => ({
+      "Request_ID": null,
+      "Request_Type": "safety",
+      "Submission_Date": new Date(),
+      "Status": "New",
+      "Initiator": values.initiator,
+      "Subject": values.subject,
+      "Work_Center": values.work_center,
+      "Priority": values.priority,
+      "Request": values.request,
+      "Approver": null,
+      "Approval_Comment": null,
+      "Approval_Date": null,
+    }),
+
+    onSubmit: () => handleFormSubmit(safetyReportForm, "safety"), 
+  });
+
+  const ecoRequestForm = useForm({
+    initialValues: { initiator: null, subject: null, part_number: null, job_number: null, work_center: null, eco_type: null, priority: null, request: null },
+
+    validate: {
+      initiator: (value) => (value === null ? "Initiator Required" : null),
+      subject: (value) => (value === null ? 'Subject Required' : null),
+      part_number: (value) => (value === null ? 'Part Number Required' : null),
+      job_number: (value) => (value === null ? 'Job Number Required' : null),
+      work_center: (value) => (value === null ? 'Work Center Required' : null),
+      eco_type: (value) => (value === null ? 'ECO Type Required' : null),
+      priority: (value) => (value === null ? 'Priority Required' : null),
+      request: (value) => (value === null ? 'Request Description Required' : null),
+    },
+
+    transformValues: (values) => ({
+      "Request_ID": null,
+      "Request_Type": "eco",
+      "Submission_Date": new Date(),
+      "Status": "New",
+      "Initiator": values.initiator,
+      "Subject": values.subject,
+      "Part_Number": values.part_number,
+      "Job_Number": values.job_number,
+      "Work_Center": values.work_center,
+      "Eco_Type": values.eco_type,
+      "Priority": values.priority,
+      "Request": values.request,
+      "Approver": null,
+      "Approval_Comment": null,
+      "Approval_Date": null,
+    }),
+
+    onSubmit: () => handleFormSubmit(ecoRequestForm, "eco"),
+  });
+
+  const maintenanceRequestForm = useForm({
+    initialValues: { initiator: null, subject: null, work_center: null, priority: null, request: null },
+
+    validate: {
+      initiator: (value) => (value === null ? "Initiator Required" : null),
+      subject: (value) => (value === null ? 'Subject Required' : null),
+      priority: (value) => (value === null ? 'Priority Required' : null),
+      request: (value) => (value === null ? 'Request Description Required' : null),
+    },
+
+    transformValues: (values) => ({
+      "Request_ID": null,
+      "Request_Type": "maintenance",
+      "Submission_Date": new Date(),
+      "Status": "New",
+      "Initiator": values.initiator,
+      "Subject": values.subject,
+      "Work_Center": values.work_center,
+      "Priority": values.priority,
+      "Request": values.request,
+      "Approver": null,
+      "Approval_Comment": null,
+      "Approval_Date": null,
+    }),
+
+    onSubmit: () => handleFormSubmit(maintenanceRequestForm, "maintenance"),
+  });
+
+  const improvementForm = useForm({
+    initialValues: { initiator: null, subject: null, part_number: null, job_number: null, work_center: null, priority: null, suggestion: null },
+
+    validate: {
+      initiator: (value) => (value === null ? "Initiator Required" : null),
+      subject: (value) => (value === null ? 'Subject Required' : null),
+      work_center: (value) => (value === null ? 'Work Center Required' : null),
+      priority: (value) => (value === null ? 'Priority Required' : null),
+      suggestion: (value) => (value === null ? 'Suggestion Required' : null),
+    },
+
+    transformValues: (values) => ({
+      "Request_ID": null,
+      "Request_Type": "improvement",
+      "Submission_Date": new Date(),
+      "Status": "New",
+      "Initiator": values.initiator,
+      "Subject": values.subject,
+      "Part_Number": values.part_number,
+      "Job_Number": values.job_number,
+      "Work_Center": values.work_center,
+      "Priority": values.priority,
+      "Request": values.suggestion,
+      "Approver": null,
+      "Approval_Comment": null,
+      "Approval_Date": null,
+    }),
+
+    onSubmit: () => handleFormSubmit(improvementForm, "improvement"),
+  });
+
+  const userName = `${user.First_Name} ${user.Last_Name}`;
+  
+  return (
+    <Flex
+      h={"85vh"}
+      w={"76vw"}
+      fluid="true"
+      justify="center"
+      align="center"
+    >
+      <Modal
+        withCloseButton
+        closeOnClickOutside={false}
+        closeOnEscape={false}
+        opened={shopRequestOpened} 
+        onClose={closeShopRequest} 
+        title="Shop Request Form"
+        centered
+        overlayProps={{
+          blur: 1,
+        }}>
+        <form>
+          <Select
+            withAsterisk
+            mb={16}
+            label="Select Initiator"
+            placeholder="Initiator"
+            data={requests.names}
+            autosize
+            {...shopRequestForm.getInputProps('initiator')}
+          />
+          <Textarea
+            withAsterisk
+            mb={16}
+            label="Subject"
+            placeholder="Subject..."
+            autosize
+            {...shopRequestForm.getInputProps('subject')}
+          />
+          <Textarea
+            withAsterisk
+            mb={16}
+            label="Part Number"
+            placeholder="Part Number..."
+            autosize
+            {...shopRequestForm.getInputProps('part_number')}
+          />
+          <Textarea
+            withAsterisk
+            mb={16}
+            label="Job Number"
+            placeholder="Job Number..."
+            autosize
+            {...shopRequestForm.getInputProps('job_number')}
+          />
+          <Select
+            withAsterisk
+            mb={16}
+            label="Select Work Center"
+            placeholder="Work Center"
+            data={requests.workCenters}
+            autosize
+            {...shopRequestForm.getInputProps('work_center')}
+          />
+          <Select
+            withAsterisk
+            mb={16}
+            label="Select Priority"
+            placeholder="Priority"
+            data={priorities}
+            autosize
+            {...shopRequestForm.getInputProps('priority')}
+          />
+          <Textarea
+            withAsterisk
+            mb={16}
+            label="Enter the Request Description"
+            placeholder="Request Description..."
+            {...shopRequestForm.getInputProps('request')}
+          />
+            <Button 
+              type="submit"
+              disabled={!shopRequestForm.isValid()}
+              onClick={(event) => handleFormSubmit(event, shopRequestForm, "shop")}
+              color="red" 
+              mb={8} >
+                Submit
+            </Button>
+          <Text size={12} opacity={.5}>
+            Submit as {userName}
+          </Text>
+        </form>
+      </Modal>
+      <Modal
+        withCloseButton
+        closeOnClickOutside={false}
+        closeOnEscape={false}
+        opened={ecoRequestOpened} 
+        onClose={closeEcoRequest} 
+        title="ECO Request Form"
+        centered
+        overlayProps={{
+          blur: 1,
+        }}>
+        <form>
+          <Select
+            withAsterisk
+            mb={16}
+            label="Select Initiator"
+            placeholder="Initiator"
+            data={requests.names}
+            autosize
+            {...ecoRequestForm.getInputProps('initiator')}
+          />
+          <Textarea
+            withAsterisk
+            mb={16}
+            label="Subject"
+            placeholder="Subject..."
+            autosize
+            {...ecoRequestForm.getInputProps('subject')}
+          />
+          <Textarea
+            withAsterisk
+            mb={16}
+            label="Part Number"
+            placeholder="Part Number..."
+            autosize
+            {...ecoRequestForm.getInputProps('part_number')}
+          />
+          <Textarea
+            withAsterisk
+            mb={16}
+            label="Job Number"
+            placeholder="Job Number..."
+            autosize
+            {...ecoRequestForm.getInputProps('job_number')}
+          />
+          <Select
+            withAsterisk
+            mb={16}
+            label="Select Work Center"
+            placeholder="Work Center"
+            data={requests.workCenters}
+            autosize
+            {...ecoRequestForm.getInputProps('work_center')}
+          />
+          <Select
+            withAsterisk
+            mb={16}
+            label="Select ECO Type"
+            placeholder="ECO Type"
+            data={ecoTypes}
+            autosize
+            {...ecoRequestForm.getInputProps('eco_type')}
+          />
+          <Select
+            withAsterisk
+            mb={16}
+            label="Select Priority"
+            placeholder="Priority"
+            data={priorities}
+            autosize
+            {...ecoRequestForm.getInputProps('priority')}
+          />
+          <Textarea
+            withAsterisk
+            mb={16}
+            label="Enter the Request Description"
+            placeholder="Job Number..."
+            {...ecoRequestForm.getInputProps('request')}
+          />
+            <Button 
+              type="submit"
+              disabled={!ecoRequestForm.isValid()}
+              onClick={(event) => handleFormSubmit(event, ecoRequestForm, "eco")}
+              color="red" 
+              mb={8} >
+                Submit
+            </Button>
+          <Text size={12} opacity={.5}>
+            Submit as {userName}
+          </Text>
+        </form>
+      </Modal>
+      <Modal
+        withCloseButton
+        closeOnClickOutside={false}
+        closeOnEscape={false}
+        opened={safetyReportOpened} 
+        onClose={closeSafetyReport} 
+        title="Safety Report Form"
+        centered
+        overlayProps={{
+          blur: 1,
+        }}>
+        <form>
+          <Select
+            withAsterisk
+            mb={16}
+            label="Select Initiator"
+            placeholder="Initiator"
+            data={requests.names}
+            autosize
+            {...safetyReportForm.getInputProps('initiator')}
+          />
+          <Textarea
+            withAsterisk
+            mb={16}
+            label="Subject"
+            placeholder="Subject..."
+            autosize
+            {...safetyReportForm.getInputProps('subject')}
+          />
+          <Select
+            withAsterisk
+            mb={16}
+            label="Select Work Center"
+            placeholder="Work Center"
+            data={requests.workCenters}
+            autosize
+            {...safetyReportForm.getInputProps('work_center')}
+          />
+          <Select
+            withAsterisk
+            mb={16}
+            label="Select Priority"
+            placeholder="Priority"
+            data={priorities}
+            autosize
+            {...safetyReportForm.getInputProps('priority')}
+          />
+          <Textarea
+            withAsterisk
+            mb={16}
+            label="Enter the Request Description"
+            placeholder="Request Description..."
+            {...safetyReportForm.getInputProps('request')}
+          />
+            <Button 
+              type="submit"
+              disabled={!safetyReportForm.isValid()}
+              onClick={(event) => handleFormSubmit(event, safetyReportForm, "safety")}
+              color="red" 
+              mb={8} >
+                Submit
+            </Button>
+          <Text size={12} opacity={.5}>
+            Submit as {userName}
+          </Text>
+        </form>
+      </Modal>
+      <Modal
+        withCloseButton
+        closeOnClickOutside={false}
+        closeOnEscape={false}
+        opened={maintenanceRequestOpened} 
+        onClose={closeMaintenanceRequest} 
+        title="Maintenance Request Form"
+        centered
+        overlayProps={{
+          blur: 1,
+        }}>
+        <form>
+          <Select
+            withAsterisk
+            mb={16}
+            label="Select Initiator"
+            placeholder="Initiator"
+            data={requests.names}
+            autosize
+            {...maintenanceRequestForm.getInputProps('initiator')}
+          />
+          <Textarea
+            withAsterisk
+            mb={16}
+            label="Subject"
+            placeholder="Subject..."
+            autosize
+            {...maintenanceRequestForm.getInputProps('subject')}
+          />
+          <Select
+            mb={16}
+            label="Select Work Center"
+            placeholder="Work Center"
+            data={requests.workCenters}
+            autosize
+            {...maintenanceRequestForm.getInputProps('work_center')}
+          />
+          <Select
+            withAsterisk
+            mb={16}
+            label="Select Priority"
+            placeholder="Priority"
+            data={priorities}
+            autosize
+            {...maintenanceRequestForm.getInputProps('priority')}
+          />
+          <Textarea
+            withAsterisk
+            mb={16}
+            label="Enter the Maintenance Request"
+            placeholder="Maintenance Request..."
+            {...maintenanceRequestForm.getInputProps('request')}
+          />
+            <Button 
+              type="submit"
+              disabled={!maintenanceRequestForm.isValid()}
+              onClick={(event) => handleFormSubmit(event, maintenanceRequestForm, "maintenance")}
+              color="red" 
+              mb={8} >
+                Submit
+            </Button>
+          <Text size={12} opacity={.5}>
+            Submit as {userName}
+          </Text>
+        </form>
+      </Modal>
+      <Modal
+        withCloseButton
+        closeOnClickOutside={false}
+        closeOnEscape={false}
+        opened={improvementRequestOpened} 
+        onClose={closeImprovementRequest} 
+        title="Continuous Improvement Form"
+        centered
+        overlayProps={{
+          blur: 1,
+        }}>
+        <form>
+          <Select
+            withAsterisk
+            mb={16}
+            label="Select Initiator"
+            placeholder="Initiator"
+            data={requests.names}
+            autosize
+            {...improvementForm.getInputProps('initiator')}
+          />
+          <Textarea
+            withAsterisk
+            mb={16}
+            label="Subject"
+            placeholder="Subject..."
+            autosize
+            {...improvementForm.getInputProps('subject')}
+          />
+          <Textarea
+            mb={16}
+            label="Part Number"
+            placeholder="Part Number..."
+            autosize
+            {...improvementForm.getInputProps('part_number')}
+          />
+          <Textarea
+            mb={16}
+            label="Job Number"
+            placeholder="Job Number..."
+            autosize
+            {...improvementForm.getInputProps('job_number')}
+          />
+          <Select
+            withAsterisk
+            mb={16}
+            label="Select Work Center"
+            placeholder="Work Center"
+            data={requests.workCenters}
+            autosize
+            {...improvementForm.getInputProps('work_center')}
+          />
+          <Select
+            withAsterisk
+            mb={16}
+            label="Select Priority"
+            placeholder="Priority"
+            data={priorities}
+            autosize
+            {...improvementForm.getInputProps('priority')}
+          />
+          <Textarea
+            withAsterisk
+            mb={16}
+            label="Enter the Improvement Suggestion"
+            placeholder="Job Number..."
+            {...improvementForm.getInputProps('suggestion')}
+          />
+            <Button 
+              type="submit"
+              disabled={!improvementForm.isValid()}
+              onClick={(event) => handleFormSubmit(event, improvementForm, "improvement")}
+              color="red" 
+              mb={8} >
+                Submit
+            </Button>
+          <Text size={12} opacity={.5}>
+            Submit as {userName}
+          </Text>
+        </form>
+      </Modal>
+        <LoadingOverlay
+          visible={requestsLoading}
+          zIndex={1000}
+          overlayprops={{ radius: "sm", blur: 2 }}
+        />
+          <Stack
+            display="flex"
+            spacing="xl"
+            align="center"
+            justify="center"
+          >
+            <Button onClick={openShopRequest} variant="filled" size="xl">
+              Shop Request Form
+            </Button>
+            <Button onClick={openEcoRequest} variant="filled" size="xl">
+              ECO Request Form
+            </Button>
+            <Button onClick={openSafetyReport} variant="filled" size="xl">
+              Safety Report Form
+            </Button>
+            <Button onClick={openMaintenanceRequest} variant="filled" size="xl">
+              Maintenance Request Form
+            </Button>
+            <Button onClick={openImprovementRequest} variant="filled" size="xl">
+              Continuous Improvement Form
+            </Button>
+          </Stack>
+    </Flex>
+  );
+};
+
+const mapStateToProps = (state) => ({
+  requests: state.getIn(["requests", "requests"]),
+  requestsLoading: state.getIn(["requests", "requestsLoading"]),
+  user: state.getIn(["user", "user"]),
+});
+
+export default connect(mapStateToProps, {
+  fetchRequests,
+  saveNotes,
+})(RequestSite);

@@ -16,6 +16,7 @@ import {
   IconFileAnalytics,
   IconCalendarStats,
   IconFingerprint,
+  IconProgressCheck,
 } from "@tabler/icons-react";
 
 import { UserButton } from "../UserButton";
@@ -125,6 +126,16 @@ function NavbarNestedBasic({ width, handleLogout, user }) {
           link: "/jobs/latest",
         },
       ],
+    },
+    {
+      label: "Requests",
+      icon: IconProgressCheck,
+      initiallyOpened: false,
+      links: [
+        { label: "Submit Request", link: "/request" },
+        { label: "Approve Requests", link: "/request/approval" },
+        { label: "Approve ECO", link: "/request/approval/eco" },
+      ]
     },
     {
       label: "Job Planning",

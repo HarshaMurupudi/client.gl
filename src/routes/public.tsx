@@ -10,6 +10,7 @@ const Contracts = lazy(() => import("../pages/contracts"));
 const Operations = lazy(() => import("../pages/operations"));
 const PO = lazy(() => import("../pages/po"));
 const Tracking = lazy(() => import("../pages/tracking"));
+const RequestPage = lazy(() => import("../pages/request"));
 const EmployeeAttendance = lazy(() => import("../pages/attendance"));
 const Meeting = lazy(() => import("../pages/meeting"));
 const Calendar = lazy(() => import("../pages/calendar"))
@@ -33,6 +34,8 @@ const Fai = lazy(() => import("../pages/fai"));
 const DScreens = lazy(() => import("../pages/d-screen"));
 const ACustomer = lazy(() => import("../pages/a-customer"));
 const PoReviewPage = lazy(() => import("../pages/po-review"));
+const RequestApproval = lazy(() => import("../pages/requestApproval"));
+const EcoApproval = lazy(() => import("../pages/ecoApproval"))
 
 const EInk = lazy(() => import("../pages/print/E-INK"));
 const HCylinder = lazy(() => import("../pages/print/H-CYLINDER"));
@@ -197,6 +200,42 @@ export const publicRoutes = [
         <PrivateRoute>
           <AppLayout>
             <Meeting />
+          </AppLayout>
+        </PrivateRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/request",
+    element: (
+      <Suspense fallback={<div>Loading</div>}>
+        <PrivateRoute>
+          <AppLayout>
+            <RequestPage />
+          </AppLayout>
+        </PrivateRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/reques/approval",
+    element: (
+      <Suspense fallback={<div>Loading</div>}>
+        <PrivateRoute>
+          <AppLayout>
+            <RequestApproval />
+          </AppLayout>
+        </PrivateRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/request/approval/eco",
+    element: (
+      <Suspense fallback={<div>Loading</div>}>
+        <PrivateRoute>
+          <AppLayout>
+            <EcoApproval />
           </AppLayout>
         </PrivateRoute>
       </Suspense>

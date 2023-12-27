@@ -26,8 +26,10 @@ import { reducer as employeesReducer } from "../features/training/store/employee
 import { reducer as namesReducer } from "../features/training/store/names_store";
 import { reducer as autoCreateJobFolderReducer } from "../features/auto-create/store";
 import { reducer as autoCreatePartFolderReducer } from "../features/auto-create-part-folder/store";
+import { reducer as requestsReducer } from "../features/requests/store";
+import { reducer as approvalReducer } from "../features/requestApproval/store";
+import { reducer as ecoReducer } from "../features/ecoApproval/store";
 import { reducer as onHoldReducer } from "../features/onHold/store";
-
 
 export default combineReducers({
   job: jobsReducer,
@@ -55,5 +57,8 @@ export default combineReducers({
   calendar: calendarReducer,
   autoCreateJobFolder: autoCreateJobFolderReducer,
   autoCreatePartFolder: autoCreatePartFolderReducer,
+  requests: requestsReducer,
+  approval: approvalReducer,
+  ecoApproval: ecoReducer,
   onHold: onHoldReducer
 });
