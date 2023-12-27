@@ -13,9 +13,11 @@ const Tracking = lazy(() => import("../pages/tracking"));
 const RequestPage = lazy(() => import("../pages/request"));
 const EmployeeAttendance = lazy(() => import("../pages/attendance"));
 const Meeting = lazy(() => import("../pages/meeting"));
+const Calendar = lazy(() => import("../pages/calendar"))
 const Training = lazy(() => import("../pages/training"));
 const Dashboard = lazy(() => import("../pages/dashboard"));
 const PendingJobs = lazy(() => import("../pages/pending"));
+const OnHold = lazy(() => import("../pages/onHold"));
 const DeliveryQueueDetails = lazy(
   () => import("../features/delivery-queue-details")
 );
@@ -216,7 +218,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/request/approval",
+    path: "/reques/approval",
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -240,12 +242,36 @@ export const publicRoutes = [
     ),
   },
   {
+    path: "/calendar",
+    element: (
+      <Suspense fallback={<div>Loading</div>}>
+        <PrivateRoute>
+          <AppLayout>
+            <Calendar />
+          </AppLayout>
+        </PrivateRoute>
+      </Suspense>
+    ),
+  },
+  {
     path: "/pending-jobs",
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
           <AppLayout>
             <PendingJobs />
+          </AppLayout>
+        </PrivateRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/onHold",
+    element: (
+      <Suspense fallback={<div>Loading</div>}>
+        <PrivateRoute>
+          <AppLayout>
+            <OnHold />
           </AppLayout>
         </PrivateRoute>
       </Suspense>

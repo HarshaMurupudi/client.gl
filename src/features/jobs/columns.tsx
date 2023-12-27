@@ -11,7 +11,7 @@ import {
   formatDateWithoutTZ,
   formatDate,
   getShipByDateColumn,
-  getEarlyShipDateColumn
+  getEarlyShipDateColumn,
 } from "../../utils";
 
 export const getColumns = (
@@ -87,7 +87,7 @@ export const getColumns = (
 
   const handleInventoryActionBtn = (row) => {
     window.open(
-      `/delivery-queue-details/${row.original.Part_Number}`,
+      `/delivery-queue-details/${row.original.Part_Number}_${row.original.Job}`,
       "_blank"
     );
   };
@@ -169,13 +169,17 @@ export const getColumns = (
     {
       id: "Job_Plan",
       accessorFn: (row: any) => {
-        if (row.Text5 === "S") {
-          return "4";
+        if (row.Comment && (row.Comment === "4" || row.Comment === "50")) {
+          return row.Comment;
         } else {
-          if (row.Job_Plan) {
-            return String(row.Job_Plan);
+          if (row.Text5 === "S") {
+            return "4";
           } else {
-            return "5";
+            if (row.Job_Plan) {
+              return String(row.Job_Plan);
+            } else {
+              return "5";
+            }
           }
         }
       },
@@ -269,7 +273,7 @@ export const getColumns = (
           color = "red";
         } else if (prodNote === "1") {
           color = "orange";
-        } else if(prodNote === "2") {
+        } else if (prodNote === "2") {
           color = "green";
         }
 
@@ -338,40 +342,40 @@ export const getColumns = (
       },
       // filterVariant: 'autocomplete',
     },
-    // {
-    //   accessorKey: "On_Hand_Qty",
-    //   header: "On Hand Qty",
-    //   enableEditing: false,
-    //   // accessorFn: (row: any) => {
-    //   //   const Job = row["Now At"] || "";
-    //   //   return Job;
-    //   // },
-    //   mantineTableBodyCellProps: ({ cell, row }: { cell: any; row: any }) => ({
-    //     onClick: () => {
-    //       handleInventoryActionBtn(row);
-    //     },
-    //   }),
-    //   Cell: ({ cell, row }: { cell: any; row: any }) => {
-    //     if (nowAtLoading) {
-    //       return <Skeleton height={8} mt={6} width="70%" radius="xl" />;
-    //     } else if (cell.getValue() === undefined) {
-    //       return "-";
-    //     } else {
-    //       return (
-    //         <p
-    //           style={{
-    //             textDecoration: "underline",
-    //             cursor: "pointer",
-    //             margin: 0,
-    //           }}
-    //         >
-    //           {cell.getValue()}
-    //         </p>
-    //       );
-    //     }
-    //   },
-    //   // filterVariant: 'autocomplete',
-    // },
+    {
+      accessorKey: "On_Hand_Qty",
+      header: "On Hand Qty",
+      enableEditing: false,
+      // accessorFn: (row: any) => {
+      //   const Job = row["Now At"] || "";
+      //   return Job;
+      // },
+      mantineTableBodyCellProps: ({ cell, row }: { cell: any; row: any }) => ({
+        onClick: () => {
+          handleInventoryActionBtn(row);
+        },
+      }),
+      Cell: ({ cell, row }: { cell: any; row: any }) => {
+        if (nowAtLoading) {
+          return <Skeleton height={8} mt={6} width="70%" radius="xl" />;
+        } else if (cell.getValue() === undefined) {
+          return "-";
+        } else {
+          return (
+            <p
+              style={{
+                textDecoration: "underline",
+                cursor: "pointer",
+                margin: 0,
+              }}
+            >
+              {cell.getValue()}
+            </p>
+          );
+        }
+      },
+      // filterVariant: 'autocomplete',
+    },
     {
       accessorKey: "Promised_Quantity",
       header: "Promised Quantity",
@@ -402,7 +406,9 @@ export const getColumns = (
       header: "Revenue",
       enableEditing: false,
       accessorFn: (row: any) => {
-        const revenue = Math.round(row["Order_Quantity"] * row["Unit_Price"]).toFixed(2);
+        const revenue = Math.round(
+          row["Order_Quantity"] * row["Unit_Price"]
+        ).toFixed(2);
         return revenue;
       },
       Cell: ({ cell, row }: { cell: any; row: any }) => {

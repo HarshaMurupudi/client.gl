@@ -4,7 +4,11 @@ import { Box } from "@mantine/core";
 import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { fetchContracts, searchCustomers } from "./store/actions";
+import {
+  fetchContracts,
+  searchCustomers,
+  fetchContractsWithOnHand,
+} from "./store/actions";
 import { searchJobs } from "../tracking/store/actions";
 import { fetchPDF, fetchPDFByJob } from "../jobs/store/actions";
 import { getColumns } from "./columns";
@@ -17,10 +21,15 @@ function Contracts({
   searchCustomers,
   searchJobs,
   contractsLoading,
+  contractsWithOnHandLaoding,
   fetchPDFByJob,
+  fetchContractsWithOnHand,
 }) {
   const navigate = useNavigate();
-  const columns = useMemo(() => getColumns(fetchPDF), []);
+  const columns = useMemo(
+    () => getColumns(fetchPDF, contracts, contractsWithOnHandLaoding),
+    []
+  );
   const timeoutRef = useRef(-1);
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
@@ -59,6 +68,7 @@ function Contracts({
     // console.log(data, currentAutofillSelection);
     if (currentAutofillSelection) {
       await fetchContracts({ [currentAutofillSelection]: data.value });
+      fetchContractsWithOnHand({ [currentAutofillSelection]: data.value });
       setCurrentAutofillSelection("");
       setValue("");
       setData([]);
@@ -99,6 +109,10 @@ function Contracts({
 const mapStateToProps = (state) => ({
   contracts: state.getIn(["contract", "contracts"]),
   contractsLoading: state.getIn(["contract", "contractsLoading"]),
+  contractsWithOnHandLaoding: state.getIn([
+    "contract",
+    "contractsWithOnHandLaoding",
+  ]),
 });
 
 export default connect(mapStateToProps, {
@@ -107,4 +121,5 @@ export default connect(mapStateToProps, {
   searchCustomers,
   searchJobs,
   fetchPDFByJob,
+  fetchContractsWithOnHand,
 })(Contracts);

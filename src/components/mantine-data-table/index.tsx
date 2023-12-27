@@ -228,7 +228,7 @@ const DataTable = ({
 
   const handleInventoryActionBtn = (row) => {
     window.open(
-      `/delivery-queue-details/${row.original.Part_Number}`,
+      `/delivery-queue-details/${row.original.Part_Number}_${row.original.Job}`,
       "_blank"
     );
   };
@@ -275,18 +275,27 @@ const DataTable = ({
     isMultiSortEvent: () => true, //now no need to hold `shift` key to multi-sort
     maxMultiSortColCount: 3, //prevent more than 3 columns from being sorted at once
     // columnFilterDisplayMode: 'popover',
-    enablePagination: false, //turn off pagination
+    enablePagination: true, //turn off pagination
     // enableRowVirtualization: true, //enable row virtualization
+    mantinePaginationProps: {
+      // rowsPerPageOptions: ["20"],
+      // showRowsPerPage: true,
+      showRowsPerPage: true,
+    },
+    // paginationDisplayMode: 'mantine',
+    // rowCount: data.length,
     mantineTableContainerProps: {
-      sx: { maxHeight: maxHeight || "82vh", minHeight: minHeight || "30vh" },
+      sx: { maxHeight: maxHeight || "63vh", minHeight: minHeight || "30vh" },
+      // sx: { minHeight: minHeight || "30vh" },
     },
     // rowVirtualizerProps: { overscan: 8 }, //optionally customize the virtualizer
-    enableBottomToolbar: false,
+    enableBottomToolbar: true,
     columnResizeMode: "onEnd",
     enablePinning: true,
     initialState: {
       // showColumnFilters: true,
       density: "xs",
+      // pagination: { pageSize: 25, pageIndex: 2 },
       ...initialState,
     },
     mantineTableProps: {
@@ -335,7 +344,7 @@ const DataTable = ({
       </Flex>
     ),
     renderTopToolbarCustomActions: () => (
-      <Flex align="center" gap="md">
+      <Flex align="center" gap="md" style={{maxWidth: '65vw'}}>
         <Text fz="md" fw={700}>
           {title}
         </Text>

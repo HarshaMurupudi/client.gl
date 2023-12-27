@@ -1,5 +1,6 @@
-import { Box, Button, Text, Textarea } from "@mantine/core";
+import { Box, Button, Text, Textarea, Skeleton } from "@mantine/core";
 import { format, addMinutes } from "date-fns";
+import { CheckboxFilter } from "../../components/TableComponents";
 
 import {
   formatDate,
@@ -9,7 +10,14 @@ import {
   getShipByDateColumn,
 } from "../../utils";
 
-export const getColumns = (fetchPDF: any) => {
+const handleInventoryActionBtn = (row) => {
+  window.open(
+    `/delivery-queue-details/${row.original.Part_Number}_${row.original.Job}`,
+    "_blank"
+  );
+};
+
+export const getColumns = (fetchPDF: any, getTableData: any, contractsWithOnHandLaoding: any) => {
   const onFetchPDFClick = (partNumber: any) => {
     fetchPDF(partNumber);
   };
@@ -57,6 +65,40 @@ export const getColumns = (fetchPDF: any) => {
       ),
     },
     getShipByDateColumn("model"),
+    {
+      accessorKey: "On_Hand_Qty",
+      header: "On Hand Qty",
+      enableEditing: false,
+      // accessorFn: (row: any) => {
+      //   const Job = row["Now At"] || "";
+      //   return Job;
+      // },
+      mantineTableBodyCellProps: ({ cell, row }: { cell: any; row: any }) => ({
+        onClick: () => {
+          handleInventoryActionBtn(row);
+        },
+      }),
+      Cell: ({ cell, row }: { cell: any; row: any }) => {
+        if (contractsWithOnHandLaoding) {
+          return <Skeleton height={8} mt={6} width="70%" radius="xl" />;
+        } else if (cell.getValue() === undefined) {
+          return "-";
+        } else {
+          return (
+            <p
+              style={{
+                textDecoration: "underline",
+                cursor: "pointer",
+                margin: 0,
+              }}
+            >
+              {cell.getValue()}
+            </p>
+          );
+        }
+      },
+      // filterVariant: 'autocomplete',
+    },
     //   ],
     // },
     // {
@@ -118,6 +160,37 @@ export const getColumns = (fetchPDF: any) => {
       accessorKey: "Customer_PO",
       header: "Customer PO",
       enableEditing: false,
+    },
+    {
+      accessorKey: "Sales_Code",
+      accessorFn: (row: any) => {
+        return row.Sales_Code ? row.Sales_Code : "-";
+      },
+      header: "Sales Code",
+      enableEditing: false,
+      filterVariant: "multi-select",
+      // mantineFilterMultiSelectProps
+      Filter: ({ column, table }) => (
+        <CheckboxFilter
+          column={column}
+          options={[
+            ...new Set(
+              getTableData.map((item) => item.Sales_Code).filter((item) => item)
+            ),
+          ]}
+        />
+      ),
+      filterFn: (row, id, filterValue) => {
+        if (filterValue.length > 0) {
+          if (row.getValue(id)) {
+            return filterValue.includes(row.getValue(id));
+          } else {
+            return false;
+          }
+        } else {
+          return true;
+        }
+      },
     },
     {
       accessorKey: "Unit_Price",

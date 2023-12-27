@@ -8,6 +8,7 @@ import {
   Center,
   Tabs,
   LoadingOverlay,
+  Loader,
 } from "@mantine/core";
 import { useParams } from "react-router-dom";
 import { connect } from "react-redux";
@@ -25,6 +26,7 @@ function POReviewComponent({
   poDetails,
   updateJobStatus,
   poDetailsLoading,
+  poPdfsLoading,
   user,
 }) {
   const params = useParams();
@@ -112,7 +114,11 @@ function POReviewComponent({
     Requested_Date: "Requested Date",
     Promised_Date: "Promised Date",
     Promised_Quantity: "Promised Quantity",
-    Unit_Price: "Revenue",
+    Unit_Price: "Unit Price",
+    Revenue: "Revenue",
+    Act_NRE_Charges: "Act NRE Charges",
+    Est_NRE_Charges: "Est NRE Charges",
+    Customer_PO_LN: "PO Line",
   };
 
   const poLabelToValueMapper = (details) => {
@@ -137,16 +143,39 @@ function POReviewComponent({
       Requested_Date: details["Requested_Date"],
       Promised_Date: details["Promised_Date"],
       Promised_Quantity: details["Promised_Quantity"],
-      Unit_Price: '$' + (details["Unit_Price"] * details["Order_Quantity"] || 0),
+      Customer_PO_LN: details["Customer_PO_LN"],
+      Unit_Price: details["Unit_Price"]
+        ? "$" + details["Unit_Price"]
+        : undefined,
+      Revenue: details["Revenue"]
+        ? "$" + details["Revenue"].toFixed(2)
+        : undefined,
+      Act_NRE_Charges: details["Act_NRE_Charges"]
+        ? "$" + details["Act_NRE_Charges"]
+        : undefined,
+      Est_NRE_Charges: details["Est_NRE_Charges"]
+        ? "$" + details["Est_NRE_Charges"]
+        : undefined,
     };
   };
 
   const isPoBtnDisabled = () => {
     const { Employee } = user;
-    const employeeList = ["000061", "BASKSU", "305900", "55001"];
+    const employeeList = {
+      susen: "BASKSU",
+      nate: "53400",
+      mat: "000061",
+      scott: "305900",
+      bill: "55001",
+      paul: "303100",
+    };
 
-    if (employeeList.includes(Employee)) {
-      return poDetails[0]?.Status === "Active";
+    if (Object.values(employeeList).includes(Employee)) {
+      if (poDetails[0]?.Status === "Pending") {
+        return false;
+      } else {
+        return true;
+      }
     } else {
       return true;
     }
@@ -184,7 +213,9 @@ function POReviewComponent({
                             <tr key={key}>
                               <td>{poKeyToLabelMapper[key]}</td>
                               <td>
-                                {isDate(value)
+                                {isDate(value) &&
+                                (key === "Requested_Date" ||
+                                  key === "Promised_Date")
                                   ? formatDate(new Date(value))
                                   : poLabelToValueMapper(po)[key] || "-"}
                               </td>
@@ -200,8 +231,8 @@ function POReviewComponent({
 
             <Center>
               <Button
-                // disabled={isPoBtnDisabled()}
-                disabled={true}
+                disabled={isPoBtnDisabled()}
+                // disabled={false}
                 my={16}
                 onClick={() => onApprove()}
               >
@@ -212,6 +243,74 @@ function POReviewComponent({
         )}
       </>
     );
+  };
+
+  const renderPdfs = () => {
+    if (poPdfsLoading) {
+      return (
+        <Center>
+          <Loader color="blue" />
+        </Center>
+      );
+    } else {
+      if (pdfs) {
+        return (
+          <Tabs defaultValue={`0`}>
+            <Tabs.List>
+              {(poDetails || []).map((po, index) => {
+                return (
+                  <Tabs.Tab key={index} value={`${index}`}>
+                    {index + 1}
+                  </Tabs.Tab>
+                );
+              })}
+            </Tabs.List>
+
+            {pdfs.map((pdf, index) => {
+              return (
+                <Tabs.Panel key={index + pdf} value={`${index}`}>
+                  <div className="pdf-container">
+                    <Document
+                      // style={{ width: "100%", height: "100%" }}
+                      file={pdf}
+                      onLoadSuccess={(data) =>
+                        onDocumentLoadSuccess(data, index)
+                      }
+                    >
+                      <Page
+                        pageNumber={pageNumber[index]}
+                        renderAnnotationLayer={false}
+                        // width={Math.min(width * 0.9, 400)} // width: 90vw; max-width: 400px
+                      />
+                    </Document>
+                  </div>
+
+                  {renderNavButtons && (
+                    <Center mt={16}>
+                      <Button
+                        disabled={pageNumber[index] <= 1}
+                        onClick={() => previousPage(index)}
+                        variant="primary"
+                      >
+                        Previous Page
+                      </Button>
+                      {"  "}
+                      <Button
+                        disabled={pageNumber[index] === numPages[index]}
+                        onClick={() => nextPage(index)}
+                        variant="primary"
+                      >
+                        Next Page
+                      </Button>
+                    </Center>
+                  )}
+                </Tabs.Panel>
+              );
+            })}
+          </Tabs>
+        );
+      }
+    }
   };
 
   return (
@@ -228,65 +327,7 @@ function POReviewComponent({
           />
           {renderPoDetails(poDetails)}
         </Grid.Col>
-        <Grid.Col span={6}>
-          <div>
-            {pdfs && (
-              <Tabs defaultValue={`0`}>
-                <Tabs.List>
-                  {(poDetails || []).map((po, index) => {
-                    return (
-                      <Tabs.Tab key={index} value={`${index}`}>
-                        {index + 1}
-                      </Tabs.Tab>
-                    );
-                  })}
-                </Tabs.List>
-
-                {pdfs.map((pdf, index) => {
-                  return (
-                    <Tabs.Panel key={index + pdf} value={`${index}`}>
-                      <div className="pdf-container">
-                        <Document
-                          // style={{ width: "100%", height: "100%" }}
-                          file={pdf}
-                          onLoadSuccess={(data) =>
-                            onDocumentLoadSuccess(data, index)
-                          }
-                        >
-                          <Page
-                            pageNumber={pageNumber[index]}
-                            renderAnnotationLayer={false}
-                            // width={Math.min(width * 0.9, 400)} // width: 90vw; max-width: 400px
-                          />
-                        </Document>
-                      </div>
-
-                      {renderNavButtons && (
-                        <Center mt={16}>
-                          <Button
-                            disabled={pageNumber[index] <= 1}
-                            onClick={() => previousPage(index)}
-                            variant="primary"
-                          >
-                            Previous Page
-                          </Button>
-                          {"  "}
-                          <Button
-                            disabled={pageNumber[index] === numPages[index]}
-                            onClick={() => nextPage(index)}
-                            variant="primary"
-                          >
-                            Next Page
-                          </Button>
-                        </Center>
-                      )}
-                    </Tabs.Panel>
-                  );
-                })}
-              </Tabs>
-            )}
-          </div>
-        </Grid.Col>
+        <Grid.Col span={6}>{renderPdfs()}</Grid.Col>
       </Grid>
     </Box>
   );
@@ -295,6 +336,7 @@ function POReviewComponent({
 const mapStateToProps = (state) => ({
   poDetails: state.getIn(["poDetails", "poDetails"]),
   poDetailsLoading: state.getIn(["poDetails", "poDetailsLoading"]),
+  poPdfsLoading: state.getIn(["poDetails", "poPdfsLoading"]),
   user: state.getIn(["user", "user"]),
 });
 

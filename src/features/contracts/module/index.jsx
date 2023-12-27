@@ -64,7 +64,7 @@ export function ContractForm({
               isClearable={true}
             />
           </Grid.Col> */}
-          <Grid.Col span={3}>
+          <Grid.Col span={2}>
             <AutocompleteLoading
               value={currentAutofillSelection === "Job" ? value : ""}
               data={data}
@@ -76,7 +76,7 @@ export function ContractForm({
               // disable={isDisabled("Job")}
             />
           </Grid.Col>
-          <Grid.Col span={3}>
+          <Grid.Col span={2}>
             {/* <TextInput
               label="Part Number"
               placeholder="Part Number"
@@ -93,7 +93,7 @@ export function ContractForm({
               // disable={isDisabled("Part_Number")}
             />
           </Grid.Col>
-          <Grid.Col span={3}>
+          <Grid.Col span={2}>
             {/* <TextInput
               type="text"
               label="PO Number"
@@ -112,7 +112,7 @@ export function ContractForm({
               // disable={isDisabled("Customer_PO")}
             />
           </Grid.Col>
-          <Grid.Col span={3}>
+          <Grid.Col span={2}>
             <AutocompleteLoading
               value={currentAutofillSelection === "Customer" ? value : ""}
               data={data}

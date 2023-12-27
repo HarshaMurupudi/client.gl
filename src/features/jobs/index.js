@@ -143,6 +143,10 @@ function Jobs({
           editDisplayMode: "table",
           enableEditing: true,
           getRowId: (row, index) => `${row.Job}_${index}`,
+          // mantinePaginationProps: {
+          //   showRowsPerPage: false,
+          // },
+          paginationDisplayMode: 'pages',
         }}
         hasRefetch={true}
         initialState={{
@@ -151,6 +155,7 @@ function Jobs({
         hasActionColumn={true}
         enableGrouping={false}
         columnFilters={categoryWCs}
+        
       >
         <Box display={"flex"}>
           <Text fz="sm" fw={700} mr={16} pt={4}>
