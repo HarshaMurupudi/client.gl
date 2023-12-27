@@ -103,7 +103,7 @@ function NavbarNestedBasic({ width, handleLogout, user }) {
       initiallyOpened: true,
       links: [
         { label: "Job Review", link: "/contracts" },
-        { label: "PO Review", link: "/po" },
+        // { label: "PO Review", link: "/po" },
         { label: "Tracking", link: "/tracking" },
         { label: "Attendance", link: "/attendance" },
         { label: "Production Meeting", link: "/productionMeeting" },
