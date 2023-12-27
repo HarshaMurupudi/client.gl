@@ -278,14 +278,14 @@ const DataTable = ({
     enablePagination: true, //turn off pagination
     // enableRowVirtualization: true, //enable row virtualization
     mantinePaginationProps: {
-      // rowsPerPageOptions: ["20"],
+      // rowsPerPageOptions: ["100"],
       // showRowsPerPage: true,
       showRowsPerPage: true,
     },
     // paginationDisplayMode: 'mantine',
     // rowCount: data.length,
     mantineTableContainerProps: {
-      sx: { maxHeight: maxHeight || "63vh", minHeight: minHeight || "30vh" },
+      sx: { maxHeight: maxHeight || "68vh", minHeight: minHeight || "30vh" },
       // sx: { minHeight: minHeight || "30vh" },
     },
     // rowVirtualizerProps: { overscan: 8 }, //optionally customize the virtualizer
@@ -295,7 +295,7 @@ const DataTable = ({
     initialState: {
       // showColumnFilters: true,
       density: "xs",
-      // pagination: { pageSize: 25, pageIndex: 2 },
+      pagination: { pageSize: 50, pageIndex: 0 },
       ...initialState,
     },
     mantineTableProps: {

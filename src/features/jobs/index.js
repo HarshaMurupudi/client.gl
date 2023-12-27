@@ -55,11 +55,7 @@ function Jobs({
       "K-DESPATCH",
       "ROCKWAY",
     ],
-    DigitalPrint: [
-      "H-JETRION",
-      "I-CANON",
-      "I-INDIGO",
-    ],
+    DigitalPrint: ["H-JETRION", "I-CANON", "I-INDIGO"],
     Converting: [
       "L-REWIND",
       "N-LAM",
@@ -146,16 +142,16 @@ function Jobs({
           // mantinePaginationProps: {
           //   showRowsPerPage: false,
           // },
-          paginationDisplayMode: 'pages',
+          paginationDisplayMode: "pages",
         }}
         hasRefetch={true}
         initialState={{
           sorting: [{ id: "shipBayDateDate", desc: false }],
+          pagination: { pageSize: 100, pageIndex: 0 },
         }}
         hasActionColumn={true}
         enableGrouping={false}
         columnFilters={categoryWCs}
-        
       >
         <Box display={"flex"}>
           <Text fz="sm" fw={700} mr={16} pt={4}>
