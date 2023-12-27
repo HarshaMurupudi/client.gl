@@ -285,7 +285,7 @@ const DataTable = ({
     // paginationDisplayMode: 'mantine',
     // rowCount: data.length,
     mantineTableContainerProps: {
-      sx: { maxHeight: maxHeight || "68vh", minHeight: minHeight || "30vh" },
+      sx: { maxHeight: maxHeight || "78vh", minHeight: minHeight || "30vh" },
       // sx: { minHeight: minHeight || "30vh" },
     },
     // rowVirtualizerProps: { overscan: 8 }, //optionally customize the virtualizer

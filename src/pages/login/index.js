@@ -38,7 +38,7 @@ function Login({ login, isAuthenticated, authLoading, loading }) {
     if(location.state){
       return <Navigate to={location.state.from}/>
     } else {
-      return <Navigate to='/'/>
+      return <Navigate to='/contracts'/>
     }
   }
 
