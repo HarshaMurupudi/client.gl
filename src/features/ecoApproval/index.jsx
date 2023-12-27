@@ -15,7 +15,8 @@ function EcoApproval({
   user
 }) {
   const [editedUsers, setEditedUsers] = useState({});
-  const [showApproved, setShowApproved] = useState(false);
+
+  const [viewState, setViewState] = useState(false);
 
   let userName = `${user.First_Name} ${user.Last_Name}`;
 
@@ -47,23 +48,19 @@ function EcoApproval({
   };
   
   const filteredRequests = useMemo(() => {
-    if (requests) {
-      if (user.First_Name === "Sumit") { // Admin View
-        return requests.filter(request =>
-          request.Status !== "Reject" &&
-          (showApproved || request.Status !== "Completed")
-        );
-      } else {
-        return requests.filter(request =>
-          assignees[userName].email.includes(request.Assigned_To) &&
-          (showApproved || request.Status !== "Completed")
-        );
-      }
+    if (user.First_Name === "Sumit") {
+      return requests.filter(request =>
+        (viewState || request.Status !== "Completed"))
     } else {
-      return [];
-    }
-  }, [requests, userName, assignees, showApproved]);
+      return requests.filter(request =>
+        assignees[userName].email.includes(request.Assigned_To) &&
+        (viewState || request.Status !== "Completed")
+    )}
+  }, [requests, userName, assignees, viewState]);
 
+  const toggleViewState = () => {
+    setViewState(!viewState);
+  }
 
   const fetchData = async () => {
     await fetchRequests();
@@ -71,7 +68,7 @@ function EcoApproval({
 
   useEffect(() => {
     fetchData();
-  }, [showApproved]);
+  }, []);
 
   const columns = useMemo(
     () =>
@@ -114,15 +111,16 @@ function EcoApproval({
         handleSave={handleSave}
         loading={requestsLoading}
         hasRefetch={true}
+        fetchData={fetchData}
         hasActionColumn={true}
         enableGrouping={false}
         hasCustomActionBtn={true}
         isEditable={canEdit()}
         isEdited={Object.keys(editedUsers).length === 0}
       >
-        <Button onClick={() => setShowApproved(!showApproved)}>
-          {showApproved ? "Open Requests" : "All Requests"}
-        </Button>
+      <Button onClick={toggleViewState}>
+        {viewState ? "Open Requests" : "All Requests"}
+      </Button>
       </MantineDataTable>
     </Box>
   );
