@@ -96,7 +96,7 @@ const useStyles = createStyles((theme) => ({
 
 function NavbarNestedBasic({ width, handleLogout, user }) {
   const mockdata = [
-    { label: "Dashboard", icon: IconGauge, link: "/" },
+    // { label: "Dashboard", icon: IconGauge, link: "/" },
     {
       label: "Admin",
       icon: IconNotes,
@@ -108,7 +108,6 @@ function NavbarNestedBasic({ width, handleLogout, user }) {
         { label: "Attendance", link: "/attendance" },
         { label: "Production Meeting", link: "/productionMeeting" },
         { label: "Training", link: "/training" },
-        { label: "On-Hold Jobs", link: "/onHold"},
         [
           "000061",
           "BASKSU",
@@ -119,7 +118,7 @@ function NavbarNestedBasic({ width, handleLogout, user }) {
           "304300",
           "51002",
           "51040",
-          "303100"
+          "303100",
         ].includes(user.Employee) && {
           label: "Folders",
           link: "/jobs/latest",
@@ -130,7 +129,10 @@ function NavbarNestedBasic({ width, handleLogout, user }) {
       label: "Job Planning",
       icon: IconFileAnalytics,
       initiallyOpened: false,
-      links: [{ label: "Pending", link: "/pending-jobs" }],
+      links: [
+        { label: "PO Review", link: "/pending-jobs" },
+        { label: "On-Hold Jobs", link: "/onHold" },
+      ],
     },
     {
       label: "Engineering",

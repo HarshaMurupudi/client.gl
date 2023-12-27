@@ -49,7 +49,7 @@ const useStyles = createStyles((theme) => ({
 function Mission() {
   let navigate = useNavigate();
   const routeChange = () => {
-    let path = `/`;
+    let path = `/contracts`;
     navigate(path);
   };
   const { classes } = useStyles();

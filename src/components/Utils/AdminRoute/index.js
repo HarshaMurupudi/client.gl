@@ -6,7 +6,7 @@ const AdminRoute = ({ children, loading, user }) => {
   if (loading) {
     return <div></div>;
   } else {
-    return user && user.LoginGroupID === 1 ? children : <Navigate to="/" />;
+    return user && user.LoginGroupID === 1 ? children : <Navigate to="/contracts" />;
   }
 };
 
