@@ -220,7 +220,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/reques/approval",
+    path: "/request/approval",
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
