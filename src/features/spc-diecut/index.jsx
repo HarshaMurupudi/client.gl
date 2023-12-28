@@ -1,16 +1,12 @@
 import { useMemo, useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { useForm, Controller } from 'react-hook-form';
-import { Box, Button, Text } from "@mantine/core";
-import { notifications } from "@mantine/notifications";
-
-import { Select, Textarea } from "react-hook-form-mantine";
-
+import { Box, Button, Text, Select, Textarea, Checkbox, Autocomplete, SimpleGrid, SegmentedControl } from "@mantine/core";
 
 import { fetchAttendance, saveNotes } from "./store/actions"
 import { MantineDataTable } from "../../components/mantine-data-table";
 import { getColumns } from "./columns";
 import { Modal } from "@mantine/core";
+import { useForm } from "@mantine/form";
 import { DatePickerInput } from "@mantine/dates";
 import { useDisclosure } from "@mantine/hooks";
 
@@ -22,16 +18,21 @@ function DieCutSPC({
   attendanceLoading,
 }) {
   const [dieFormOpened, { open: openDieForm, close: closeDieForm }] = useDisclosure(false);
-  const { register, handleSubmit, watch, formState: { errors }, control } = useForm();
 
   const [editedUsers, setEditedUsers] = useState({});
+
+  const [value, setValue] = useState("Cut");
 
   const columns = useMemo(
     () => getColumns(editedUsers, setEditedUsers),
     [editedUsers]
-  );
+    );
 
-  const handleSaveUsers = async () => {
+  const cols = useMemo( () => {
+    return value === "Cut" ? columns[0].Cut : columns[1].Emboss
+  })
+
+  const handleSaveUsers = async (e, table) => {
     await saveNotes(Object.values(editedUsers));
     setEditedUsers({});
   };
@@ -44,69 +45,53 @@ function DieCutSPC({
     fetchData();
   }, []);
 
-  const today = () => {
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    let mm = today.getMonth() + 1;
-    let dd = today.getDate();
-    if (dd < 10) dd = '0' + dd;
-    if (mm < 10) mm = '0' + mm;
-    const formattedToday = mm + '/' + dd + '/' + yyyy;
-    return formattedToday;
-  }
   const userName = `${user.First_Name} ${user.Last_Name}`;
 
-  const transformValues = (data) => {
-    // "Die_Number": data.die_number,
-    // "Date": data.date,
-    // "Art_Number": data.art_number,
-    // "Material": data.material,
-    // "Lamination": data.lamination,
-    // "Adhesive": data.adhesive,
-    // "Platen": data.platen,
-    // "Pad": data.pad,
-    // "Bears": data.bears,
-    // "Makeready": data.makeready,
-    // "Signature": userName,
-    // "Note": data.note
-    console.log(data)
-  }
-  
-  const isValid = (data) => {
-    const requiredFields = [
-      "Die_Number",
-      "Date",
-      "Art_Number",
-      "Material",
-      "Lamination",
-      "Adhesive",
-      "Platen",
-      "Pad",
-      "Bears",
-      "Makeready",
-    ];
-    for (const field of requiredFields) {
-      if (data[field] === null || data[field] === undefined || data[field] === "") {
-        return false;
-      }
-    }
-    return true;
-  };
+  const dieForm = useForm({
+    initialValues: { 
+      die_number: "", 
+      date: null, 
+      art_number: null, 
+      material: null, 
+      lamination: null,
+      cut_type: null,
+      press: null,
+      makeready: null,
+      pad: "Yes",
+      adhesive: null, 
+      platen: null, 
+      signature: null, 
+      note: null },
 
-  const onSubmit = (data) => {
-    data = transformValues(data);
-    console.log(data);
-    if (isValid(data)) {
-      // handleSaveUsers(data);
-      closeDieForm(); // Close the modal after submitting
-    } else {
-      notifications.show({
-        title: "Error",
-        message: "Invalid form data. Please fill in all required fields.",
-        color: "red",
-      });
-    }
-  };
+    validate: {
+      die_Number: (value) => (value === null ? 'You must enter the Die Number' : null),
+      date: (value) => (value === null ? 'You must enter the Date of the run' : null),
+      art_Number: (value) => (value === null ? "You must enter the Art Number" : null),
+      material: (value) => (value === null ? 'You must select the Material' : null),
+      lamination: (value) => (value === null ? 'You must select a Lamination Value' : null),
+      press: (value) => (value === null ? 'You must select a Press' : null),
+      makeready: (value) => (value === null ? 'You must select a Makeready value' : null),
+      platen: (value) => (value === null ? 'You must enter a Platen value' : null),
+      adhesive: (value) => (value === null ? 'You must select an Adhesive value' : null),
+    },
+
+    transformValues: (values) => ({
+      "Die_Number": values.die_number, 
+      "Date": values.date, 
+      "Art_Number": values.art_number, 
+      "Material": values.material, 
+      "Lamination": values.lamination,
+      "Adhesive": values.adhesive, 
+      "Cut_Type": values.cut_type,
+      "Press": values.press,
+      "Makeready": values.makeready,
+      "Pad": values.pad,
+      "Platen": values.platen, 
+      "Signature": values.signature, 
+      "Note": values.note
+    })
+  });
+
 
   return (
     <Box>
@@ -114,103 +99,126 @@ function DieCutSPC({
         withCloseButton
         closeOnClickOutside={false}
         closeOnEscape={false}
-        opened={dieFormOpened}
+        opened={dieFormOpened} 
         onClose={closeDieForm}
         title="Die Cut Entry Form"
         centered
+        size={800}
         overlayProps={{
           blur: 1,
         }}>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <DatePickerInput
-            withAsterisk
-            mb={8}
-            label="Date of Run"
-            placeholder="Pick Date"
-            isClearable={true}
-            defaultLevel="decade"
-            control={control}
-          />
-          <Select
-            withAsterisk
-            mb={8}
-            label="Die Number"
-            placeholder="Select or Enter Die Number..."
-            data={["219", "45"]}
-            control={control}
-          />
-          <Select
-            withAsterisk
-            mb={8}
-            label="Art Number"
-            placeholder="Search and Select Art Number..."
-            data={["9845", "512"]}
-            searchable
-            control={control}
-          />
-          <Select
-            withAsterisk
-            mb={8}
-            label="Material"
-            placeholder="Search and Select Material..."
-            data={["123123", "456456"]}
-            searchable
-            control={control}
-          />          
-          <Select
-            withAsterisk
-            mb={8}
-            label="Lamination"
-            placeholder="Select Lamination..."
-            data={["Yes", "No"]}
-            control={control}
-          />
-          <Select
-            withAsterisk
-            mb={8}
-            label="Adhesive"
-            placeholder="Select Adhesive..."
-            data={["Yes", "No"]}
-            control={control}
-          />
-          <Select
-            withAsterisk
-            mb={8}
-            label="Cut Type"
-            placeholder="Select Cut Type..."
-            data={["TC", "KS"]}
-            control={control}
-          />
-          <Select
-            withAsterisk
-            mb={8}
-            label="Press"
-            placeholder="Select Press..."
-            data={["Thompson", "Standard", "Chandler"]}
-            control={control}
-          />
-          <Textarea
-            withAsterisk
-            label="Platen Set"
-            mb={8}
-            placeholder="Enter Platen Set..."
-            autosize
-            control={control}
-          />
-          <Textarea
-            label="Note"
-            mb={8}
-            placeholder="Notes..."
-            autosize
-            control={control}
-          />
-          <Button
-            type="submit"
-            onClick={onSubmit}
-            mt={16}
-            mb={8}>
-            Submit
-          </Button>
+        <form>
+          <SimpleGrid cols={2}>
+            <DatePickerInput
+              mb={8}
+              withAsterisk
+              label="Date of Run"
+              placeholder="Pick Date"
+              isClearable={true}
+              defaultLevel="decade"
+              {...dieForm.getInputProps('date')}
+            />
+            <Autocomplete
+              withAsterisk
+              mb={8}
+              label="Die Number"
+              placeholder="Select or Enter Die Number..."
+              data={['219', '45']}
+              defaultValue=""
+              {...dieForm.getInputProps('die_number')}
+            />
+            <Select
+              withAsterisk
+              mb={8}
+              label="Art Number"
+              placeholder="Search and Select Art Number..."
+              data={["test"]}
+              searchable
+              {...dieForm.getInputProps('art_number')}
+            />
+            <Select
+              withAsterisk
+              mb={8}
+              label="Material"
+              placeholder="Search and Select Material..."
+              data={["test"]}
+              searchable
+              {...dieForm.getInputProps('material')}
+            />          
+            <Select
+              withAsterisk
+              mb={8}
+              label="Lamination"
+              placeholder="Select Lamination..."
+              data={["Matte", "Clear"]}
+              {...dieForm.getInputProps('lamination')}
+            />
+            <Select
+              withAsterisk
+              mb={8}
+              label="Adhesive"
+              placeholder="Select Adhesive..."
+              data={["1mm","2mm"]}
+              {...dieForm.getInputProps('adhesive')}
+            />
+            <Select
+              withAsterisk
+              mb={8}
+              label="Cut Type"
+              placeholder="Select Cut Type..."
+              data={["TC","KS"]}
+              {...dieForm.getInputProps('cut_type')}
+            />
+            <Select
+              withAsterisk
+              mb={8}
+              label="Press"
+              placeholder="Select Press..."
+              data={["Thompson", "Standard", "Chandler"]}
+              {...dieForm.getInputProps('press')}
+            />
+            <Select
+              withAsterisk
+              mb={8}
+              label="Makeready"
+              placeholder="Select Makeready..."
+              data={[".05",".08"]}
+              {...dieForm.getInputProps('makeready')}
+            />
+            <Select
+              withAsterisk
+              mb={8}
+              label="Used Pad"
+              placeholder="Select Makeready..."
+              defaultValue={"Yes"}
+              data={["Yes", "No"]}
+              {...dieForm.getInputProps('pad')}
+            />
+            <Textarea
+              mb={8}
+              withAsterisk
+              label="Platen Set"
+              placeholder="Enter Platen Set..."
+              autosize
+              {...dieForm.getInputProps('platen')}
+            />
+            <Textarea
+              mb={8}
+              label="Note"
+              placeholder="Notes..."
+              autosize
+              {...dieForm.getInputProps('note')}
+            />
+          </SimpleGrid>
+            <Button 
+              type="submit"
+              disabled={!dieForm.isValid()}
+              // onClick={(event) => handleFormSubmit(event, dieForm, true)}
+              color="red" 
+              mt={16}
+              mb={8} >
+                Submit
+            </Button>
           <Text size={12} opacity={.5}>
             Submit as {userName}
           </Text>
@@ -220,7 +228,7 @@ function DieCutSPC({
         title={"Die Cutting SPC"}
         tableKey={`attendance-data-table`}
         fetchData={fetchData}
-        columns={columns}
+        columns={cols}
         data={attendance || []}
         tableProps={{
           editDisplayMode: "table",
@@ -240,7 +248,21 @@ function DieCutSPC({
         enableExpanding={true}
       >
         <Box display={"flex"}>
-          <Button onClick={openDieForm} variant="filled">
+          <SegmentedControl mr={16}
+            data = {[
+              {
+                value: "Cut",
+                label: "Cut"
+              },
+              {
+                value: "Emboss",
+                label: "Emboss"
+              }
+            ]}
+            value={value}
+            onChange={setValue}
+          />
+          <Button onClick={openDieForm} variant="filled" mt={1.5}>
               Enter Die Cut
             </Button>
         </Box>

@@ -62,7 +62,7 @@ export const getColumns = (
     }
   };
 
-  const columns = [
+  const cutColumns = [
     {
       accessorKey: "Die_Number",
       idAccessor: "Die_ID",
@@ -164,5 +164,110 @@ export const getColumns = (
       },
     },
   ];
+
+  const embossColumns = [
+    {
+      accessorKey: "Die_Number",
+      idAccessor: "Die_ID",
+      header: "Die Number",
+      enableEditing: false,
+      filterVariant: "multi-select",
+    },
+    {
+      accessorKey: "Impressions",
+      header: "Impressions",
+      enableEditing: false,
+      filterVariant: "multi-select",
+    },
+    {
+      accessorKey: "Date",
+      header: "Date",
+      enableEditing: false,
+      filterVariant: "multi-select",
+      // Cell: ({ cell }: { cell: any }) => formatTime(cell.getValue())
+    },
+    {
+      accessorKey: "Art_Number",
+      header: "Art Number",
+      enableEditing: false,
+      filterVariant: "multi-select",
+    },
+    {
+      accessorKey: "Part_Number",
+      header: "Part Number",
+      enableEditing: false,
+      filterVariant: "multi-select",
+    },
+    {
+      accessorKey: "Material",
+      header: "Material",
+      enableEditing: false,
+      filterVariant: "multi-select",
+    },
+    {
+      accessorKey: "Ink_Layers",
+      header: "Ink Layers",
+      enableEditing: false,
+      filterVariant: "multi-select",
+    },
+    {
+      accessorKey: "Platen_Set",
+      header: "Platen Set",
+      enableEditing: false,
+      filterVariant: "multi-select",
+    },
+    {
+      accessorKey: "Heat",
+      header: "Heat",
+      enableEditing: false,
+      filterVariant: "multi-select",
+    },
+    {
+      accessorKey: "Dwell",
+      header: "Dwell",
+      enableEditing: false,
+      filterVariant: "multi-select",
+    },
+    {
+      accessorKey: "Emboss_Height",
+      header: "Emb. Height",
+      enableEditing: false,
+      filterVariant: "multi-select",
+    },
+    {
+      accessorKey: "Signature",
+      header: "Signature",
+      enableEditing: false,
+      filterVariant: "multi-select",
+    },
+    {
+      accessorKey: "Die_Note",
+      header: "Notes",
+      enableEditing: true,
+      size: 250,
+      Cell: ({ cell, row }: { cell: any; row: any }) => (
+        <Text>{cell.getValue()}</Text>
+      ),
+      Edit: ({
+        cell,
+        column,
+        table,
+      }: {
+        cell: any;
+        column: any;
+        table: any;
+      }) => {
+        return (
+          <GLTextarea
+            cell={cell}
+            table={table}
+            onTextChange={(e: any) => onBlur(e, cell, column)}
+          />
+        );
+      },
+    },
+  ];
+
+  const columns = [{"Cut": cutColumns}, {"Emboss": embossColumns}];
   return columns;
 };
