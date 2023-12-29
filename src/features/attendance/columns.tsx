@@ -87,7 +87,20 @@ export const getColumns = (
       id: "Login",
       header: "Clock In",
       enableColumnFilterModes: true,
-      Cell: ({ cell }: { cell: any }) => formatTime(cell.getValue())
+      Cell: ({ cell, row }: { cell: any; row: any }) => {
+        const clockInDate = row.original.Login ? new Date(row.original.Login) : null;
+        const startDateTime = row.original.Start_Time ? new Date(row.original.Start_Time) : null;
+        if (clockInDate){
+          console.log(clockInDate);
+          console.log(startDateTime);
+        }
+        const date = formatTime(clockInDate);
+        const textStyle = {
+          backgroundColor: startDateTime && clockInDate && (clockInDate.getTime() - startDateTime.getTime()) > 3 * 60 * 1000 ? '#ffadad' : 'inherit',
+        };
+
+        return <p style={{ margin: 0 }}><span style={textStyle}>{date}</span></p>;
+      },
     },
     {
       accessorFn: (row: any) => {
@@ -101,6 +114,32 @@ export const getColumns = (
       header: "Clock Out",
       enableColumnFilterModes: true,
       Cell: ({ cell }: { cell: any }) => formatTime(cell.getValue()),
+    },
+    {
+      accessorFn: (row: any) => {
+        if (row.Start_Time) {
+          const sDay = new Date(row.Start_Time);
+          return sDay;
+        }
+      },
+      enableEditing: false,
+      id: "Start_Time",
+      header: "Shift Start",
+      enableColumnFilterModes: true,
+      Cell: ({ cell }: { cell: any }) => formatTime(cell.getValue())
+    },
+    {
+      accessorFn: (row: any) => {
+        if (row.End_Time) {
+          const sDay = new Date(row.End_Time);
+          return sDay;
+        }
+      },
+      enableEditing: false,
+      id: "End_Time",
+      header: "Shift End",
+      enableColumnFilterModes: true,
+      Cell: ({ cell }: { cell: any }) => formatTime(cell.getValue())
     },
     {
       accessorKey: "Attendance_Note",
