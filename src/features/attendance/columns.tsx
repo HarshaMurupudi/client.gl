@@ -90,13 +90,9 @@ export const getColumns = (
       Cell: ({ cell, row }: { cell: any; row: any }) => {
         const clockInDate = row.original.Login ? new Date(row.original.Login) : null;
         const startDateTime = row.original.Start_Time ? new Date(row.original.Start_Time) : null;
-        if (clockInDate){
-          console.log(clockInDate);
-          console.log(startDateTime);
-        }
         const date = formatTime(clockInDate);
         const textStyle = {
-          backgroundColor: startDateTime && clockInDate && (clockInDate.getTime() - startDateTime.getTime()) > 3 * 60 * 1000 ? '#ffadad' : 'inherit',
+          color: startDateTime && clockInDate && (clockInDate.getTime() - startDateTime.getTime()) > (3 * 60 * 1000) ? '#ff0000' : 'inherit', //'#ffadad' : 'inherit',
         };
 
         return <p style={{ margin: 0 }}><span style={textStyle}>{date}</span></p>;
