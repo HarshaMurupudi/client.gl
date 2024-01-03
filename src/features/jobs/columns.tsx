@@ -1,6 +1,8 @@
+// import { useState } from "react";
 import { format, addMinutes } from "date-fns";
 import { Box, Button, Text, Skeleton } from "@mantine/core";
 import { Link } from "react-router-dom";
+import DatePicker from "react-datepicker";
 
 import { GLSelect } from "../../components/select";
 import { GLTextarea } from "../../components/ReactTableTextarea";
@@ -21,6 +23,8 @@ export const getColumns = (
   getTableData: any,
   nowAtLoading: any
 ) => {
+  // const [startDate, setStartDate] = useState(new Date());
+
   const onQtyClick = (job: any) => {
     window.open(
       `/delivery-queue-details/${job}`,
@@ -81,6 +85,25 @@ export const getColumns = (
         },
       });
     }
+  };
+
+  const onDateChange = (e: any, cell: any, column: any) => {
+    const { row } = cell;
+
+    console.log(row);
+
+    //   if (editedUsers[row.id]) {
+    //     setEditedUsers({
+    //       ...editedUsers,
+    //       [row.id]: { ...editedUsers[row.id], ...{ Job_Plan: e } },
+    //     });
+    //   } else {
+    //     setEditedUsers({
+    //       ...editedUsers,
+    //       [row.id]: { ...row.original, ...{ Job_Plan: e } },
+    //     });
+    //   }
+    // };
   };
 
   const PRODUCTION_STATUS_LIST = ["0", "1", "2"];
@@ -634,9 +657,9 @@ export const getColumns = (
     },
     {
       id: "requestedDate",
-      enableEditing: false,
+      enableEditing: true,
       accessorFn: (row: any) => {
-        const sDay = new Date(row.Requested_Date);
+        const sDay = row.Requested_Date ? new Date(row.Requested_Date) : null;
         return sDay;
       },
       header: "Requested Date",
@@ -644,6 +667,32 @@ export const getColumns = (
       sortingFn: "datetime",
       enableColumnFilterModes: false,
       Cell: ({ cell }: { cell: any }) => formatDate(cell.getValue()),
+      Edit: ({
+        cell,
+        column,
+        table,
+      }: {
+        cell: any;
+        column: any;
+        table: any;
+      }) => {
+        // if (cell.getValue()) {
+        console.log(cell.getValue());
+        return (
+          <DatePicker
+            selectsRange={false}
+            selected={cell.getValue()}
+            // onChange={(date) => setStartDate(date)}
+            // startDate={startDate}
+            // endDate={endDate}
+            // onChange={(update) => {
+            //   setDateRange(update);
+            // }}
+            isClearable={true}
+          />
+        );
+        // }
+      },
     },
   ];
 
