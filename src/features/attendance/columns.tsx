@@ -1,6 +1,7 @@
 import { Text } from "@mantine/core";
 
 import { GLTextarea } from "../../components/ReactTableTextarea";
+import { start } from "repl";
 
 export const getColumns = (
   editedUsers: any,
@@ -21,7 +22,27 @@ export const getColumns = (
     return "-";
   }
 
+  function timeDifference(date1: any, date2: any): number | null {
+    const startDate = new Date(date1);
+    if (!date2) {
+      return null;
+    }
+    const endDate = new Date(date2);
 
+    const startDateOffset = startDate.getTimezoneOffset();
+    const endDateOffset = endDate.getTimezoneOffset();
+    startDate.setMinutes(startDate.getMinutes() + startDateOffset);
+    endDate.setMinutes(endDate.getMinutes() + endDateOffset);
+
+    startDate.setFullYear(2000, 0, 1);
+    endDate.setFullYear(2000, 0, 1);
+  
+    const diff = endDate.getTime() - startDate.getTime();
+    const totalMinutes = diff / (1000 * 60);
+    const decimalMinutes = totalMinutes.toFixed(2);
+  
+    return parseFloat(decimalMinutes);
+  }
 
   const onBlur = (event: any, cell: any, column: any) => {
     const { row } = cell;
@@ -55,7 +76,7 @@ export const getColumns = (
         const clockInDate = row.original.Login ? new Date(row.original.Login) : null;
         const date = formatTime(clockInDate);
         const textStyle = {
-          color: date === "-" ? "#ff0000" : "black",
+          color: date === "-" && row.original.Type === "Shop" ? "#ff0000" : "black",
         };
     
         return <p style={{ margin: 0 }}><span style={textStyle}>{cell.getValue()}</span></p>;
@@ -70,7 +91,7 @@ export const getColumns = (
         const clockInDate = row.original.Login ? new Date(row.original.Login) : null;
         const date = formatTime(clockInDate);
         const textStyle = {
-          color: date === "-" ? "#ff0000" : "black",
+          color: date === "-" && row.original.Type === "Shop" ? "#ff0000" : "black",
         };
     
         return <p style={{ margin: 0 }}><span style={textStyle}>{cell.getValue()}</span></p>;
@@ -90,12 +111,15 @@ export const getColumns = (
       Cell: ({ cell, row }: { cell: any; row: any }) => {
         const clockInDate = row.original.Login ? new Date(row.original.Login) : null;
         const startDateTime = row.original.Start_Time ? new Date(row.original.Start_Time) : null;
-        const date = formatTime(clockInDate);
+        const difference = timeDifference(startDateTime, clockInDate);
         const textStyle = {
-          color: startDateTime && clockInDate && (clockInDate.getTime() - startDateTime.getTime()) > (3 * 60 * 1000) ? '#ff0000' : 'inherit', //'#ffadad' : 'inherit',
+          color: difference && difference > 3.0 && row.original.Type === "Shop" ? '#ff0000' : 'inherit', // || difference && difference < 15.0
         };
-
-        return <p style={{ margin: 0 }}><span style={textStyle}>{date}</span></p>;
+        if (row.original.Login){
+          console.log(row.original.First_Name + " - Start Time: " + startDateTime + " Clock In: " + row.original.Login)
+          console.log(difference);
+        }
+        return <p style={{ margin: 0 }}><span style={textStyle}>{formatTime(clockInDate)}</span></p>;
       },
     },
     {
