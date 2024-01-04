@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   Group,
   Box,
@@ -8,58 +8,58 @@ import {
   UnstyledButton,
   createStyles,
   rem,
-} from '@mantine/core';
+} from "@mantine/core";
 import {
   IconCalendarStats,
   IconChevronLeft,
   IconChevronRight,
-} from '@tabler/icons-react';
+} from "@tabler/icons-react";
 
 const useStyles = createStyles((theme) => ({
   control: {
     fontWeight: 500,
-    display: 'block',
-    width: '100%',
+    display: "block",
+    width: "100%",
     padding: `${theme.spacing.xs} ${theme.spacing.md}`,
-    color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
+    color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
     fontSize: theme.fontSizes.xs,
 
-    '&:hover': {
+    "&:hover": {
       backgroundColor:
-        theme.colorScheme === 'dark'
+        theme.colorScheme === "dark"
           ? theme.colors.dark[7]
           : theme.colors.gray[0],
-      color: theme.colorScheme === 'dark' ? theme.white : theme.black,
+      color: theme.colorScheme === "dark" ? theme.white : theme.black,
     },
   },
 
   link: {
     fontWeight: 500,
-    display: 'block',
-    textDecoration: 'none',
+    display: "block",
+    textDecoration: "none",
     padding: `${theme.spacing.xs} ${theme.spacing.md}`,
     paddingLeft: rem(31),
     marginLeft: rem(30),
     fontSize: theme.fontSizes.sm,
     color:
-      theme.colorScheme === 'dark'
+      theme.colorScheme === "dark"
         ? theme.colors.dark[0]
         : theme.colors.gray[7],
     borderLeft: `${rem(1)} solid ${
-      theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3]
+      theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3]
     }`,
 
-    '&:hover': {
+    "&:hover": {
       backgroundColor:
-        theme.colorScheme === 'dark'
+        theme.colorScheme === "dark"
           ? theme.colors.dark[7]
           : theme.colors.gray[0],
-      color: theme.colorScheme === 'dark' ? theme.white : theme.black,
+      color: theme.colorScheme === "dark" ? theme.white : theme.black,
     },
   },
 
   chevron: {
-    transition: 'transform 200ms ease',
+    transition: "transform 200ms ease",
   },
 }));
 
@@ -83,10 +83,10 @@ export function LinksGroup({
   const { classes, theme } = useStyles();
   const hasLinks = Array.isArray(links);
   const [opened, setOpened] = useState(initiallyOpened || false);
-  const ChevronIcon = theme.dir === 'ltr' ? IconChevronRight : IconChevronLeft;
+  const ChevronIcon = theme.dir === "ltr" ? IconChevronRight : IconChevronLeft;
   const items = (hasLinks ? links : []).map((link) => (
-    <Text<'a'>
-      component='a'
+    <Text<"a">
+      component="a"
       className={classes.link}
       href={link.link}
       key={link.label}
@@ -98,24 +98,33 @@ export function LinksGroup({
     </Text>
   ));
 
+  const unStyledButtonClick = (e) => {
+    // console.log(e)
+    setOpened((o) => !o);
+  };
+
+  const onInnerLinkClicked = (e) => {
+    onClick(e, link);
+  };
+
   return (
     <>
       <UnstyledButton
-        onClick={() => setOpened((o) => !o)}
+        onClick={(e) =>
+          hasLinks ? unStyledButtonClick(e) : onInnerLinkClicked(e)
+        }
         className={classes.control}
       >
-        <Group position='apart' spacing={0}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <ThemeIcon variant='light' size={30}>
-              <Icon size='1.1rem' />
+        <Group position="apart" spacing={0}>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <ThemeIcon variant="light" size={30}>
+              <Icon size="1.1rem" />
             </ThemeIcon>
             {/* <Box ml='md'>{label}</Box> */}
             <Box
-              ml='md'
-              component='a'
-              onClick={(event) => {
-                onClick(event, link);
-              }}
+              ml="md"
+              component="a"
+              onClick={(e) => onInnerLinkClicked(e)}
             >
               {label}
             </Box>
@@ -123,12 +132,12 @@ export function LinksGroup({
           {hasLinks && (
             <ChevronIcon
               className={classes.chevron}
-              size='1rem'
+              size="1rem"
               stroke={1.5}
               style={{
                 transform: opened
-                  ? `rotate(${theme.dir === 'rtl' ? -90 : 90}deg)`
-                  : 'none',
+                  ? `rotate(${theme.dir === "rtl" ? -90 : 90}deg)`
+                  : "none",
               }}
             />
           )}
@@ -140,12 +149,12 @@ export function LinksGroup({
 }
 
 const mockdata = {
-  label: 'Releases',
+  label: "Releases",
   icon: IconCalendarStats,
   links: [
-    { label: 'Upcoming releases', link: '/' },
-    { label: 'Previous releases', link: '/' },
-    { label: 'Releases schedule', link: '/' },
+    { label: "Upcoming releases", link: "/" },
+    { label: "Previous releases", link: "/" },
+    { label: "Releases schedule", link: "/" },
   ],
 };
 
@@ -156,7 +165,7 @@ export function NavbarLinksGroup() {
         minHeight: rem(220),
         padding: theme.spacing.md,
         backgroundColor:
-          theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.white,
+          theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.white,
       })}
     >
       <LinksGroup {...mockdata} />

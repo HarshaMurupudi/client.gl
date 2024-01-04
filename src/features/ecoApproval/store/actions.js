@@ -9,12 +9,12 @@ const headers = {
 }
 
 export const setRequests = (status) => ({
-  type: 'SET_REQUESTS',
+  type: 'SET_ECO_REQUESTS',
   payload: status,
 });
 
 export const setRequestsLoading = (status) => ({
-  type: 'SET_REQUESTS_LOADING',
+  type: 'SET_ECO_REQUESTS_LOADING',
   payload: status,
 });
 
