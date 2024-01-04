@@ -19,7 +19,7 @@ import { Navigate, useLocation } from "react-router-dom";
 import { useDisclosure } from "@mantine/hooks";
 import { IconLogout } from "@tabler/icons-react";
 
-import { NavbarNested } from "../../sidebar";
+import { NavbarNested } from "../../sidebar/index.jsx";
 import { logout } from "../../../pages/login/store/actions";
 import ErrorBoundary from "../../Utils/ErrorBoundary";
 import Logo from "../../../assets/logo.png";
