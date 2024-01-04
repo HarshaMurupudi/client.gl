@@ -5,12 +5,12 @@ const INITIAL_STATE = {
 
 const approvalReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case 'SET_REQUESTS':
+    case 'SET_ECO_REQUESTS':
       return {
         ...state,
         requests: action.payload,
       };
-    case 'SET_REQUESTS_LOADING':
+    case 'SET_ECO_REQUESTS_LOADING':
       return {
         ...state,
         requestsLoading: action.payload,

@@ -101,7 +101,7 @@ function NavbarNestedBasic({ width, handleLogout, user }) {
     {
       label: "Admin",
       icon: IconNotes,
-      initiallyOpened: true,
+      initiallyOpened: false,
       links: [
         { label: "Job Review", link: "/contracts" },
         // { label: "PO Review", link: "/po" },
@@ -300,6 +300,7 @@ function NavbarNestedBasic({ width, handleLogout, user }) {
     >
       <Navbar.Section grow className={classes.links} component={ScrollArea}>
         <div className={classes.linksInner}>{links}</div>
+        {/* {links} */}
       </Navbar.Section>
 
       {/* <Navbar.Section className={classes.footer}>
