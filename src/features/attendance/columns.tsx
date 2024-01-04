@@ -91,7 +91,7 @@ export const getColumns = (
         const clockInDate = row.original.Login ? new Date(row.original.Login) : null;
         const date = formatTime(clockInDate);
         const textStyle = {
-          color: date === "-" && row.original.Type === "Shop" ? "#ff0000" : "black",
+          color: date === "-" ? "#ff0000" : "black",
         };
     
         return <p style={{ margin: 0 }}><span style={textStyle}>{cell.getValue()}</span></p>;
@@ -113,12 +113,8 @@ export const getColumns = (
         const startDateTime = row.original.Start_Time ? new Date(row.original.Start_Time) : null;
         const difference = timeDifference(startDateTime, clockInDate);
         const textStyle = {
-          color: difference && difference > 3.0 && row.original.Type === "Shop" ? '#ff0000' : 'inherit', // || difference && difference < 15.0
+          color: difference && difference > 3.0 ? '#ff0000' : 'inherit'
         };
-        if (row.original.Login){
-          console.log(row.original.First_Name + " - Start Time: " + startDateTime + " Clock In: " + row.original.Login)
-          console.log(difference);
-        }
         return <p style={{ margin: 0 }}><span style={textStyle}>{formatTime(clockInDate)}</span></p>;
       },
     },
