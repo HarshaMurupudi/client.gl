@@ -675,6 +675,14 @@ export const getColumns = (
       Cell: ({ cell }: { cell: any }) => formatDate(cell.getValue()),
     },
     {
+      accessorKey: "Process",
+      header: "Process",
+      enableEditing: false,
+      Cell: ({ cell, row }: { cell: any; row: any }) => {
+        return <Text>{cell.getValue() || "-"}</Text>;
+      },
+    },
+    {
       accessorKey: "Colors",
       header: "#Colors",
       enableEditing: false,
