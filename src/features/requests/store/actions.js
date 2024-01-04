@@ -48,7 +48,7 @@ export const saveNotes = (form, formName) => async (dispatch) => {
       case "improvement":
         await baseAxios.patch('requests/improvement', { data: { form }, headers });
         break;
-      case "time-off":
+      case "timeOff":
         await baseAxios.patch('requests/time-off', { data: { form }, headers });
       default:
         break;

@@ -236,7 +236,7 @@ function RequestSite({
       "Start_Date": values.start_date,
       "End_Date": values.end_date,
       "Request": values.request,
-      "Approver": "Sumit Mahajan",
+      "Approver": null,
       "Approval_Comment": null,
       "Approval_Date": null,
     }),
@@ -691,7 +691,7 @@ function RequestSite({
             <Button 
               type="submit"
               disabled={!timeOffRequestForm.isValid()}
-              onClick={(event) => handleFormSubmit(event, timeOffRequestForm, "time-off")}
+              onClick={(event) => handleFormSubmit(event, timeOffRequestForm, "timeOff")}
               color="red" 
               mb={8} >
                 Submit
