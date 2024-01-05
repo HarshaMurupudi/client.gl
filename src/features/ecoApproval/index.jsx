@@ -25,38 +25,32 @@ function EcoApproval({
       name: "Sumit Mahajan",
       email: "sumitm@general-label.com"
     },
-    "Spencer Erie": {
-      name: "Spencer Erie",
-      email: "spencererie01@gmail.com"
+    "Dalton Breitzman": {
+      name: "Dalton Breitzman",
+      email: "daltonb@general-label.com"
     },
-    "Bill Allen": {
-      name: "Bill Allen",
-      email: "bill@general-label.com"
+    "Lyn Erie": {
+      name: "Lyn Erie",
+      email: "lyn@general-label.com"
     },
-    "Mat Welch": {
-      name: "Mat Welch",
-      email: "mat@general-label.com"
+    "Tracey Trudeau": {
+      name: "Tracey Trudeau",
+      email: "tracey@general-label.com"
     },
-    "Scott Bohm": {
-      name: "Scott Bohm",
-      email: "scottb@general-label.com"
+    "Thy Suon": {
+      name: "Thy Suon",
+      email: "thy@general-label.com"
     },
-    "Spencer Erie": {
-      name: "Spencer Erie",
-      email: "spencererie01@gmail.com"
+    "Jason Mezzenga": {
+      name: "Jason Mezzenga",
+      email: "jason@gmail.com"
     }
   };
   
   const filteredRequests = useMemo(() => {
-    if (user.First_Name === "Sumit") {
-      return requests.filter(request =>
-        (viewState || request.Status !== "Completed"))
-    } else {
-      return requests.filter(request =>
-        assignees[userName].email.includes(request.Assigned_To) &&
-        (viewState || request.Status !== "Completed")
-    )}
-  }, [requests, userName, assignees, viewState]);
+    return requests.filter(request =>
+      (viewState || request.Status !== "Completed"))
+  }, [requests, viewState]);
 
   const toggleViewState = () => {
     setViewState(!viewState);
@@ -84,12 +78,6 @@ function EcoApproval({
     setEditedUsers({});
   };
 
-  const canEdit = () => {
-    const { Employee } = user;
-    const employeeList = ["51040"];
-    return employeeList.includes(Employee) ? true : false;
-  };
-
   return (
     <Box>
       <MantineDataTable
@@ -115,7 +103,7 @@ function EcoApproval({
         hasActionColumn={true}
         enableGrouping={false}
         hasCustomActionBtn={true}
-        isEditable={canEdit()}
+        isEditable={true}
         isEdited={Object.keys(editedUsers).length === 0}
       >
       <Button onClick={toggleViewState}>

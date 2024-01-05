@@ -34,7 +34,7 @@ export const saveNotes = (eco) => async (dispatch) => {
   try {
     dispatch(setRequestsLoading(true));
     if (eco.length > 0){
-      await baseAxios.patch('requests/eco', 
+      await baseAxios.patch('request/eco', 
       {
         data: {form: eco},
         headers
