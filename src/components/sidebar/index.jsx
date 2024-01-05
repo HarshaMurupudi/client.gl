@@ -107,6 +107,7 @@ function NavbarNestedBasic({ width, handleLogout, user }) {
         // { label: "PO Review", link: "/po" },
         { label: "Tracking", link: "/tracking" },
         { label: "Attendance", link: "/attendance" },
+        { label: "Calendar", link: "/calendar"},
         { label: "Production Meeting", link: "/productionMeeting" },
         { label: "Training", link: "/training" },
         [
