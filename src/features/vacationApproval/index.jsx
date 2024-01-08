@@ -97,7 +97,7 @@ function VacationApproval({
 
 const mapStateToProps = (state) => ({
   user: state.getIn(["user","user"]),
-  vacations: state.getIn(["vacation", "vacations"]),
+  vacations: state.getIn(["vacations", "vacations"]),
   vacationLoading: state.getIn(["vacations", "vacationLoading"]),
 });
 
