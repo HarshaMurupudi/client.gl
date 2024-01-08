@@ -83,12 +83,6 @@ function EcoApproval({
     setEditedUsers({});
   };
 
-  const canEdit = () => {
-    const { Employee } = user;
-    const employeeList = ["51040"];
-    return employeeList.includes(Employee) ? true : false;
-  };
-
   return (
     <Box>
       <MantineDataTable
@@ -114,7 +108,7 @@ function EcoApproval({
         hasActionColumn={true}
         enableGrouping={false}
         hasCustomActionBtn={true}
-        isEditable={canEdit()}
+        isEditable={true}
         isEdited={Object.keys(editedUsers).length === 0}
       >
         <Button onClick={toggleViewState}>

@@ -33,44 +33,6 @@ export const getColumns = (
     }
   ];
 
-  const assignees = [
-    {
-      label: "Dalton Breitzman",
-      value: "daltonb@general-label.com",
-      description: ""
-    },
-    {
-      label: "Lyn Erie",
-      value: "lyn@general-label.com",
-      description: ""
-    },
-    {
-      label: "Tracey Trudeau",
-      value: "tracy@general-label.com",
-      description: ""
-    },
-    {
-      label: "Thy Suon",
-      value: "thy@general-label.com",
-      description: ""
-    },
-    {
-      label: "Sumit Mahajan",
-      value: "sumitm@general-label.com",
-      description: ""
-    },
-    {
-      label: "Jason Mezzenga",
-      value: "jason@general-label.com",
-      description: ""
-    },
-    {
-      label: "Unassign",
-      value: "",
-      description: ""
-    },
-  ];
-
   function isValidDate(d) {
     // @ts-ignore
     return d instanceof Date && !isNaN(d);
@@ -168,75 +130,9 @@ export const getColumns = (
       enableEditing: false,
     },
     {
-      accessorKey: "Subject",
-      header: "Subject",
-      filterVariant: "multi-select",
-      enableEditing: false,
-      Cell: ({
-        cell,
-        column,
-        table,
-      }: {
-        cell: any;
-        column: any;
-        table: any;
-      }) => {
-        return (
-          <GLTextarea
-            cell={cell}
-            table={table}
-            onTextChange={null}
-          />
-        );
-      },
-    },
-    {
-      accessorKey: "Eco_Type",
-      header: "ECO Type",
-      enableEditing: false,
-      filterVariant: "multi-select",
-    },
-    {
-      accessorKey: "Part_Number",
-      header: "Part Number",
-      enableEditing: false,
-      filterVariant: "multi-select",
-      accessorFn: (row: any) => {
-        const Part_Number = row.Part_Number || "";
-        return Part_Number;
-      },
-    },
-    {
-      accessorKey: "Job_Number",
-      header: "Job Number",
-      enableEditing: false,
-      filterVariant: "multi-select",
-      accessorFn: (row: any) => {
-        const Job_Number = row.Job_Number || "";
-        return Job_Number;
-      },
-    },
-    {
-      accessorKey: "Work_Center",
-      header: "Work Center",
-      filterVariant: "multi-select",
-      enableEditing: false,
-      accessorFn: (row: any) => {
-        const Work_Center = row.Work_Center || "";
-        return Work_Center;
-      },
-    },
-    {
-      accessorKey: "Priority",
-      header: "Priority",
-      size: 150,
-      enableEditing: false,
-      filterVariant: 'multi-select',
-    },
-    {
       accessorKey: "Request",
       header: "Request",
-      size: 300,
+      size: 275,
       enableEditing: false,
       filterVariant: "multi-select",
       Cell: ({
@@ -292,40 +188,6 @@ export const getColumns = (
       },
     },
     {
-      id: "Assigned_To",
-      accessorKey: "Assigned_To",
-      accessorFn: (row: any) => {
-        if (row.Assigned_To) {
-          return String(row.Assigned_To);
-        }
-      },
-      header: "Assign",
-      size: 145,
-      // filterVariant: "multi-select",
-      mantineFilterSelectProps: {
-        data: assignees as any,
-      },
-      Edit: ({
-        cell,
-        column,
-        table,
-      }: {
-        cell: any;
-        column: any;
-        table: any;
-      }) => {
-        return (
-          <GLSelect
-            data={assignees}
-            cell={cell}
-            table={table}
-            onSelect={(e: any) => onSelect(e, cell, column, 'Assign')}
-            textColor={"transparent"}
-          />
-        );
-      },
-    },
-    {
       accessorKey: "Approver",
       header: "Approver",
       enableEditing: false,
@@ -353,7 +215,7 @@ export const getColumns = (
       accessorKey: "Approval_Comment",
       header: "Approval Comment",
       enableEditing: true,
-      size: 300,
+      size: 250,
       filterVariant: "multi-select",
       Cell: ({ cell, row }: { cell: any; row: any }) => (
         <Text>{cell.getValue()}</Text>

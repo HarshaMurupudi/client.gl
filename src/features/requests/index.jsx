@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import { connect } from "react-redux";
 import { useDisclosure } from "@mantine/hooks";
 import { Flex, Box, Select, Button, Modal, Textarea, Text, Stack, LoadingOverlay } from "@mantine/core";
+import { DatePickerInput, TimeInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { fetchRequests, saveNotes } from "./store/actions";
 
@@ -22,6 +23,9 @@ function RequestSite({
 
   const [improvementRequestOpened, { open: openImprovementRequest, close: closeImprovementRequest }] = useDisclosure(false);
 
+  const [timeOffRequestOpened, { open: openTimeOffRequest, close: closeTimeOffRequest }] = useDisclosure(false);
+
+
   const fetchPageData = async () => {
     await fetchRequests(); // Employee Names and Work Centers
   };
@@ -36,6 +40,7 @@ function RequestSite({
     safety: closeSafetyReport,
     maintenance: closeMaintenanceRequest,
     improvement: closeImprovementRequest,
+    timeOff: closeTimeOffRequest,
   };
 
   const handleFormSubmit = async (event, form, formName) => {
@@ -212,7 +217,32 @@ function RequestSite({
 
     onSubmit: () => handleFormSubmit(improvementForm, "improvement"),
   });
+  
+  const timeOffRequestForm = useForm({
+    initialValues: { initiator: null, start_date: null, end_date: null, request: null },
 
+    validate: {
+      initiator: (value) => (value === null ? "Initiator Required" : null),
+      start_date: (value) => (value === null ? 'Start Date Required' : null),
+      end_date: (value) => (value === null ? 'End Date Required' : null),
+    },
+
+    transformValues: (values) => ({
+      "Request_ID": null,
+      "Request_Type": "time-off",
+      "Submission_Date": new Date(),
+      "Status": "New",
+      "Initiator": values.initiator,
+      "Start_Date": values.start_date,
+      "End_Date": values.end_date,
+      "Request": values.request,
+      "Approver": null,
+      "Approval_Comment": null,
+      "Approval_Date": null,
+    }),
+
+    onSubmit: () => handleFormSubmit(timeOffRequestForm, "time-off"), 
+  });
   const userName = `${user.First_Name} ${user.Last_Name}`;
   
   return (
@@ -404,7 +434,7 @@ function RequestSite({
         closeOnEscape={false}
         opened={safetyReportOpened} 
         onClose={closeSafetyReport} 
-        title="Safety Report Form"
+        title="Safety Request Form"
         centered
         overlayProps={{
           blur: 1,
@@ -612,6 +642,65 @@ function RequestSite({
           </Text>
         </form>
       </Modal>
+      <Modal
+        withCloseButton
+        closeOnClickOutside={false}
+        closeOnEscape={false}
+        opened={timeOffRequestOpened} 
+        onClose={closeTimeOffRequest} 
+        title="Time Off Request Form"
+        centered
+        overlayProps={{
+          blur: 1,
+        }}>
+        <form>
+          <Select
+            withAsterisk
+            mb={16}
+            label="Select Your Name"
+            placeholder="Initiator"
+            data={requests.names}
+            autosize
+            {...timeOffRequestForm.getInputProps('initiator')}
+          />
+          <DatePickerInput
+            mb={16}
+            withAsterisk
+            label="Start Date"
+            placeholder="Pick Date"
+            isClearable={true}
+            {...timeOffRequestForm.getInputProps('start_date')}
+          />
+          <DatePickerInput
+            mb={16}
+            withAsterisk
+            label="End Date"
+            placeholder="Pick Date"
+            isClearable={true}
+            {...timeOffRequestForm.getInputProps('end_date')}
+          />
+          <Textarea
+            mb={16}
+            label="Reason For Request, If Needed"
+            placeholder="Description"
+            {...timeOffRequestForm.getInputProps('request')}
+          />
+          <Text size={14} mb={16}>
+            Before submitting, please verify that the dates you have entered are correct.
+          </Text>
+            <Button 
+              type="submit"
+              disabled={!timeOffRequestForm.isValid()}
+              onClick={(event) => handleFormSubmit(event, timeOffRequestForm, "timeOff")}
+              color="red" 
+              mb={8} >
+                Submit
+            </Button>
+          <Text size={12} opacity={.5}>
+            Submit as {userName}
+          </Text>
+        </form>
+      </Modal>
         <LoadingOverlay
           visible={requestsLoading}
           zIndex={1000}
@@ -631,6 +720,9 @@ function RequestSite({
             </Button>
             <Button onClick={openSafetyReport} variant="filled" size="xl">
               Safety Report Form
+            </Button>
+            <Button onClick={openTimeOffRequest} variant="filled" size="xl">
+              Time Off Request Form
             </Button>
             <Button onClick={openMaintenanceRequest} variant="filled" size="xl">
               Maintenance Request Form
