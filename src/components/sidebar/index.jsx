@@ -135,6 +135,7 @@ function NavbarNestedBasic({ width, handleLogout, user }) {
         { label: "Submit Request", link: "/request" },
         { label: "Approve Requests", link: "/request/approval" },
         { label: "Approve ECO", link: "/request/approval/eco" },
+        { label: "Approve Vacation", link: "/request/vacation"}
       ]
     },
     {
