@@ -34,7 +34,7 @@ export const saveNotes = (vacation) => async (dispatch) => {
   try {
     dispatch(setVacationLoading(true));
     if (vacation.length > 0){
-      await baseAxios.patch('request/vacation', 
+      await baseAxios.patch('requests/time-off', 
       {
         data: {form: vacation},
         headers

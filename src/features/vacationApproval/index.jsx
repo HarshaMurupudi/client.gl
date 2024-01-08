@@ -19,19 +19,12 @@ function VacationApproval({
 
   let userName = `${user.First_Name} ${user.Last_Name}`;
   
-  // const filteredRequests = useMemo(() => {
-  //   if (user.First_Name === "Sumit") {
-  //     return (vacations || []).filter(
-  //       (vacation) => viewState || vacation.Status !== "Completed"
-  //     );
-  //   } else {
-  //     return (vacations || []).filter(
-  //       (vacation) =>
-  //         vacation.Initiator === userName
-  //         (viewState || vacation.Status !== "Completed")
-  //     );
-  //   }
-  // }, [vacations, userName, viewState]);
+  const filteredRequests = useMemo(() => {
+      return (vacations || []).filter(
+        (vacation) =>
+          (viewState || vacation.Status === "New" || vacation.Status === "Pending")
+      );
+  }, [vacations, viewState]);
 
   const toggleViewState = () => {
     setViewState(!viewState);
@@ -65,7 +58,7 @@ function VacationApproval({
         title={"Vacation Request Approval"}
         tableKey={`request-approval-data-table`}
         columns={columns}
-        data={vacations || []}
+        data={filteredRequests || []}
         tableProps={{
           editDisplayMode: "table",
           enableEditing: true,
@@ -81,7 +74,7 @@ function VacationApproval({
         loading={vacationLoading}
         hasRefetch={true}
         fetchData={fetchData}
-        hasActionColumn={true}
+        hasActionColumn={false}
         enableGrouping={false}
         hasCustomActionBtn={true}
         isEditable={true}

@@ -236,7 +236,7 @@ function RequestSite({
       "Start_Date": values.start_date,
       "End_Date": values.end_date,
       "Request": values.request,
-      "Approver": null,
+      "Approver": "Paul Stromberg",
       "Approval_Comment": null,
       "Approval_Date": null,
     }),
@@ -648,7 +648,7 @@ function RequestSite({
         closeOnEscape={false}
         opened={timeOffRequestOpened} 
         onClose={closeTimeOffRequest} 
-        title="Time Off Request Form"
+        title="Vacation Request Form"
         centered
         overlayProps={{
           blur: 1,
@@ -722,7 +722,7 @@ function RequestSite({
               Safety Report Form
             </Button>
             <Button onClick={openTimeOffRequest} variant="filled" size="xl">
-              Time Off Request Form
+              Vacation Request Form
             </Button>
             <Button onClick={openMaintenanceRequest} variant="filled" size="xl">
               Maintenance Request Form

@@ -1,6 +1,6 @@
 const INITIAL_STATE = {
   vacations: [],
-  vacationLoading: true,
+  vacationLoading: false,
 };
 
 const approvalReducer = (state = INITIAL_STATE, action) => {

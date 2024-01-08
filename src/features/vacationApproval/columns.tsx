@@ -17,7 +17,7 @@ export const getColumns = (
       description: ""
     },
     {
-      label: "Completed",
+      label: "Approved",
       value: "Completed",
       description: ""
     },
@@ -114,8 +114,32 @@ export const getColumns = (
     {
       id: "Submission_Date",
       accessorKey: "Submission_Date",
-      header: "Date",
-      size: 135,
+      header: "Submission Date",
+      size: 215,
+      enableEditing: false,
+      sortingFn: "datetime",
+      filterVariant: "multi-select",
+      Cell: ({ cell, row }: { cell: any; row: any }) => (
+        <Text>{formatDate(cell.getValue())}</Text>
+      ),
+    },
+    {
+      id: "Start_Date",
+      accessorKey: "Start_Date",
+      header: "Start Date",
+      size: 175,
+      enableEditing: false,
+      sortingFn: "datetime",
+      filterVariant: "multi-select",
+      Cell: ({ cell, row }: { cell: any; row: any }) => (
+        <Text>{formatDate(cell.getValue())}</Text>
+      ),
+    },
+    {
+      id: "End_Date",
+      accessorKey: "End_Date",
+      header: "End Date",
+      size: 175,
       enableEditing: false,
       sortingFn: "datetime",
       filterVariant: "multi-select",
