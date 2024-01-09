@@ -101,14 +101,15 @@ function NavbarNestedBasic({ width, handleLogout, user }) {
     {
       label: "Admin",
       icon: IconNotes,
-      initiallyOpened: true,
+      initiallyOpened: false,
       links: [
         { label: "Job Review", link: "/contracts" },
         // { label: "PO Review", link: "/po" },
         { label: "Tracking", link: "/tracking" },
-        { label: "Attendance", link: "/attendance" },
-        { label: "Production Meeting", link: "/productionMeeting" },
-        { label: "Training", link: "/training" },
+        // { label: "Attendance", link: "/attendance" },
+        // { label: "Calendar", link: "/calendar"},
+        // { label: "Production Meeting", link: "/productionMeeting" },
+        // { label: "Training", link: "/training" },
         [
           "000061",
           "BASKSU",
@@ -127,6 +128,17 @@ function NavbarNestedBasic({ width, handleLogout, user }) {
       ],
     },
     {
+      label: "HR",
+      icon: IconNotes,
+      initiallyOpened: false,
+      links: [
+        { label: "Attendance", link: "/attendance" },
+        { label: "Calendar", link: "/calendar"},
+        { label: "Production Meeting", link: "/productionMeeting" },
+        { label: "Training", link: "/training"}
+      ]
+    },
+    {
       label: "Requests",
       icon: IconProgressCheck,
       initiallyOpened: false,
@@ -134,6 +146,7 @@ function NavbarNestedBasic({ width, handleLogout, user }) {
         { label: "Submit Request", link: "/request" },
         { label: "Approve Requests", link: "/request/approval" },
         { label: "Approve ECO", link: "/request/approval/eco" },
+        { label: "Approve Vacation", link: "/request/vacation"}
       ]
     },
     {
@@ -300,6 +313,7 @@ function NavbarNestedBasic({ width, handleLogout, user }) {
     >
       <Navbar.Section grow className={classes.links} component={ScrollArea}>
         <div className={classes.linksInner}>{links}</div>
+        {/* {links} */}
       </Navbar.Section>
 
       {/* <Navbar.Section className={classes.footer}>

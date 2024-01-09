@@ -1,63 +1,48 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { connect } from "react-redux";
-import { useLocation } from "react-router-dom";
 
-import { fetchApproval, saveNotes } from "./store/actions";
+import { fetchVacation, saveNotes } from "./store/actions";
 import { Box, Button } from "@mantine/core";
 import { MantineDataTable } from "../../components/mantine-data-table";
 import { getColumns } from "./columns";
 
-function RequestApproval({
-  approval,
-  approvalLoading,
-  fetchApproval,
+function VacationApproval({
+  vacations,
+  vacationLoading,
+  fetchVacation,
   saveNotes,
   user
 }) {
   const [editedUsers, setEditedUsers] = useState({});
-  const [showApproved, setShowApproved] = useState(false);
 
-  const userName = `${user.First_Name} ${user.Last_Name}`;
+  const [viewState, setViewState] = useState(false);
 
-  const assignedApprovers = {
-    "Sumit Mahajan": ["shop", "eco", "improvement", "maintenance", "safety"],
-    "Jon Erie": ["shop"],
-    "Jason Mezzenga": ["maintenance", "safety"],
-    "Nate Baskfield": ["improvement", "safety"],
-    "Susan Baskfield" : ["safety"],
-    "Lyn Erie" : ["safety"]
-  };
+  let userName = `${user.First_Name} ${user.Last_Name}`;
   
-  const currentUserTypes = assignedApprovers[userName] || [];
-
   const filteredRequests = useMemo(() => {
-    if (approval) {
-      return approval.filter(
-        (app) =>
-          currentUserTypes.includes(app.Request_Type) &&
-          app.Status !== "Reject" &&
-          (showApproved || app.Status !== "Completed")
+      return (vacations || []).filter(
+        (vacation) =>
+          (viewState || vacation.Status === "New" || vacation.Status === "Pending")
       );
-    } else {
-      return [];
-    }
-  }, [approval, currentUserTypes, showApproved]);
+  }, [vacations, viewState]);
 
+  const toggleViewState = () => {
+    setViewState(!viewState);
+  }
 
   const fetchData = async () => {
-    await fetchApproval();
+    await fetchVacation();
   };
 
   useEffect(() => {
     fetchData();
-  }, [showApproved]);
+  }, []);
 
   const columns = useMemo(
     () =>
       getColumns(
         editedUsers,
         setEditedUsers,
-        userName,
       ),
     [editedUsers]
   );
@@ -70,7 +55,7 @@ function RequestApproval({
   return (
     <Box>
       <MantineDataTable
-        title={"Request Approval"}
+        title={"Vacation Request Approval"}
         tableKey={`request-approval-data-table`}
         columns={columns}
         data={filteredRequests || []}
@@ -86,18 +71,18 @@ function RequestApproval({
           ],
         }}
         handleSave={handleSave}
-        loading={approvalLoading}
+        loading={vacationLoading}
         hasRefetch={true}
         fetchData={fetchData}
-        hasActionColumn={true}
+        hasActionColumn={false}
         enableGrouping={false}
         hasCustomActionBtn={true}
         isEditable={true}
         isEdited={Object.keys(editedUsers).length === 0}
       >
-        <Button onClick={() => setShowApproved(!showApproved)}>
-          {showApproved ? "Open Requests" : "All Requests"}
-        </Button>
+      <Button onClick={toggleViewState}>
+        {viewState ? "Open Requests" : "All Requests"}
+      </Button>
       </MantineDataTable>
     </Box>
   );
@@ -105,11 +90,11 @@ function RequestApproval({
 
 const mapStateToProps = (state) => ({
   user: state.getIn(["user","user"]),
-  approval: state.getIn(["approval", "approval"]),
-  approvalLoading: state.getIn(["approval", "approvalLoading"]),
+  vacations: state.getIn(["vacationApproval", "vacations"]),
+  vacationLoading: state.getIn(["vacationApproval", "vacationLoading"]),
 });
 
 export default connect(mapStateToProps, {
-  fetchApproval,
+  fetchVacation,
   saveNotes,
-})(RequestApproval);
+})(VacationApproval);

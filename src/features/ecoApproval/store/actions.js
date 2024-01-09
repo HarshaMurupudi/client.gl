@@ -9,12 +9,12 @@ const headers = {
 }
 
 export const setRequests = (status) => ({
-  type: 'SET_REQUESTS',
+  type: 'SET_ECO_REQUESTS',
   payload: status,
 });
 
 export const setRequestsLoading = (status) => ({
-  type: 'SET_REQUESTS_LOADING',
+  type: 'SET_ECO_REQUESTS_LOADING',
   payload: status,
 });
 
@@ -34,7 +34,7 @@ export const saveNotes = (eco) => async (dispatch) => {
   try {
     dispatch(setRequestsLoading(true));
     if (eco.length > 0){
-      await baseAxios.patch('requests/eco', 
+      await baseAxios.patch('request/eco', 
       {
         data: {form: eco},
         headers

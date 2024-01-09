@@ -12,7 +12,7 @@ function EcoApproval({
   requestsLoading,
   fetchRequests,
   saveNotes,
-  user
+  user,
 }) {
   const [editedUsers, setEditedUsers] = useState({});
 
@@ -23,44 +23,47 @@ function EcoApproval({
   const assignees = {
     "Sumit Mahajan": {
       name: "Sumit Mahajan",
-      email: "sumitm@general-label.com"
+      email: "sumitm@general-label.com",
     },
     "Spencer Erie": {
       name: "Spencer Erie",
-      email: "spencererie01@gmail.com"
+      email: "spencererie01@gmail.com",
     },
     "Bill Allen": {
       name: "Bill Allen",
-      email: "bill@general-label.com"
+      email: "bill@general-label.com",
     },
     "Mat Welch": {
       name: "Mat Welch",
-      email: "mat@general-label.com"
+      email: "mat@general-label.com",
     },
     "Scott Bohm": {
       name: "Scott Bohm",
-      email: "scottb@general-label.com"
+      email: "scottb@general-label.com",
     },
     "Spencer Erie": {
       name: "Spencer Erie",
-      email: "spencererie01@gmail.com"
-    }
+      email: "spencererie01@gmail.com",
+    },
   };
-  
+
   const filteredRequests = useMemo(() => {
     if (user.First_Name === "Sumit") {
-      return requests.filter(request =>
-        (viewState || request.Status !== "Completed"))
+      return (requests || []).filter(
+        (request) => viewState || request.Status !== "Completed"
+      );
     } else {
-      return requests.filter(request =>
-        assignees[userName].email.includes(request.Assigned_To) &&
-        (viewState || request.Status !== "Completed")
-    )}
+      return (requests || []).filter(
+        (request) =>
+          assignees[userName].email.includes(request.Assigned_To) &&
+          (viewState || request.Status !== "Completed")
+      );
+    }
   }, [requests, userName, assignees, viewState]);
 
   const toggleViewState = () => {
     setViewState(!viewState);
-  }
+  };
 
   const fetchData = async () => {
     await fetchRequests();
@@ -71,23 +74,13 @@ function EcoApproval({
   }, []);
 
   const columns = useMemo(
-    () =>
-      getColumns(
-        editedUsers,
-        setEditedUsers,
-      ),
+    () => getColumns(editedUsers, setEditedUsers),
     [editedUsers]
   );
 
   const handleSave = async () => {
     await saveNotes(Object.values(editedUsers));
     setEditedUsers({});
-  };
-
-  const canEdit = () => {
-    const { Employee } = user;
-    const employeeList = ["51040"];
-    return employeeList.includes(Employee) ? true : false;
   };
 
   return (
@@ -115,21 +108,21 @@ function EcoApproval({
         hasActionColumn={true}
         enableGrouping={false}
         hasCustomActionBtn={true}
-        isEditable={canEdit()}
+        isEditable={true}
         isEdited={Object.keys(editedUsers).length === 0}
       >
-      <Button onClick={toggleViewState}>
-        {viewState ? "Open Requests" : "All Requests"}
-      </Button>
+        <Button onClick={toggleViewState}>
+          {viewState ? "Open Requests" : "All Requests"}
+        </Button>
       </MantineDataTable>
     </Box>
   );
 }
 
 const mapStateToProps = (state) => ({
-  user: state.getIn(["user","user"]),
-  requests: state.getIn(["requests", "requests"]),
-  requestsLoading: state.getIn(["requests", "requestsLoading"]),
+  user: state.getIn(["user", "user"]),
+  requests: state.getIn(["ecoApproval", "requests"]),
+  requestsLoading: state.getIn(["ecoApproval", "requestsLoading"]),
 });
 
 export default connect(mapStateToProps, {

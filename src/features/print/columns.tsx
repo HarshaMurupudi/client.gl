@@ -380,6 +380,26 @@ export const getColumns = (
         );
       },
     },
+    {
+      accessorKey: "Colors",
+      header: "#Colors",
+      enableEditing: false,
+    },
+    {
+      accessorKey: "Print_Pcs",
+      header: "Print Pcs",
+      enableEditing: false,
+    },
+    {
+      accessorKey: "Number_Up",
+      header: "NumberUp",
+      enableEditing: false,
+    },
+    {
+      accessorKey: "Press",
+      header: "Press",
+      enableEditing: false,
+    },
     //   ],
     // },
   ];

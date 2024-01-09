@@ -119,6 +119,11 @@ export const getColumns = (
       description: "Default Priority",
     },
     {
+      label: "10",
+      value: "10",
+      description: "Must Date",
+    },
+    {
       label: "30",
       value: "30",
       description: "Remake Required",
@@ -205,6 +210,8 @@ export const getColumns = (
           textColor = "orange";
         } else if (jobPlan === "3" || jobPlan === "2" || jobPlan === "1") {
           textColor = "#40C057";
+        } else if (jobPlan === "10") {
+          textColor = "red";
         }
         return (
           <GLSelect
@@ -289,6 +296,17 @@ export const getColumns = (
       header: "Customer",
       enableEditing: false,
       filterVariant: "multi-select",
+      Cell: ({ cell, row }: { cell: any; row: any }) => {
+        const code = cell.row.getValue("Sales_Code");
+
+        // Define a CSS style object based on the revenue value
+        const cellStyle = {
+          margin: 0,
+          backgroundColor: code === "Membrane" ? "darksalmon" : "transparent",
+        };
+
+        return <p style={cellStyle}>{cell.getValue()}</p>;
+      },
     },
     // {
     //   accessorKey: "DeliveryKey",
@@ -479,6 +497,17 @@ export const getColumns = (
           return true;
         }
       },
+      Cell: ({ cell, row }: { cell: any; row: any }) => {
+        const code = cell.getValue();
+
+        // Define a CSS style object based on the revenue value
+        const cellStyle = {
+          margin: 0,
+          backgroundColor: code === "Membrane" ? "darksalmon" : "transparent",
+        };
+
+        return <p style={cellStyle}>{code}</p>;
+      },
     },
     {
       accessorKey: "Production_Status",
@@ -644,6 +673,34 @@ export const getColumns = (
       sortingFn: "datetime",
       enableColumnFilterModes: false,
       Cell: ({ cell }: { cell: any }) => formatDate(cell.getValue()),
+    },
+    {
+      accessorKey: "Process",
+      header: "Process",
+      enableEditing: false,
+      Cell: ({ cell, row }: { cell: any; row: any }) => {
+        return <Text>{cell.getValue() || "-"}</Text>;
+      },
+    },
+    {
+      accessorKey: "Colors",
+      header: "#Colors",
+      enableEditing: false,
+    },
+    {
+      accessorKey: "Print_Pcs",
+      header: "Print Pcs",
+      enableEditing: false,
+    },
+    {
+      accessorKey: "Number_Up",
+      header: "NumberUp",
+      enableEditing: false,
+    },
+    {
+      accessorKey: "Press",
+      header: "Press",
+      enableEditing: false,
     },
   ];
 

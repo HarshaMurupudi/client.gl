@@ -32,36 +32,26 @@ export const saveNotes = (form, formName) => async (dispatch) => {
   try {
     dispatch(setRequestsLoading(true));
     form = [form];
-    if (formName == "shop"){
-      await baseAxios.patch('requests/shop', 
-        {
-          data: {form},
-          headers
-        });
-    } else if (formName == "eco") {
-      await baseAxios.patch('requests/eco', 
-        {
-          data: {form},
-          headers
-        });
-    } else if (formName == "safety") {
-      await baseAxios.patch('requests/safety', 
-        {
-          data: {form},
-          headers
-        });
-    } else if (formName == "maintenance") {
-      await baseAxios.patch('requests/maintenance', 
-        {
-          data: {form},
-          headers
-        });
-    } else if (formName == "improvement") {
-      await baseAxios.patch('requests/improvement', 
-        {
-          data: {form},
-          headers
-        });
+    switch (formName) {
+      case "shop":
+        await baseAxios.patch('requests/shop', { data: { form }, headers });
+        break;
+      case "eco":
+        await baseAxios.patch('requests/eco', { data: { form }, headers });
+        break;
+      case "safety":
+        await baseAxios.patch('requests/safety', { data: { form }, headers });
+        break;
+      case "maintenance":
+        await baseAxios.patch('requests/maintenance', { data: { form }, headers });
+        break;
+      case "improvement":
+        await baseAxios.patch('requests/improvement', { data: { form }, headers });
+        break;
+      case "timeOff":
+        await baseAxios.patch('requests/time-off', { data: { form }, headers });
+      default:
+        break;
     }
   } catch (error) {
     console.log(error);
