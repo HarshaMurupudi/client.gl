@@ -58,7 +58,7 @@ function Attendance({
             getRowId: (row, index) => `${row.Attendance_Note_ID}_${index}`,
           }}
           initialState={{
-            sorting: [{ id: "Login", desc: false }],
+            sorting: [{ id: "First_Name", desc: false }],
           }}
           handleSave={handleSaveUsers}
           loading={attendanceLoading}
@@ -83,7 +83,6 @@ function Attendance({
 
 const mapStateToProps = (state) => ({
   attendance: state.getIn(["attendance", "attendance"]),
-  events: state.getIn(["calendar", "events"]),
   attendanceLoading: state.getIn(["attendance", "attendanceLoading"]),
 });
 

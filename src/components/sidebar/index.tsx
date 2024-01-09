@@ -28,15 +28,23 @@ const mockdata = [
   {
     label: "Admin",
     icon: IconNotes,
-    initiallyOpened: true,
+    initiallyOpened: false,
     links: [
       { label: "Job Review", link: "/contracts" },
       { label: "PO Review", link: "/po" },
       { label: "Tracking", link: "/tracking" },
+    ],
+  },
+  {
+    label: "HR",
+    icon: IconNotes,
+    initiallyOpened: false,
+    links: [
       { label: "Attendance", link: "/attendance" },
       { label: "Calendar", link: "/calendar"},
       { label: "Production Meeting", link: "/productionMeeting" },
-    ],
+      { label: "Training", link: "/training"}
+    ]
   },
   {
     label: "Job Planning",
