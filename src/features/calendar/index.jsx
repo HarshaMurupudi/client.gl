@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 
 import { fetchEvents } from "./store/actions";
@@ -11,33 +11,6 @@ import startOfWeek from 'date-fns/startOfWeek'
 import getDay from 'date-fns/getDay'
 import enUS from 'date-fns/locale/en-US'
 import { LoadingOverlay } from "@mantine/core";
-
-const eventsTest = [
-  {
-      "title": "Sumit Mahajan - Vacation",
-      "allDay": true,
-      "start": "2023-11-30T00:00:00.000Z",
-      "end": "2023-11-30T00:00:00.000Z"
-  },
-  {
-      "title": "Sumit Mahajan - Vacation",
-      "allDay": true,
-      "start": "2023-12-29T00:00:00.000Z",
-      "end": "2023-12-29T00:00:00.000Z"
-  },
-  {
-      "title": "Scott Bohm - Vacation",
-      "allDay": true,
-      "start": "2023-12-26T00:00:00.000Z",
-      "end": "2023-12-27T00:00:00.000Z"
-  },
-  {
-      "title": "Paul Stromberg - Vacation",
-      "allDay": true,
-      "start": "2024-01-08T00:00:00.000Z",
-      "end": "2024-01-08T00:00:00.000Z"
-  }
-];
 
 const locales = {
   'en-US': enUS,

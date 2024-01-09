@@ -73,10 +73,10 @@ export const getColumns = (
       enableEditing: false,
       filterVariant: "multi-select",
       Cell: ({ cell, row }: { cell: any; row: any }) => {
-        const clockInDate = row.original.Login ? new Date(row.original.Login) : null;
+        const clockInDate = row.original.Adjusted_Login ? new Date(row.original.Adjusted_Login) : null;
         const date = formatTime(clockInDate);
         const textStyle = {
-          color: date === "-" && row.original.Type === "Shop" ? "#ff0000" : "black",
+          color: date === "-" && row.original.Type === "Shop" && row.original.First_Name !== "Sumit" ? "#ff0000" : "black",
         };
     
         return <p style={{ margin: 0 }}><span style={textStyle}>{cell.getValue()}</span></p>;
@@ -88,10 +88,10 @@ export const getColumns = (
       enableEditing: false,
       filterVariant: "multi-select",
       Cell: ({ cell, row }: { cell: any; row: any }) => {
-        const clockInDate = row.original.Login ? new Date(row.original.Login) : null;
+        const clockInDate = row.original.Adjusted_Login ? new Date(row.original.Adjusted_Login) : null;
         const date = formatTime(clockInDate);
         const textStyle = {
-          color: date === "-" ? "#ff0000" : "black",
+          color: date === "-" && row.original.Type === "Shop" && row.original.First_Name !== "Sumit" ? "#ff0000" : "black",
         };
     
         return <p style={{ margin: 0 }}><span style={textStyle}>{cell.getValue()}</span></p>;
@@ -99,17 +99,17 @@ export const getColumns = (
     },
     {
       accessorFn: (row: any) => {
-        if (row.Login) {
-          const sDay = new Date(row.Login);
+        if (row.Adjusted_Login) {
+          const sDay = new Date(row.Adjusted_Login);
           return sDay;
         }
       },
       enableEditing: false,
-      id: "Login",
+      id: "Adjusted_Login",
       header: "Clock In",
       enableColumnFilterModes: true,
       Cell: ({ cell, row }: { cell: any; row: any }) => {
-        const clockInDate = row.original.Login ? new Date(row.original.Login) : null;
+        const clockInDate = row.original.Adjusted_Login ? new Date(row.original.Adjusted_Login) : null;
         const startDateTime = row.original.Start_Time ? new Date(row.original.Start_Time) : null;
         const difference = timeDifference(startDateTime, clockInDate);
         const textStyle = {
@@ -120,13 +120,13 @@ export const getColumns = (
     },
     {
       accessorFn: (row: any) => {
-        if (row.Logout) {
-          const sDay = new Date(row.Logout);
+        if (row.Adjusted_Logout) {
+          const sDay = new Date(row.Adjusted_Logout);
           return sDay;
         }
       },
       enableEditing: false,
-      id: "Logout",
+      id: "Adjusted_Logout",
       header: "Clock Out",
       enableColumnFilterModes: true,
       Cell: ({ cell }: { cell: any }) => formatTime(cell.getValue()),

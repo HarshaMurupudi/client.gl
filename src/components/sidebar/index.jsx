@@ -106,10 +106,10 @@ function NavbarNestedBasic({ width, handleLogout, user }) {
         { label: "Job Review", link: "/contracts" },
         // { label: "PO Review", link: "/po" },
         { label: "Tracking", link: "/tracking" },
-        { label: "Attendance", link: "/attendance" },
-        { label: "Calendar", link: "/calendar"},
-        { label: "Production Meeting", link: "/productionMeeting" },
-        { label: "Training", link: "/training" },
+        // { label: "Attendance", link: "/attendance" },
+        // { label: "Calendar", link: "/calendar"},
+        // { label: "Production Meeting", link: "/productionMeeting" },
+        // { label: "Training", link: "/training" },
         [
           "000061",
           "BASKSU",
@@ -126,6 +126,17 @@ function NavbarNestedBasic({ width, handleLogout, user }) {
           link: "/jobs/latest",
         },
       ],
+    },
+    {
+      label: "HR",
+      icon: IconNotes,
+      initiallyOpened: false,
+      links: [
+        { label: "Attendance", link: "/attendance" },
+        { label: "Calendar", link: "/calendar"},
+        { label: "Production Meeting", link: "/productionMeeting" },
+        { label: "Training", link: "/training"}
+      ]
     },
     {
       label: "Requests",
