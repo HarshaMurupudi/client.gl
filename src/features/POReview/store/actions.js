@@ -1,4 +1,4 @@
-import baseAxios from "../../../apis/baseAxios";
+import baseAxios, { oldAxios } from "../../../apis/baseAxios";
 import { notifications } from "@mantine/notifications";
 
 import { delay } from "../../../utils";
@@ -69,7 +69,7 @@ export const fetchPOPDF = (jobID) => async (dispatch) => {
 
 export const updateJobStatus = (jobID, status) => async (dispatch) => {
   try {
-    const response = await baseAxios.get(`/jobBoss/${jobID}/${status}`);
+    const response = await oldAxios.get(`/jobBoss/${jobID}/${status}`);
 
     notifications.show({
       title: "Success",
