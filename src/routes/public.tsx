@@ -7,6 +7,7 @@ const Home = lazy(() => import("../pages/home"));
 const Login = lazy(() => import("../pages/login"));
 const Mission = lazy(() => import("../pages/mission"));
 const Contracts = lazy(() => import("../pages/contracts"));
+const PriceGuide = lazy(() => import ("../pages/price-guide"));
 const Operations = lazy(() => import("../pages/operations"));
 const PO = lazy(() => import("../pages/po"));
 const Tracking = lazy(() => import("../pages/tracking"));
@@ -312,6 +313,18 @@ export const publicRoutes = [
         <PrivateRoute>
           <AppLayout>
             <Hytech />
+          </AppLayout>
+        </PrivateRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/part-price-guide",
+    element: (
+      <Suspense fallback={<div>Loading</div>}>
+        <PrivateRoute>
+          <AppLayout>
+            <PriceGuide />
           </AppLayout>
         </PrivateRoute>
       </Suspense>

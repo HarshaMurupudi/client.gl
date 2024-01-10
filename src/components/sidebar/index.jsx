@@ -110,6 +110,7 @@ function NavbarNestedBasic({ width, handleLogout, user }) {
         { label: "Calendar", link: "/calendar"},
         { label: "Production Meeting", link: "/productionMeeting" },
         { label: "Training", link: "/training" },
+        { label: "Part Price Guide", link: "/part-price-guide"},
         [
           "000061",
           "BASKSU",
