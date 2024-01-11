@@ -40,7 +40,8 @@ export const fetchAttendance = () => async (dispatch) => {
             Adhesive: "No",
             Cut_Type: "TC",
             Press: "Standard",
-            Platen_Set: "7",
+            Makeready: ".08",
+            Platen: "7",
             Impressions: "75",
             Signature: "Brian Kohout"
           },
@@ -55,9 +56,10 @@ export const fetchAttendance = () => async (dispatch) => {
             Adhesive: "No",
             Cut_Type: "TC",
             Press: "Standard",
-            Platen_Set: "6.5",
+            Makeready: ".08",
+            Platen: "6.5",
             Impressions: "125",
-            Signature: "Sumi Mahajan"
+            Signature: "Sumit Mahajan"
           },
           {
             Die_ID: "219-3",
@@ -70,7 +72,8 @@ export const fetchAttendance = () => async (dispatch) => {
             Adhesive: "No",
             Cut_Type: "TC",
             Press: "Standard",
-            Platen_Set: "6.5",
+            Makeready: ".08",
+            Platen: "6.5",
             Impressions: "91",
             Signature: "Spencer Erie"
           }
@@ -92,7 +95,8 @@ export const fetchAttendance = () => async (dispatch) => {
             Adhesive: "No",
             Cut_Type: "TC",
             Press: "Standard",
-            Platen_Set: "7",
+            Makeready: ".05",
+            Platen: "7",
             Impressions: "295",
             Signature: "Spencer Erie"
           },
@@ -107,7 +111,8 @@ export const fetchAttendance = () => async (dispatch) => {
             Adhesive: "No",
             Cut_Type: "TC",
             Press: "Standard",
-            Platen_Set: "6.5",
+            Makeready: ".05",
+            Platen: "6.5",
             Impressions: "400",
             Signature: "Sumit Mahajan"
           },
@@ -122,7 +127,8 @@ export const fetchAttendance = () => async (dispatch) => {
             Adhesive: "No",
             Cut_Type: "TC",
             Press: "Standard",
-            Platen_Set: "6.5",
+            Makeready: ".05",
+            Platen: "6.5",
             Impressions: "300",
             Signature: "Brian Kohout"
           }

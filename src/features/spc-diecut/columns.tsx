@@ -65,7 +65,7 @@ export const getColumns = (
   const cutColumns = [
     {
       accessorKey: "Die_Number",
-      idAccessor: "Die_ID",
+      idAccessor: "Die_Number",
       header: "Die Number",
       enableEditing: false,
       filterVariant: "multi-select",
@@ -126,8 +126,14 @@ export const getColumns = (
       filterVariant: "multi-select",
     },
     {
-      accessorKey: "Platen_Set",
-      header: "Platen Set",
+      accessorKey: "Makeready",
+      header: "Press",
+      enableEditing: false,
+      filterVariant: "multi-select",
+    },
+    {
+      accessorKey: "Platen",
+      header: "Platen",
       enableEditing: false,
       filterVariant: "multi-select",
     },
@@ -138,7 +144,7 @@ export const getColumns = (
       filterVariant: "multi-select",
     },
     {
-      accessorKey: "Die_Note",
+      accessorKey: "Note",
       header: "Notes",
       enableEditing: true,
       size: 250,

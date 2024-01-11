@@ -143,7 +143,7 @@ function DieCutSPC({
       "Impressions": values.impressions,
       "Dwell": values.dwell, 
       "Emboss_Height": values.emboss_height,
-      "Press": values.press,
+      "Heat": values.heat,
       "Makeready": values.makeready,
       "Pad": values.pad,
       "Platen": values.platen, 
