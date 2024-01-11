@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { Box, Button, Text, Select, Textarea, Checkbox, Autocomplete, SimpleGrid, SegmentedControl } from "@mantine/core";
+import { Box, Button, Text, Select, Textarea, Checkbox, Autocomplete, SimpleGrid, SegmentedControl, TextInput } from "@mantine/core";
 
 import { fetchAttendance, saveNotes } from "./store/actions"
 import { MantineDataTable } from "../../components/mantine-data-table";
@@ -18,6 +18,7 @@ function DieCutSPC({
   attendanceLoading,
 }) {
   const [dieFormOpened, { open: openDieForm, close: closeDieForm }] = useDisclosure(false);
+  const [embossFormOpened, { open: openEmbossForm, close: closeEmbossForm }] = useDisclosure(false);
 
   const [editedUsers, setEditedUsers] = useState({});
 
@@ -52,8 +53,10 @@ function DieCutSPC({
       die_number: "", 
       date: null, 
       art_number: null, 
+      part_number: null,
       material: null, 
       lamination: null,
+      impressions: null,
       cut_type: null,
       press: null,
       makeready: null,
@@ -67,22 +70,79 @@ function DieCutSPC({
       die_Number: (value) => (value === null ? 'You must enter the Die Number' : null),
       date: (value) => (value === null ? 'You must enter the Date of the run' : null),
       art_Number: (value) => (value === null ? "You must enter the Art Number" : null),
+      part_number: (value) => (value === null ? "You must enter the Part Number" : null),
       material: (value) => (value === null ? 'You must select the Material' : null),
       lamination: (value) => (value === null ? 'You must select a Lamination Value' : null),
+      impressions: (value) => (value === null ? 'You must enter the number of impressions' : null),
       press: (value) => (value === null ? 'You must select a Press' : null),
       makeready: (value) => (value === null ? 'You must select a Makeready value' : null),
       platen: (value) => (value === null ? 'You must enter a Platen value' : null),
+      press: (value) => (value === null ? 'You must select a Press' : null),
       adhesive: (value) => (value === null ? 'You must select an Adhesive value' : null),
     },
 
     transformValues: (values) => ({
       "Die_Number": values.die_number, 
       "Date": values.date, 
-      "Art_Number": values.art_number, 
+      "Art_Number": values.art_number,
+      "Part_Number": values.part_number,
       "Material": values.material, 
       "Lamination": values.lamination,
+      "Impressions": values.impressions,
       "Adhesive": values.adhesive, 
       "Cut_Type": values.cut_type,
+      "Press": values.press,
+      "Makeready": values.makeready,
+      "Pad": values.pad,
+      "Platen": values.platen, 
+      "Signature": values.signature, 
+      "Note": values.note
+    })
+  });
+
+  const embossForm = useForm({
+    initialValues: { 
+      die_number: "", 
+      date: null, 
+      art_number: null, 
+      part_number: null,
+      material: null, 
+      ink_layers: null,
+      impressions: null,
+      dwell: null,
+      heat: null,
+      makeready: null,
+      pad: "Yes",
+      emboss_height: null, 
+      platen: null, 
+      signature: null, 
+      note: null },
+
+    validate: {
+      die_Number: (value) => (value === null ? 'You must enter the Die Number' : null),
+      date: (value) => (value === null ? 'You must enter the Date of the run' : null),
+      art_Number: (value) => (value === null ? "You must enter the Art Number" : null),
+      part_number: (value) => (value === null ? "You must enter the Part Number" : null),
+      material: (value) => (value === null ? 'You must select the Material' : null),
+      ink_layers: (value) => (value === null ? 'You must enter the number of Ink Layers' : null),
+      impressions: (value) => (value === null ? 'You must enter the number of impressions' : null),
+      dwell: (value) => (value === null ? 'You must enter a Dwell value' : null),
+      makeready: (value) => (value === null ? 'You must select a Makeready value' : null),
+      platen: (value) => (value === null ? 'You must enter a Platen value' : null),
+      emboss_height: (value) => (value === null ? 'You must enter an Emboss Height' : null),
+      heat: (value) => (value === null ? 'You must select a Heat value' : null),
+    },
+
+    transformValues: (values) => ({
+      "Die_Number": values.die_number, 
+      "Date": values.date, 
+      "Art_Number": values.art_number,
+      "Part_Number": values.part_number,
+      "Material": values.material, 
+      "Ink_Layers": values.ink_layers,
+      "Impressions": values.impressions,
+      "Dwell": values.dwell, 
+      "Emboss_Height": values.emboss_height,
       "Press": values.press,
       "Makeready": values.makeready,
       "Pad": values.pad,
@@ -126,6 +186,15 @@ function DieCutSPC({
               data={['219', '45']}
               defaultValue=""
               {...dieForm.getInputProps('die_number')}
+            />
+            <Select
+              withAsterisk
+              mb={8}
+              label="Part Number"
+              placeholder="Search and Select Part Number..."
+              data={["test"]}
+              searchable
+              {...dieForm.getInputProps('part_number')}
             />
             <Select
               withAsterisk
@@ -189,10 +258,18 @@ function DieCutSPC({
               withAsterisk
               mb={8}
               label="Used Pad"
-              placeholder="Select Makeready..."
+              placeholder="Select Value..."
               defaultValue={"Yes"}
               data={["Yes", "No"]}
               {...dieForm.getInputProps('pad')}
+            />
+            <Textarea
+              mb={8}
+              withAsterisk
+              label="Impressions"
+              placeholder="Enter Impressions..."
+              autosize
+              {...dieForm.getInputProps('impressions')}
             />
             <Textarea
               mb={8}
@@ -214,6 +291,153 @@ function DieCutSPC({
               type="submit"
               disabled={!dieForm.isValid()}
               // onClick={(event) => handleFormSubmit(event, dieForm, true)}
+              color="red" 
+              mt={16}
+              mb={8} >
+                Submit
+            </Button>
+          <Text size={12} opacity={.5}>
+            Submit as {userName}
+          </Text>
+        </form>
+      </Modal>
+      <Modal
+        withCloseButton
+        closeOnClickOutside={false}
+        closeOnEscape={false}
+        opened={embossFormOpened} 
+        onClose={closeEmbossForm}
+        title="Emboss Entry Form"
+        centered
+        size={800}
+        overlayProps={{
+          blur: 1,
+        }}>
+        <form>
+          <SimpleGrid cols={2}>
+            <DatePickerInput
+              mb={8}
+              withAsterisk
+              label="Date of Run"
+              placeholder="Pick Date"
+              isClearable={true}
+              defaultLevel="decade"
+              {...embossForm.getInputProps('date')}
+            />
+            <Autocomplete
+              withAsterisk
+              mb={8}
+              label="Die Number"
+              placeholder="Select or Enter Die Number..."
+              data={['219', '45']}
+              defaultValue=""
+              {...embossForm.getInputProps('die_number')}
+            />
+            <Select
+              withAsterisk
+              mb={8}
+              label="Part Number"
+              placeholder="Search and Select Part Number..."
+              data={["test"]}
+              searchable
+              {...embossForm.getInputProps('part_number')}
+            />
+            <Select
+              withAsterisk
+              mb={8}
+              label="Art Number"
+              placeholder="Search and Select Art Number..."
+              data={["test"]}
+              searchable
+              {...embossForm.getInputProps('art_number')}
+            />
+            <Select
+              withAsterisk
+              mb={8}
+              label="Material"
+              placeholder="Search and Select Material..."
+              data={["test"]}
+              searchable
+              {...embossForm.getInputProps('material')}
+            />
+            <Select
+              withAsterisk
+              mb={8}
+              label="Heat"
+              placeholder="Select Heat..."
+              defaultValue={"No"}
+              data={["Yes","No"]}
+              {...embossForm.getInputProps('heat')}
+            />
+            <Select
+              withAsterisk
+              mb={8}
+              label="Makeready"
+              placeholder="Select Makeready..."
+              data={[".05",".08"]}
+              {...embossForm.getInputProps('makeready')}
+            />
+            <Select
+              withAsterisk
+              mb={8}
+              label="Used Pad"
+              placeholder="Select Value..."
+              defaultValue={"Yes"}
+              data={["Yes", "No"]}
+              {...embossForm.getInputProps('pad')}
+            />
+            <Textarea
+              withAsterisk
+              mb={8}
+              label="Ink Layers"
+              placeholder="Enter Number of Layers..."
+              autosize
+              {...embossForm.getInputProps('ink_layers')}
+            />
+            <Textarea
+              withAsterisk
+              mb={8}
+              label="Dwell"
+              placeholder="Enter Dwell Value..."
+              autosize
+              {...embossForm.getInputProps('dwell')}
+            />
+            <Textarea
+              withAsterisk
+              mb={8}
+              label="Emboss Height"
+              placeholder="Enter Emboss Height..."
+              autosize
+              {...embossForm.getInputProps('emboss_height')}
+            />
+            <Textarea
+              mb={8}
+              withAsterisk
+              label="Impressions"
+              placeholder="Enter Impressions..."
+              autosize
+              {...embossForm.getInputProps('impressions')}
+            />
+            <Textarea
+              mb={8}
+              withAsterisk
+              label="Platen Set"
+              placeholder="Enter Platen Set..."
+              autosize
+              {...embossForm.getInputProps('platen')}
+            />
+            <Textarea
+              mb={8}
+              label="Note"
+              placeholder="Notes..."
+              autosize
+              {...embossForm.getInputProps('note')}
+            />
+          </SimpleGrid>
+            <Button 
+              type="submit"
+              disabled={!embossForm.isValid()}
+              // onClick={(event) => handleFormSubmit(event, embossForm, true)}
               color="red" 
               mt={16}
               mb={8} >
@@ -262,9 +486,12 @@ function DieCutSPC({
             value={value}
             onChange={setValue}
           />
-          <Button onClick={openDieForm} variant="filled" mt={1.5}>
+          <Button radius={0} mr={-1} onClick={openDieForm} variant="outline" mt={1.5}>
               Enter Die Cut
-            </Button>
+          </Button>
+          <Button radius={0} onClick={openEmbossForm} variant="outline" mt={1.5}>
+            Enter Emboss
+          </Button>
         </Box>
       </MantineDataTable>
     </Box>
