@@ -1,21 +1,21 @@
-import { format, addMinutes, subBusinessDays } from "date-fns";
-import { Box, Button, Text, Textarea } from "@mantine/core";
+import { format, addMinutes, subBusinessDays } from 'date-fns';
+import { Box, Button, Text, Textarea } from '@mantine/core';
 
 export function delay(time) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
 
 export const getDateColor = (nDate) => {
-  let color = "black";
+  let color = 'black';
 
   if (!nDate) return;
 
   if (nDate.toLocaleDateString() === new Date().toLocaleDateString()) {
-    color = "yellow";
+    color = 'yellow';
   } else if (nDate.getTime() < new Date().getTime()) {
-    color = "red";
+    color = 'red';
   } else {
-    color = "black";
+    color = 'black';
   }
 
   return color;
@@ -28,16 +28,16 @@ function isValidDate(d) {
 
 export function isDate(date) {
   return (
-    isNaN(date) && new Date(date) !== "Invalid Date" && !isNaN(new Date(date))
+    isNaN(date) && new Date(date) !== 'Invalid Date' && !isNaN(new Date(date))
   );
 }
 
 export function formatDate(date) {
   return date
     ? isValidDate(date)
-      ? format(addMinutes(date, date.getTimezoneOffset()), "MM/dd/yyyy")
-      : "-"
-    : "-";
+      ? format(addMinutes(date, date.getTimezoneOffset()), 'MM/dd/yyyy')
+      : '-'
+    : '-';
 }
 
 export function subBusDays(date, days) {
@@ -45,21 +45,21 @@ export function subBusDays(date, days) {
 }
 
 export function formatDateWithoutTZ(date) {
-  return date ? (isValidDate(date) ? format(date, "MM/dd/yyyy") : "-") : "-";
+  return date ? (isValidDate(date) ? format(date, 'MM/dd/yyyy') : '-') : '-';
 }
 
 export const getShipByDateColumn = (
   promiseDateDatatype,
-  title = "Ship By Date"
+  title = 'Ship By Date'
 ) => {
   return {
-    id: "shipBayDateDate",
+    id: 'shipBayDateDate',
     enableEditing: false,
     accessorFn: (row) => {
       let offsetTime = null;
-      if (promiseDateDatatype === "model") {
+      if (promiseDateDatatype === 'model') {
         offsetTime = row.Deliveries
-          ? new Date(row.Deliveries[0]?.Promised_Date)
+          ? new Date(row.Deliveries[row.Deliveries.length - 1]?.Promised_Date)
           : null;
       } else {
         offsetTime = row.Promised_Date ? new Date(row.Promised_Date) : null;
@@ -75,8 +75,8 @@ export const getShipByDateColumn = (
       return sDay;
     },
     header: title,
-    filterVariant: "date",
-    sortingFn: "datetime",
+    filterVariant: 'date',
+    sortingFn: 'datetime',
     sortUndefined: false,
     enableColumnFilterModes: false,
     Cell: ({ cell }) => {
@@ -94,14 +94,14 @@ export const getShipByDateColumn = (
 
 export const getEarlyShipDateColumn = (
   promiseDateDatatype,
-  title = "Early Ship"
+  title = 'Early Ship'
 ) => {
   return {
-    id: "earlyShipDate",
+    id: 'earlyShipDate',
     enableEditing: false,
     accessorFn: (row) => {
       let offsetTime = null;
-      if (promiseDateDatatype === "model") {
+      if (promiseDateDatatype === 'model') {
         offsetTime = row.Deliveries
           ? new Date(row.Deliveries[0]?.Promised_Date)
           : null;
@@ -120,8 +120,8 @@ export const getEarlyShipDateColumn = (
       return sDay;
     },
     header: title,
-    filterVariant: "date",
-    sortingFn: "datetime",
+    filterVariant: 'date',
+    sortingFn: 'datetime',
     sortUndefined: false,
     enableColumnFilterModes: false,
     Cell: ({ cell }) => {
