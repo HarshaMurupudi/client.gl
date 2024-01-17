@@ -79,7 +79,7 @@ function EcoApproval({
   );
 
   const handleSave = async () => {
-    await saveNotes(Object.values(editedUsers));
+    await saveNotes(Object.values(editedUsers), userName);
     setEditedUsers({});
   };
 

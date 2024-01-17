@@ -30,13 +30,13 @@ export const fetchRequests = (partID) => async (dispatch) => {
   }
 };
 
-export const saveNotes = (eco) => async (dispatch) => {
+export const saveNotes = (eco, userName) => async (dispatch) => {
   try {
     dispatch(setRequestsLoading(true));
     if (eco.length > 0){
-      await baseAxios.patch('request/eco', 
+      await baseAxios.patch('requests/eco', 
       {
-        data: {form: eco},
+        data: {form: eco, user: userName},
         headers
       });
     }
