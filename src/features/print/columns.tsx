@@ -1,14 +1,14 @@
-import { format, addMinutes } from "date-fns";
-import { Text, Skeleton } from "@mantine/core";
+import { format, addMinutes } from 'date-fns';
+import { Text, Skeleton } from '@mantine/core';
 
-import { GLTextarea } from "../../components/ReactTableTextarea";
-import { CheckboxFilter } from "../../components/TableComponents";
+import { GLTextarea } from '../../components/ReactTableTextarea';
+import { CheckboxFilter } from '../../components/TableComponents';
 import {
   getDateColor,
   subBusDays,
   formatDateWithoutTZ,
   getShipByDateColumn,
-} from "../../utils";
+} from '../../utils';
 
 export const getColumns = (
   fetchPDF: any,
@@ -31,12 +31,12 @@ export const getColumns = (
   function formatDate(date: any) {
     if (date) {
       if (isValidDate(date)) {
-        return format(addMinutes(date, date.getTimezoneOffset()), "MM/dd/yyyy");
+        return format(addMinutes(date, date.getTimezoneOffset()), 'MM/dd/yyyy');
       } else {
-        return "-";
+        return '-';
       }
     } else {
-      return "-";
+      return '-';
     }
   }
 
@@ -63,35 +63,69 @@ export const getColumns = (
   };
 
   const names = [
-    "Thy Suon",
-    "Lyn Erie",
-    "Dalton Breitzman",
-    "Tracey Trudeau",
-    "Sumit Mahajan",
-    "Jon Erie",
+    'Thy Suon',
+    'Lyn Erie',
+    'Dalton Breitzman',
+    'Tracey Trudeau',
+    'Sumit Mahajan',
+    'Jon Erie',
   ];
 
   const columns = [
-    // {
-    //   header: "Job",
-    //   columns: [
     {
-      accessorKey: "Job",
-      header: "Job",
+      id: 'Job_Plan',
+      accessorFn: (row: any) => {
+        if (
+          row.Comment &&
+          (row.Comment === '4' || row.Comment === '50' || row.Comment === '10')
+        ) {
+          return row.Comment;
+        } else {
+          return '5';
+        }
+      },
+      accessorKey: 'Job_Plan',
+      enableEditing: false,
+      header: 'Job Plan',
+      filterVariant: 'autocomplete',
+      Cell: ({
+        cell,
+        column,
+        table,
+      }: {
+        cell: any;
+        column: any;
+        table: any;
+      }) => {
+        const jobPlan = cell.getValue('Job_Plan');
+        var textColor = 'transparent';
+        if (jobPlan === '4') {
+          textColor = 'orange';
+        } else if (jobPlan === '3' || jobPlan === '2' || jobPlan === '1') {
+          textColor = '#40C057';
+        } else if (jobPlan === '10') {
+          textColor = 'purple';
+        }
+        return <Text bg={textColor}>{cell.getValue()}</Text>;
+      },
+    },
+    {
+      accessorKey: 'Job',
+      header: 'Job',
       enableEditing: false,
       // filterVariant: "multi-select",
       accessorFn: (row: any) => {
-        const Job = row.Job || "";
+        const Job = row.Job || '';
         return Job;
       },
     },
     {
-      accessorKey: "Part_Number",
-      header: "Part Number",
+      accessorKey: 'Part_Number',
+      header: 'Part Number',
       // filterVariant: "multi-select",
       enableEditing: false,
       accessorFn: (row: any) => {
-        const Part_Number = row.Part_Number || "";
+        const Part_Number = row.Part_Number || '';
         return Part_Number;
       },
       mantineTableBodyCellProps: ({ cell }: { cell: any }) => ({
@@ -102,8 +136,8 @@ export const getColumns = (
       Cell: ({ cell, row }: { cell: any; row: any }) => (
         <p
           style={{
-            textDecoration: "underline",
-            cursor: "pointer",
+            textDecoration: 'underline',
+            cursor: 'pointer',
             margin: 0,
           }}
         >
@@ -112,23 +146,23 @@ export const getColumns = (
       ),
     },
     {
-      accessorKey: "Customer",
-      header: "Customer",
+      accessorKey: 'Customer',
+      header: 'Customer',
       enableEditing: false,
       // filterVariant: "multi-select",
     },
     {
-      accessorKey: "Sequence",
-      header: "Sequence",
+      accessorKey: 'Sequence',
+      header: 'Sequence',
       enableEditing: false,
     },
     {
-      accessorKey: "Rev",
-      header: "Rev",
+      accessorKey: 'Rev',
+      header: 'Rev',
       enableEditing: false,
       // filterVariant: "multi-select",
       accessorFn: (row: any) => {
-        const Rev = row.Rev || "";
+        const Rev = row.Rev || '';
         return Rev;
       },
     },
@@ -138,10 +172,10 @@ export const getColumns = (
 
         if (row.Sched_Start) return sDay;
       },
-      id: "schedDate",
-      header: "Sched Start",
-      filterVariant: "date",
-      sortingFn: "datetime",
+      id: 'schedDate',
+      header: 'Sched Start',
+      filterVariant: 'date',
+      sortingFn: 'datetime',
       // enableMultiSort: true,
       enableEditing: false,
       sortUndefined: false,
@@ -171,28 +205,28 @@ export const getColumns = (
         return sDay;
       },
       enableEditing: false,
-      id: "promisedDate",
-      header: "Next Promise",
-      filterVariant: "date",
-      sortingFn: "datetime",
+      id: 'promisedDate',
+      header: 'Next Promise',
+      filterVariant: 'date',
+      sortingFn: 'datetime',
       enableColumnFilterModes: false,
       Cell: ({ cell }: { cell: any }) => formatDate(cell.getValue()),
     },
-    getShipByDateColumn(null, "Next Ship"),
+    getShipByDateColumn(null, 'Next Ship'),
     {
-      accessorKey: "Make_Quantity",
-      header: "Make Quantity",
+      accessorKey: 'Make_Quantity',
+      header: 'Make Quantity',
       enableEditing: false,
       enableMultiSort: true,
     },
     {
-      accessorKey: "Sales_Code",
+      accessorKey: 'Sales_Code',
       accessorFn: (row: any) => {
-        return row.Sales_Code ? row.Sales_Code : "-";
+        return row.Sales_Code ? row.Sales_Code : '-';
       },
-      header: "Sales Code",
+      header: 'Sales Code',
       enableEditing: false,
-      filterVariant: "multi-select",
+      filterVariant: 'multi-select',
       // mantineFilterMultiSelectProps
       Filter: ({ column, table }) => (
         <CheckboxFilter
@@ -217,12 +251,12 @@ export const getColumns = (
       },
     },
     {
-      accessorKey: "Work_Center",
-      header: "Work Center",
+      accessorKey: 'Work_Center',
+      header: 'Work Center',
       enableEditing: false,
-      filterVariant: "multi-select",
+      filterVariant: 'multi-select',
       accessorFn: (row: any) => {
-        const Work_Center = row["Work_Center"] || "";
+        const Work_Center = row['Work_Center'] || '';
         return Work_Center;
       },
     },
@@ -232,21 +266,21 @@ export const getColumns = (
     //   enableEditing: false,
     // },
     {
-      accessorKey: "Now At",
-      header: "Now At",
+      accessorKey: 'Now At',
+      header: 'Now At',
       enableEditing: false,
       // filterVariant: "multi-select",
       accessorFn: (row: any) => {
-        const Job = row["Now At"] || "";
+        const Job = row['Now At'] || '';
         return Job;
       },
       Cell: ({ cell, row }: { cell: any; row: any }) => {
-        let nowAt = "-";
-        if (value === "Open") {
-          nowAt = row.original["Now At"];
+        let nowAt = '-';
+        if (value === 'Open') {
+          nowAt = row.original['Now At'];
 
           if (openJobsNowAtLoading) {
-            return <Skeleton height={8} mt={6} width="70%" radius="xl" />;
+            return <Skeleton height={8} mt={6} width='70%' radius='xl' />;
           } else {
             return <p style={{ margin: 0 }}>{nowAt}</p>;
           }
@@ -257,41 +291,41 @@ export const getColumns = (
       },
     },
     {
-      accessorKey: "Status",
+      accessorKey: 'Status',
       accessorFn: (row: any) => {
-        if (value === "Open") {
-          return row["Status"];
+        if (value === 'Open') {
+          return row['Status'];
         } else {
-          return row["JobOperationStatus"];
+          return row['JobOperationStatus'];
         }
       },
-      header: "Status",
+      header: 'Status',
       enableEditing: false,
-      filterVariant: "multi-select",
+      filterVariant: 'multi-select',
     },
     {
-      accessorKey: "Description",
-      header: "Description",
+      accessorKey: 'Description',
+      header: 'Description',
       enableEditing: false,
     },
     {
-      accessorKey: "Customer_PO",
-      header: "Customer PO",
+      accessorKey: 'Customer_PO',
+      header: 'Customer PO',
       enableEditing: false,
-      filterVariant: "multi-select",
+      filterVariant: 'multi-select',
       accessorFn: (row: any) => {
-        const Customer_PO = row["Customer_PO"] || "";
+        const Customer_PO = row['Customer_PO'] || '';
         return Customer_PO;
       },
     },
     {
-      accessorKey: "Quote",
-      header: "Quote",
+      accessorKey: 'Quote',
+      header: 'Quote',
       enableEditing: false,
     },
     {
-      accessorKey: "Est_Total_Hrs",
-      header: "Est Total Hrs",
+      accessorKey: 'Est_Total_Hrs',
+      header: 'Est Total Hrs',
       enableMultiSort: true,
       enableEditing: false,
       Cell: ({ cell, row }: { cell: any; row: any }) => {
@@ -317,22 +351,22 @@ export const getColumns = (
     //   header: "Notes",
     //   columns: [
     {
-      id: "Priority",
-      accessorKey: "Priority",
+      id: 'Priority',
+      accessorKey: 'Priority',
       accessorFn: (row: any) => {
         if (row.Priority) {
           return row.Priority;
         } else {
-          return "5";
+          return '5';
         }
       },
-      header: "Priority",
+      header: 'Priority',
       enableEditing: true,
       Cell: ({ cell, row }: { cell: any; row: any }) => (
         <Text>{cell.getValue()}</Text>
       ),
       mantineEditTextInputProps: ({ cell, row }: { cell: any; row: any }) => ({
-        type: "test",
+        type: 'test',
         onBlur: (event: any) => {
           if (editedUsers[row.id]) {
             setEditedUsers({
@@ -355,8 +389,8 @@ export const getColumns = (
       }),
     },
     {
-      accessorKey: "Plan_Notes",
-      header: "Plan Notes",
+      accessorKey: 'Plan_Notes',
+      header: 'Plan Notes',
       enableEditing: true,
       size: 250,
       Cell: ({ cell, row }: { cell: any; row: any }) => (
@@ -381,23 +415,23 @@ export const getColumns = (
       },
     },
     {
-      accessorKey: "Colors",
-      header: "#Colors",
+      accessorKey: 'Colors',
+      header: '#Colors',
       enableEditing: false,
     },
     {
-      accessorKey: "Print_Pcs",
-      header: "Print Pcs",
+      accessorKey: 'Print_Pcs',
+      header: 'Print Pcs',
       enableEditing: false,
     },
     {
-      accessorKey: "Number_Up",
-      header: "NumberUp",
+      accessorKey: 'Number_Up',
+      header: 'NumberUp',
       enableEditing: false,
     },
     {
-      accessorKey: "Press",
-      header: "Press",
+      accessorKey: 'Press',
+      header: 'Press',
       enableEditing: false,
     },
     //   ],
