@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { connect } from "react-redux";
 import { useDisclosure } from "@mantine/hooks";
-import { Flex, Box, Select, Button, Modal, Textarea, Text, Stack, LoadingOverlay } from "@mantine/core";
+import { Flex, Divider, Select, Button, Modal, Textarea, Text, Stack, LoadingOverlay } from "@mantine/core";
 import { DatePickerInput, TimeInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { fetchRequests, saveNotes } from "./store/actions";
@@ -712,6 +712,21 @@ function RequestSite({
             align="center"
             justify="center"
           >
+            <Divider 
+              size="md" 
+              style={{ width:'80%' }}
+              label="HR Requests"
+              labelPosition="center"
+            />
+            <Button onClick={openTimeOffRequest} variant="filled" size="xl">
+              Vacation Request Form
+            </Button>
+            <Divider 
+              size="md"
+              style={{ width:'80%' }}
+              label="Shop Issues / Requests"
+              labelPosition="center"
+            />
             <Button onClick={openShopRequest} variant="filled" size="xl">
               Shop Request Form
             </Button>
@@ -720,9 +735,6 @@ function RequestSite({
             </Button>
             <Button onClick={openSafetyReport} variant="filled" size="xl">
               Safety Report Form
-            </Button>
-            <Button onClick={openTimeOffRequest} variant="filled" size="xl">
-              Vacation Request Form
             </Button>
             <Button onClick={openMaintenanceRequest} variant="filled" size="xl">
               Maintenance Request Form
