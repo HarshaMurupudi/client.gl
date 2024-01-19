@@ -236,7 +236,7 @@ function RequestSite({
       "Start_Date": values.start_date,
       "End_Date": values.end_date,
       "Request": values.request,
-      "Approver": "Paul Stromberg",
+      "Approver": null,
       "Approval_Comment": null,
       "Approval_Date": null,
     }),

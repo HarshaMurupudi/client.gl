@@ -51,4 +51,4 @@ export const saveNotes = (eco, userName) => async (dispatch) => {
     await delay(1200)
     dispatch(setRequestsLoading(false));
   }
-  };
+};
