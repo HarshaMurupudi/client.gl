@@ -48,7 +48,7 @@ function EcoApproval({
   };
 
   const filteredRequests = useMemo(() => {
-    if (user.First_Name === "Sumit") {
+    if (user.First_Name === "Sumit" || user.First_Name === "Nate" || user.First_Name === "Jon") {
       return (requests || []).filter(
         (request) => viewState || request.Status !== "Completed"
       );

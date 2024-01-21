@@ -30,13 +30,13 @@ export const fetchVacation = (partID) => async (dispatch) => {
   }
 };
 
-export const saveNotes = (vacation) => async (dispatch) => {
+export const saveNotes = (vacation, userName) => async (dispatch) => {
   try {
     dispatch(setVacationLoading(true));
     if (vacation.length > 0){
       await baseAxios.patch('requests/time-off', 
       {
-        data: {form: vacation},
+        data: {form: vacation, user: userName},
         headers
       });
     }

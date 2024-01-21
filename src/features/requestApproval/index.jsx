@@ -20,10 +20,10 @@ function RequestApproval({
   const userName = `${user.First_Name} ${user.Last_Name}`;
 
   const assignedApprovers = {
-    "Sumit Mahajan": ["shop", "eco", "improvement", "maintenance", "safety"],
-    "Jon Erie": ["shop"],
+    "Sumit Mahajan": ["shop", "improvement", "maintenance", "safety"],
+    "Jon Erie": ["shop", "improvement", "maintenance", "safety"],
     "Jason Mezzenga": ["maintenance", "safety"],
-    "Nate Baskfield": ["improvement", "safety"],
+    "Nate Baskfield": ["improvement", "shop"],
     "Susan Baskfield" : ["safety"],
     "Lyn Erie" : ["safety"]
   };
