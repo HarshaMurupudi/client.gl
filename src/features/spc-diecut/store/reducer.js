@@ -1,23 +1,23 @@
 const INITIAL_STATE = {
-    attendances: [],
-    attendanceLoading: false,
+    diecut: [],
+    diecutLoading: false,
   };
   
-const attendanceReducer = (state = INITIAL_STATE, action) => {
+const diecutReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case 'SET_ATTENDANCE':
+    case 'SET_DIECUT':
       return {
         ...state,
-        attendance: action.payload,
+        diecut: action.payload,
       };
-    case 'SET_ATTENDANCE_LOADING':
+    case 'SET_DIECUT_LOADING':
       return {
         ...state,
-        attendanceLoading: action.payload,
+        diecutLoading: action.payload,
       };
     default:
       return state;
   }
 };
 
-export default attendanceReducer;
+export default diecutReducer;

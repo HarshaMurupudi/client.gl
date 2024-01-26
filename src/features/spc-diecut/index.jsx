@@ -2,7 +2,7 @@ import { useMemo, useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { Box, Button, Text, Select, Textarea, Checkbox, Autocomplete, SimpleGrid, SegmentedControl, TextInput } from "@mantine/core";
 
-import { fetchAttendance, saveNotes } from "./store/actions"
+import { fetchDiecut, saveNotes } from "./store/actions"
 import { MantineDataTable } from "../../components/mantine-data-table";
 import { getColumns } from "./columns";
 import { Modal } from "@mantine/core";
@@ -13,9 +13,9 @@ import { useDisclosure } from "@mantine/hooks";
 function DieCutSPC({
   user,
   saveNotes,
-  attendance,
-  fetchAttendance,
-  attendanceLoading,
+  diecut,
+  fetchDiecut,
+  diecutLoading,
 }) {
   const [dieFormOpened, { open: openDieForm, close: closeDieForm }] = useDisclosure(false);
   const [embossFormOpened, { open: openEmbossForm, close: closeEmbossForm }] = useDisclosure(false);
@@ -29,6 +29,11 @@ function DieCutSPC({
     [editedUsers]
     );
 
+  let closeForms = {
+    cut: closeDieForm,
+    emboss: closeEmbossForm,
+  };
+
   const cols = useMemo( () => {
     return value === "Cut" ? columns[0].Cut : columns[1].Emboss
   })
@@ -38,9 +43,29 @@ function DieCutSPC({
     setEditedUsers({});
   };
 
-  const fetchData = async () => {
-    await fetchAttendance();
+  const handleFormSubmit = async (event, form, formName) => {
+    event.preventDefault();
+    // closeForms = closeForms[formName];
+    const newData = form.getTransformedValues();
+    // closeForms();
+    await saveNotes(newData, formName);
+    // form.reset()
   };
+
+
+  const fetchData = async () => {
+    await fetchDiecut();
+  };
+
+  const getData = useMemo ( 
+    () => {
+        if (diecut && value === "Cut"){
+          return diecut.die;
+        } else if (diecut) {
+          return diecut.emboss;
+        }
+      }
+    );
 
   useEffect(() => {
     fetchData();
@@ -82,6 +107,7 @@ function DieCutSPC({
     },
 
     transformValues: (values) => ({
+      "Die_ID": null,
       "Die_Number": values.die_number, 
       "Date": values.date, 
       "Art_Number": values.art_number,
@@ -96,8 +122,10 @@ function DieCutSPC({
       "Pad": values.pad,
       "Platen": values.platen, 
       "Signature": values.signature, 
-      "Note": values.note
-    })
+      "Note": values.note,
+    }),
+
+    onSubmit: () => handleFormSubmit(dieForm, "cut"),
   });
 
   const embossForm = useForm({
@@ -148,8 +176,11 @@ function DieCutSPC({
       "Pad": values.pad,
       "Platen": values.platen, 
       "Signature": values.signature, 
-      "Note": values.note
-    })
+      "Note": values.note,
+      "Type": "emboss"
+    }),
+
+    onSubmit: () => handleFormSubmit(embossForm, "emboss"),
   });
 
 
@@ -290,7 +321,7 @@ function DieCutSPC({
             <Button 
               type="submit"
               disabled={!dieForm.isValid()}
-              // onClick={(event) => handleFormSubmit(event, dieForm, true)}
+              onClick={(event) => handleFormSubmit(event, dieForm, "cut")}
               color="red" 
               mt={16}
               mb={8} >
@@ -437,7 +468,7 @@ function DieCutSPC({
             <Button 
               type="submit"
               disabled={!embossForm.isValid()}
-              // onClick={(event) => handleFormSubmit(event, embossForm, true)}
+              onClick={(event) => handleFormSubmit(event, embossForm, "emboss")}
               color="red" 
               mt={16}
               mb={8} >
@@ -450,17 +481,17 @@ function DieCutSPC({
       </Modal>
       <MantineDataTable
         title={"Die Cutting SPC"}
-        tableKey={`attendance-data-table`}
+        tableKey={`diecut-data-table`}
         fetchData={fetchData}
         columns={cols}
-        data={attendance || []}
+        data={getData || []}
         tableProps={{
           editDisplayMode: "table",
           enableEditing: true,
           getRowId: (row, index) => `${row.Die_ID}_${index}`,
         }}
         handleSave={handleSaveUsers}
-        loading={attendanceLoading}
+        loading={diecutLoading}
         hasRefetch={true}
         hasCustomActionBtn={true}
         hasActionColumn={false}
@@ -500,11 +531,11 @@ function DieCutSPC({
 
 const mapStateToProps = (state) => ({
   user: state.getIn(["user", "user"]),
-  attendance: state.getIn(["attendance", "attendance"]),
-  attendanceLoading: state.getIn(["attendance", "attendanceLoading"]),
+  diecut: state.getIn(["diecut", "diecut"]),
+  diecutLoading: state.getIn(["diecut", "diecutLoading"]),
 });
 
 export default connect(mapStateToProps, {
-  fetchAttendance,
+  fetchDiecut,
   saveNotes,
 })(DieCutSPC);

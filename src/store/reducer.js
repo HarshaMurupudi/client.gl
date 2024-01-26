@@ -26,6 +26,7 @@ import { reducer as namesReducer } from "../features/training/store/names_store"
 import { reducer as autoCreateJobFolderReducer } from "../features/auto-create/store";
 import { reducer as autoCreatePartFolderReducer } from "../features/auto-create-part-folder/store";
 import { reducer as onHoldReducer } from "../features/onHold/store";
+import { reducer as diecutReducer } from "../features/spc-diecut/store";
 
 export default combineReducers({
   job: jobsReducer,
@@ -53,4 +54,5 @@ export default combineReducers({
   autoCreateJobFolder: autoCreateJobFolderReducer,
   autoCreatePartFolder: autoCreatePartFolderReducer,
   onHold: onHoldReducer,
+  diecut: diecutReducer
 });

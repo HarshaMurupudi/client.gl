@@ -19,7 +19,7 @@ export type SPC = {
   Platen_Set: string;
   Signature: string;
   Die_Note: string;
-  subRows?: SPC[]; //Each person can have sub rows of more people
+  subRows?: SPC[];
 };
 
 export const getColumns = (
@@ -217,8 +217,8 @@ export const getColumns = (
       filterVariant: "multi-select",
     },
     {
-      accessorKey: "Platen_Set",
-      header: "Platen Set",
+      accessorKey: "Platen",
+      header: "Platen",
       enableEditing: false,
       filterVariant: "multi-select",
     },
