@@ -11,6 +11,7 @@ import {
 import {
   IconNotes,
   IconGauge,
+  IconLayoutDashboard,
   IconPresentationAnalytics,
   IconLogout,
   IconFileAnalytics,
@@ -97,7 +98,7 @@ const useStyles = createStyles((theme) => ({
 
 function NavbarNestedBasic({ width, handleLogout, user }) {
   const mockdata = [
-    // { label: "Dashboard", icon: IconGauge, link: "/" },
+    { label: "Dashboard", icon: IconLayoutDashboard, link: "/dashboard" },
     {
       label: "Admin",
       icon: IconNotes,

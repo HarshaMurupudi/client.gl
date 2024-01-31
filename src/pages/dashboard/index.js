@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { Container } from "@mantine/core";
-import PowerBi from "../../features/power-bi";
+import Dashboard from "../../features/dashboard";
 
-function Dashboard() {
+function DashboardPage() {
   return (
     <Container fluid>
-      <PowerBi />
+      <Dashboard />
     </Container>
   );
 }
 
-export default Dashboard;
+export default DashboardPage;

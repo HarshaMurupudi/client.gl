@@ -31,6 +31,7 @@ import { reducer as approvalReducer } from "../features/requestApproval/store";
 import { reducer as ecoReducer } from "../features/ecoApproval/store";
 import { reducer as vacationReducer } from "../features/vacationApproval/store";
 import { reducer as onHoldReducer } from "../features/onHold/store";
+import { reducer as dashboardReducer } from "../features/dashboard/store";
 
 export default combineReducers({
   job: jobsReducer,
@@ -62,5 +63,6 @@ export default combineReducers({
   approval: approvalReducer,
   ecoApproval: ecoReducer,
   vacationApproval: vacationReducer,
-  onHold: onHoldReducer
+  onHold: onHoldReducer,
+  dashboard: dashboardReducer,
 });

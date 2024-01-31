@@ -111,6 +111,18 @@ export const publicRoutes = [
     ),
   },
   {
+    path: "/dashboard",
+    element: (
+      <Suspense fallback={<div>Loading</div>}>
+        <PrivateRoute>
+          <AppLayout>
+            <Dashboard />
+          </AppLayout>
+        </PrivateRoute>
+      </Suspense>
+    ),
+  },
+  {
     path: "/delivery-queue",
     element: (
       <Suspense fallback={<div>Loading</div>}>
