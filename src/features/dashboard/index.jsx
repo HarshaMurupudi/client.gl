@@ -17,7 +17,8 @@ import {
   Image, 
   Title, 
   Grid, 
-  Divider, 
+  Divider,
+  Blockquote, 
   } from "@mantine/core";
 
 function Dashboard({
@@ -57,6 +58,7 @@ function Dashboard({
             />
           </Flex>
         </Grid.Col>
+        
         <Grid.Col span={3}>
           <Card 
           shadow="md" 
@@ -191,6 +193,9 @@ function Dashboard({
             </Flex>
           </Card>
         </Grid.Col>}
+        <Blockquote color="blue" mt={50} cite="- Phil Jackson">
+          The strength of the team is each individual member. The strength of each member is the team.
+        </Blockquote>
       </Grid>
     </div>
   );
