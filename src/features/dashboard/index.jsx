@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 
 import {
@@ -18,13 +17,22 @@ import {
   Image, 
   Title, 
   Grid, 
-  Divider 
+  Divider, 
   } from "@mantine/core";
 
 function Dashboard({
   dashboardLoading,
   user,
 }) {
+  let userName = `${user.First_Name} ${user.Last_Name}`;
+
+  const admins = [
+    "Sumit Mahajan",
+    "Susan Baskfield",
+    "Nate Baskfield",
+    "Mike Baskfield",
+    "Jon Erie",
+  ]
 
   return (
     <div>
@@ -56,6 +64,7 @@ function Dashboard({
           radius="md" 
           withBorder
           ml={50} mr={50}
+          miw={200}
           >
           <Card.Section>
             <Image
@@ -109,7 +118,8 @@ function Dashboard({
           padding="lg" 
           radius="md" 
           withBorder
-          ml={50} mr={50}>
+          ml={50} mr={50}
+          miw={200}>
           <Card.Section>
             <Image 
               src="https://www.general-label.com/wp-content/uploads/2019/02/Main-Solutions-small.jpg"
@@ -133,16 +143,28 @@ function Dashboard({
               >
               Employee Time
             </Button>
+            <Button
+              variant="outline" 
+              leftIcon={<IconExternalLink size="0.9rem" />}
+              component="a"
+              href="./request"
+              target="_blank"
+              mb={10}
+              >
+              Vacation Request Form
+            </Button>
           </Flex>
           </Card>
         </Grid.Col>
-        <Grid.Col span={3}>
+        {admins.includes(userName) && <Grid.Col span={3}>
           <Card 
             shadow="md" 
             padding="lg" 
             radius="md" 
             withBorder
-            ml={50} mr={50}>
+            ml={50} mr={50}
+            miw={200}
+            >
             <Card.Section>
               <Image
                 src="https://scontent.ffcm1-1.fna.fbcdn.net/v/t1.6435-9/135805862_2755462371373958_3443409699820907461_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=7f8c78&_nc_ohc=GWj_B2hSH2kAX8jJkRQ&_nc_ht=scontent.ffcm1-1.fna&oh=00_AfDAprpitFnA_82PaTYrNSUGFiK8QJ-bb7QYk8sYza7BSA&oe=65E2176C"
@@ -168,7 +190,7 @@ function Dashboard({
               </Button>
             </Flex>
           </Card>
-        </Grid.Col>
+        </Grid.Col>}
       </Grid>
     </div>
   );
