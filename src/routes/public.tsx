@@ -103,7 +103,7 @@ export const publicRoutes = [
         {/* <ErrorBoundary> */}
         <PrivateRoute>
           <AppLayout>
-            <Contracts />
+            <Dashboard />
           </AppLayout>
         </PrivateRoute>
         {/* </ErrorBoundary> */}
