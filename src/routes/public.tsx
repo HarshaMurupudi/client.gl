@@ -103,10 +103,22 @@ export const publicRoutes = [
         {/* <ErrorBoundary> */}
         <PrivateRoute>
           <AppLayout>
-            <Contracts />
+            <Dashboard />
           </AppLayout>
         </PrivateRoute>
         {/* </ErrorBoundary> */}
+      </Suspense>
+    ),
+  },
+  {
+    path: "/dashboard",
+    element: (
+      <Suspense fallback={<div>Loading</div>}>
+        <PrivateRoute>
+          <AppLayout>
+            <Dashboard />
+          </AppLayout>
+        </PrivateRoute>
       </Suspense>
     ),
   },
