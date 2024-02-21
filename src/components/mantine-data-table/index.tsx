@@ -1,13 +1,13 @@
 // @ts-nocheck
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 import {
   MantineReactTable,
   useMantineReactTable,
   MRT_ToggleFiltersButton,
   MRT_EditActionButtons,
   type MRT_RowSelectionState,
-} from "mantine-react-table";
-import { useNavigate } from "react-router-dom";
+} from 'mantine-react-table';
+import { useNavigate } from 'react-router-dom';
 import {
   Menu,
   Tooltip,
@@ -25,21 +25,22 @@ import {
   LoadingOverlay,
   Group,
   // IconRefresh,
-} from "@mantine/core";
-import { IconRefresh } from "@tabler/icons-react";
-import { connect } from "react-redux";
-import { useDisclosure } from "@mantine/hooks";
+} from '@mantine/core';
+import { IconRefresh } from '@tabler/icons-react';
+import { connect } from 'react-redux';
+import { useDisclosure } from '@mantine/hooks';
 
-import { MRT_ShowHideColumnsButton } from "../mantine-custom/buttons/MRT_ShowHideColumnsButton";
-import { fetchPOPDF } from "../../features/po/store/actions";
-import { setModalText, setModalVisibility } from "../modal/store/actions";
+import { MRT_ShowHideColumnsButton } from '../mantine-custom/buttons/MRT_ShowHideColumnsButton';
+import { fetchPOPDF } from '../../features/po/store/actions';
+import { setModalText, setModalVisibility } from '../modal/store/actions';
 import {
   fetchCustomerApprovalPDF,
   fetchZundCutFilePDF,
   openFolder,
   createJobFolders,
   createPartFolders,
-} from "./store/actions";
+  createCert,
+} from './store/actions';
 
 interface Props {
   columns: any;
@@ -84,6 +85,7 @@ const DataTable = ({
   openFolder,
   createJobFolders,
   createPartFolders,
+  createCert,
 }: Props) => {
   const navigate = useNavigate();
   const isFirstRender = useRef(true);
@@ -91,7 +93,7 @@ const DataTable = ({
   const [columnVisibility, setColumnVisibility] = useState(() => {
     return JSON.parse(localStorage.getItem(tableKey)) || {};
   });
-  const firstColumn = hasActionColumn ? ["mrt-row-actions"] : [];
+  const firstColumn = hasActionColumn ? ['mrt-row-actions'] : [];
 
   // ? enableGrouping ? mrt - row - expand
   // ? ["mrt-row-expand", "mrt-row-actions"]
@@ -111,7 +113,7 @@ const DataTable = ({
   const hasNewColumns = (oldColumns, newColumns) => {
     let result = false;
 
-    if (!oldColumns.includes("mrt-row-actions")) {
+    if (!oldColumns.includes('mrt-row-actions')) {
       return true;
     }
 
@@ -128,7 +130,7 @@ const DataTable = ({
     }
 
     // mrt-row-expand
-    if (enableGrouping && !oldColumns.includes("mrt-row-expand")) {
+    if (enableGrouping && !oldColumns.includes('mrt-row-expand')) {
       return true;
     }
 
@@ -140,7 +142,7 @@ const DataTable = ({
 
     // removed columns
     for (const col of oldColumns) {
-      if (!newColumns.includes(col) && col === "mrt-row-actions") {
+      if (!newColumns.includes(col) && col === 'mrt-row-actions') {
         columns = columns.filter((fCol) => fCol !== col);
       }
     }
@@ -152,7 +154,7 @@ const DataTable = ({
       }
     }
 
-    if (!columns.includes("mrt-row-actions")) {
+    if (!columns.includes('mrt-row-actions')) {
       columns = [...firstColumn, ...columns];
     }
 
@@ -210,34 +212,36 @@ const DataTable = ({
   }, [columnOrder]);
 
   const handleActionBtn = async (row, type) => {
-    const selecetedRowID = row.id.split("_")[0];
+    const selecetedRowID = row.id.split('_')[0];
     const { Part_Number } = row.original;
 
-    if (type === "operations") {
-      window.open(`/operations/${selecetedRowID}`, "_blank");
-    } else if (type === "customer-approval") {
+    if (type === 'operations') {
+      window.open(`/operations/${selecetedRowID}`, '_blank');
+    } else if (type === 'customer-approval') {
       await fetchCustomerApprovalPDF(Part_Number);
-    } else if (type === "zund-cut-file") {
+    } else if (type === 'zund-cut-file') {
       await fetchZundCutFilePDF(Part_Number);
-    } else if (type === "auto-create-job-folders") {
+    } else if (type === 'auto-create-job-folders') {
       await createJobFolders(row.original.Job);
-    } else if (type === "auto-create-part-folders") {
+    } else if (type === 'auto-create-part-folders') {
       await createPartFolders(row.original.Part_Number);
+    } else if (type === 'cert') {
+      await createCert(row.original.Job);
     }
   };
 
   const handleInventoryActionBtn = (row) => {
     window.open(
       `/delivery-queue-details/${row.original.Part_Number}_${row.original.Job}`,
-      "_blank"
+      '_blank'
     );
   };
 
   const handleMaterialActionBtn = (row, action) => {
-    if (action === "material") {
-      window.open(`/material-requirement/${row.original.Job}`, "_blank");
-    } else if (action === "shiplines") {
-      window.open(`/shiplines/${row.original.Job}`, "_blank");
+    if (action === 'material') {
+      window.open(`/material-requirement/${row.original.Job}`, '_blank');
+    } else if (action === 'shiplines') {
+      window.open(`/shiplines/${row.original.Job}`, '_blank');
     }
   };
 
@@ -285,29 +289,29 @@ const DataTable = ({
     // paginationDisplayMode: 'mantine',
     // rowCount: data.length,
     mantineTableContainerProps: {
-      sx: { maxHeight: maxHeight || "78vh", minHeight: minHeight || "30vh" },
+      sx: { maxHeight: maxHeight || '78vh', minHeight: minHeight || '30vh' },
       // sx: { minHeight: minHeight || "30vh" },
     },
     // rowVirtualizerProps: { overscan: 8 }, //optionally customize the virtualizer
     enableBottomToolbar: true,
-    columnResizeMode: "onEnd",
+    columnResizeMode: 'onEnd',
     enablePinning: true,
     initialState: {
       // showColumnFilters: true,
-      density: "xs",
+      density: 'xs',
       pagination: { pageSize: 50, pageIndex: 0 },
       ...initialState,
     },
     mantineTableProps: {
       striped: true,
-      fontSize: ".80rem",
+      fontSize: '.80rem',
     },
     mantineTableBodyCellProps: {
       sx: {
-        border: "1px solid #ced4da",
-        padding: "0 0 0 0.5rem !important",
+        border: '1px solid #ced4da',
+        padding: '0 0 0 0.5rem !important',
         input: {
-          height: "1.2rem !important",
+          height: '1.2rem !important',
         },
       },
     },
@@ -319,20 +323,20 @@ const DataTable = ({
       isLoading: loading,
       ...(columnFilters && { columnFilters }),
     },
-    positionToolbarAlertBanner: "none", //hide alert banner selection message
-    columnFilterDisplayMode: "popover",
+    positionToolbarAlertBanner: 'none', //hide alert banner selection message
+    columnFilterDisplayMode: 'popover',
     onColumnVisibilityChange: setColumnVisibility,
     onColumnOrderChange: setColumnOrder,
     renderToolbarInternalActions: ({ table }) => (
-      <Flex gap="xs" align="center">
+      <Flex gap='xs' align='center'>
         {!isBasicTable && (
-          <Text fz="md" fw={700}>
+          <Text fz='md' fw={700}>
             Rows: {data.length}
           </Text>
         )}
 
         {hasRefetch && (
-          <Tooltip label="Refresh Data">
+          <Tooltip label='Refresh Data'>
             <ActionIcon onClick={() => fetchData()}>
               <IconRefresh />
             </ActionIcon>
@@ -344,16 +348,16 @@ const DataTable = ({
       </Flex>
     ),
     renderTopToolbarCustomActions: () => (
-      <Flex align="center" gap="md" style={{maxWidth: '65vw'}}>
-        <Text fz="md" fw={700}>
+      <Flex align='center' gap='md' style={{ maxWidth: '65vw' }}>
+        <Text fz='md' fw={700}>
           {title}
         </Text>
-        <Divider size="sm" orientation="vertical" />
+        <Divider size='sm' orientation='vertical' />
         {hasCustomActionBtn && children}
         {isEditable && (
           <Button
-            size="xs"
-            color="blue"
+            size='xs'
+            color='blue'
             onClick={(e) => handleSave(e, table)}
             disabled={isEdited}
           >
@@ -363,11 +367,11 @@ const DataTable = ({
       </Flex>
     ),
     enableRowActions: hasActionColumn,
-    positionActionsColumn: "first",
+    positionActionsColumn: 'first',
     ...(hasActionColumn && {
       renderRowActionMenuItems: ({ row }) => (
         <>
-          <Menu.Item onClick={() => handleActionBtn(row, "operations")}>
+          <Menu.Item onClick={() => handleActionBtn(row, 'operations')}>
             Operations
           </Menu.Item>
           <Menu.Item onClick={() => handlePOActionBtn(row)}>PO</Menu.Item>
@@ -375,33 +379,33 @@ const DataTable = ({
           <Menu.Item onClick={() => handleInventoryActionBtn(row)}>
             Inventory
           </Menu.Item>
-          <Menu.Item onClick={() => handleMaterialActionBtn(row, "material")}>
+          <Menu.Item onClick={() => handleMaterialActionBtn(row, 'material')}>
             Material
           </Menu.Item>
-          <Menu.Item onClick={() => handleActionBtn(row, "customer-approval")}>
+          <Menu.Item onClick={() => handleActionBtn(row, 'customer-approval')}>
             Customer Approval
           </Menu.Item>
           {/* only in zund plot */}
           {/* key = O-ZUNDPLOT-data-table */}
-          {(tableKey === "O-ZUNDPLOT-data-table" ||
-            tableKey === "contracts-queue-data-table") && (
-            <Menu.Item onClick={() => handleActionBtn(row, "zund-cut-file")}>
+          {(tableKey === 'O-ZUNDPLOT-data-table' ||
+            tableKey === 'contracts-queue-data-table') && (
+            <Menu.Item onClick={() => handleActionBtn(row, 'zund-cut-file')}>
               Z.Cut File
             </Menu.Item>
           )}
-          <Menu.Item onClick={() => handleMaterialActionBtn(row, "shiplines")}>
+          <Menu.Item onClick={() => handleMaterialActionBtn(row, 'shiplines')}>
             Shiplines
           </Menu.Item>
           {tableKey === `auto-create-folders-jobs-data-table` && (
             <Menu.Item
-              onClick={() => handleActionBtn(row, "auto-create-job-folders")}
+              onClick={() => handleActionBtn(row, 'auto-create-job-folders')}
             >
               Create Job Folders
             </Menu.Item>
           )}
           {tableKey === `auto-create-folders-parts-data-table` && (
             <Menu.Item
-              onClick={() => handleActionBtn(row, "auto-create-part-folders")}
+              onClick={() => handleActionBtn(row, 'auto-create-part-folders')}
             >
               Create Part Folders
             </Menu.Item>
@@ -415,19 +419,23 @@ const DataTable = ({
           <Menu.Item onClick={() => handleFolderOpen(row, "Quote")}>
             Open Quote Folder
           </Menu.Item> */}
-          <Popover width="target" position="right" withArrow shadow="md">
+          <Menu.Item onClick={() => handleActionBtn(row, 'cert')}>
+            Cert
+          </Menu.Item>
+
+          <Popover width='target' position='right' withArrow shadow='md'>
             <Popover.Target>
               <Button w={150}>Open Folder</Button>
             </Popover.Target>
             <Popover.Dropdown>
               <>
-                <Menu.Item onClick={() => handleFolderOpen(row, "Part_Number")}>
+                <Menu.Item onClick={() => handleFolderOpen(row, 'Part_Number')}>
                   Part
                 </Menu.Item>
-                <Menu.Item onClick={() => handleFolderOpen(row, "Job")}>
+                <Menu.Item onClick={() => handleFolderOpen(row, 'Job')}>
                   Job
                 </Menu.Item>
-                <Menu.Item onClick={() => handleFolderOpen(row, "Quote")}>
+                <Menu.Item onClick={() => handleFolderOpen(row, 'Quote')}>
                   Quote
                 </Menu.Item>
               </>
@@ -447,7 +455,7 @@ const DataTable = ({
       },
       selected: rowSelection[row.id],
       sx: {
-        cursor: "pointer",
+        cursor: 'pointer',
         // backgroundColor: 'lightblue'
       },
     }),
@@ -456,11 +464,11 @@ const DataTable = ({
   return (
     <>
       {/* <GLModal opened={opened} open={open} close={close} /> */}
-      <Box pos="relative">
+      <Box pos='relative'>
         <LoadingOverlay
           visible={mantineDataTableLoading}
           zIndex={1000}
-          overlayProps={{ radius: "sm", blur: 2 }}
+          overlayProps={{ radius: 'sm', blur: 2 }}
         />
         {/* ...other content */}
         <MantineReactTable table={table} key={tableKey} />
@@ -471,8 +479,8 @@ const DataTable = ({
 
 const mapStateToProps = (state) => ({
   mantineDataTableLoading: state.getIn([
-    "mantineDataTable",
-    "mantineDataTableLoading",
+    'mantineDataTable',
+    'mantineDataTableLoading',
   ]),
 });
 
@@ -485,4 +493,5 @@ export const MantineDataTable = connect(mapStateToProps, {
   openFolder,
   createJobFolders,
   createPartFolders,
+  createCert,
 })(DataTable);
