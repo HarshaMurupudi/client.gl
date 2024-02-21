@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useMemo } from "react";
-import { connect } from "react-redux";
+import React, { useEffect, useState, useMemo } from 'react';
+import { connect } from 'react-redux';
 import {
   Box,
   Group,
@@ -8,20 +8,20 @@ import {
   Text,
   Textarea,
   Grid,
-} from "@mantine/core";
-import { useLocation, useParams } from "react-router-dom";
-import { useErrorBoundary } from "react-error-boundary";
+} from '@mantine/core';
+import { useLocation, useParams } from 'react-router-dom';
+import { useErrorBoundary } from 'react-error-boundary';
 
 import {
   fetchOperations,
   fetchOperationTimes,
   setOperationTimes,
-} from "./store/actions";
-import { fetchPDFByJob } from "../jobs/store/actions";
-import { MantineDataTable } from "../../components/mantine-data-table";
-import { getColumns } from "./laborColumns";
-import { getOperationColumns } from "./operationColumns";
-import { getJobColumns } from "./jobColumns";
+} from './store/actions';
+import { fetchPDFByJob } from '../jobs/store/actions';
+import { MantineDataTable } from '../../components/mantine-data-table';
+import { getColumns } from './laborColumns';
+import { getOperationColumns } from './operationColumns';
+import { getJobColumns } from './jobColumns';
 
 function Operations({
   operations,
@@ -36,12 +36,12 @@ function Operations({
   const location = useLocation();
   const params = useParams();
   const [selectedOperation, setSelectedOperation] = useState({
-    Job_Operation: "",
-    Note_Text: "",
-    Work_Center: "",
-    Floor_Notes: "",
+    Job_Operation: '',
+    Note_Text: '',
+    Work_Center: '',
+    Floor_Notes: '',
   });
-  const [selectedJob, setSelectedJob] = useState("");
+  const [selectedJob, setSelectedJob] = useState('');
 
   const totalEstHours = useMemo(() => {
     const totalPoints = (operations[selectedJob] || []).reduce(
@@ -87,9 +87,9 @@ function Operations({
 
   const customOnRowSelection = (value, currentRow) => {
     if (!currentRow.getIsSelected()) {
-      setSelectedJob(currentRow.getValue("Job"));
+      setSelectedJob(currentRow.getValue('Job'));
     } else {
-      setSelectedJob("");
+      setSelectedJob('');
     }
   };
 
@@ -98,10 +98,10 @@ function Operations({
       onWorkCenterClick(currentRow.original);
     } else {
       setSelectedOperation({
-        Job_Operation: "",
-        Note_Text: "",
-        Work_Center: "",
-        Floor_Notes: "",
+        Job_Operation: '',
+        Note_Text: '',
+        Work_Center: '',
+        Floor_Notes: '',
       });
       setOperationTimes([]);
     }
@@ -113,20 +113,23 @@ function Operations({
         {/* <Grid.Col span={12}> */}
         <Grid.Col span={4}>
           <MantineDataTable
-            tableKey={"Operations-data-table"}
+            tableKey={'Operations-data-table'}
             title={`Jobs`}
             columns={jobColumns}
             data={Object.keys(operations).map((op) => {
               const isCompleted = operations[op].every(
-                (operation) => operation.Status === "C"
+                (operation) => operation.Status === 'C'
               );
 
               return {
                 Job: op,
-                Status: isCompleted ? "C" : "O",
+                Status: isCompleted ? 'C' : 'O',
                 Description: operations[op][0].job
                   ? operations[op][0].job.Description
-                  : "-",
+                  : '-',
+                Part_Number: operations[op][0].job
+                  ? operations[op][0].job.Part_Number
+                  : '-',
               };
             })}
             hasActionColumn={false}
@@ -143,7 +146,7 @@ function Operations({
         {/* </Grid.Col> */}
         <Grid.Col span={8}>
           <MantineDataTable
-            tableKey={"Operation-Details-data-table"}
+            tableKey={'Operation-Details-data-table'}
             title={`Jobs`}
             columns={operationColumns}
             data={selectedJob ? operations[selectedJob] : []}
@@ -161,22 +164,22 @@ function Operations({
         <Grid.Col span={4}>
           <Textarea
             my={16}
-            label={`Operation Notes - ${selectedOperation.Work_Center || ""}`}
+            label={`Operation Notes - ${selectedOperation.Work_Center || ''}`}
             value={selectedOperation.Note_Text}
             autosize
             maxRows={12}
           />
           <Textarea
             my={32}
-            label={`Floor Notes - ${selectedOperation.Work_Center || ""}`}
+            label={`Floor Notes - ${selectedOperation.Work_Center || ''}`}
             value={selectedOperation.Floor_Notes}
             autosize
           />
         </Grid.Col>
         <Grid.Col span={8}>
           <MantineDataTable
-            tableKey={"Employee-Details"}
-            title={`Labor Entry - ${selectedOperation.Work_Center || ""}`}
+            tableKey={'Employee-Details'}
+            title={`Labor Entry - ${selectedOperation.Work_Center || ''}`}
             columns={laborColumns}
             data={operationTimes}
             hasActionColumn={false}
@@ -193,9 +196,9 @@ function Operations({
 }
 
 const mapStateToProps = (state) => ({
-  operations: state.getIn(["operation", "operations"]),
-  operationsLoading: state.getIn(["operation", "operationsLoading"]),
-  operationTimes: state.getIn(["operation", "operationTimes"]),
+  operations: state.getIn(['operation', 'operations']),
+  operationsLoading: state.getIn(['operation', 'operationsLoading']),
+  operationTimes: state.getIn(['operation', 'operationTimes']),
 });
 
 export default connect(mapStateToProps, {
