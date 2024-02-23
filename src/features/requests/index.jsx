@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { connect } from "react-redux";
 import { useDisclosure } from "@mantine/hooks";
-import { Flex, Divider, Select, Button, Modal, Textarea, Text, Stack, LoadingOverlay } from "@mantine/core";
+import { Flex, Divider, Select, Button, Modal, Textarea, Text, Stack, LoadingOverlay, SimpleGrid } from "@mantine/core";
 import { DatePickerInput, TimeInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { fetchRequests, saveNotes } from "./store/actions";
@@ -25,6 +25,7 @@ function RequestSite({
 
   const [timeOffRequestOpened, { open: openTimeOffRequest, close: closeTimeOffRequest }] = useDisclosure(false);
 
+  const [dieOrderOpened, { open: openDieOrder, close: closeDieOrder }] = useDisclosure(false);
 
   const fetchPageData = async () => {
     await fetchRequests(); // Employee Names and Work Centers
@@ -38,6 +39,7 @@ function RequestSite({
     shop: closeShopRequest,
     eco: closeEcoRequest,
     safety: closeSafetyReport,
+    die: closeDieOrder,
     maintenance: closeMaintenanceRequest,
     improvement: closeImprovementRequest,
     timeOff: closeTimeOffRequest,
@@ -47,12 +49,13 @@ function RequestSite({
     event.preventDefault();
     closeForms = closeForms[formName];
     const newData = form.getTransformedValues();
-    closeForms();
+    // closeForms();
     await saveNotes(newData, formName);
-    form.reset()
+    // form.reset()
   };
 
   const priorities = ["Low", "Medium", "High"];
+
   const ecoTypes = [
     "Converting",
     "Membrane Switch", 
@@ -61,6 +64,17 @@ function RequestSite({
     "Decal", 
     "Printed Electronics"
   ];
+
+  const toolTypes = [
+    "Flexibe Rotary",
+    "Flexible Flat",
+    "Steel Rule",
+    "Solid Die",
+    "Emboss",
+    "Thermal",
+    "Deboss",
+    "Thin Plate"
+  ]
 
   const shopRequestForm = useForm({
     initialValues: { initiator: null, subject: null, part_number: null, job_number: null, work_center: null, priority: null, request: null },
@@ -93,6 +107,56 @@ function RequestSite({
     }),
 
     onSubmit: () => handleFormSubmit(shopRequestForm, "shop"), 
+  });
+
+  const dieOrderForm = useForm({
+    initialValues: { 
+      po: null, 
+      tool_type: null, 
+      tool_id: null, 
+      tool_shape: null, 
+      tool_description: null, 
+      cavity_width: null, 
+      cavity_height: null,
+      radius: null,
+      across: null,
+      down: null,
+      total: null,
+      space_across: null,
+      vendor: null,
+      comment: null,
+    },
+
+    validate: {
+      tool_type: (value) => (value === null ? 'Tool Type Required' : null),
+    },
+
+    transformValues: (values) => ({
+      "Die_ID": null,
+      "Request_Type": "die",
+      "Submission_Date": new Date(),
+      "Status": "Active",
+      "PO Number": values.po,
+      "Tool_Type": values.tool_type,
+      "Tool_ID": null,
+      "Tool_Shape": values.tool_shape,
+      "Tool_Description": values.tool_description,
+      "Cavity_Width": values.cavity_width,
+      "Cavity_Height": values.cavity_height,
+      "Radius": values.radius,
+      "Cavities_Across": values.across,
+      "Cavities_Down": values.down,
+      "Cavities_Total": values.total,
+      "Space_Across": values.space_across,
+      "Vendor": values.vendor,
+      "Comment": values.comment,
+      "Inspection_Status": null,
+      "Approver": null,
+      "Approval_Comment": null,
+      "Approval_Date": null,
+    }),
+
+    onSubmit: () => handleFormSubmit(dieOrderForm, "die"), 
   });
 
   const safetyReportForm = useForm({
@@ -327,6 +391,147 @@ function RequestSite({
               type="submit"
               disabled={!shopRequestForm.isValid()}
               onClick={(event) => handleFormSubmit(event, shopRequestForm, "shop")}
+              color="red" 
+              mb={8} >
+                Submit
+            </Button>
+          <Text size={12} opacity={.5}>
+            Submit as {userName}
+          </Text>
+        </form>
+      </Modal>
+      <Modal
+        withCloseButton
+        closeOnClickOutside={false}
+        closeOnEscape={false}
+        opened={dieOrderOpened} 
+        // onClose={closeDieOrder} 
+        title="Die Order Form"
+        centered
+        size={750}
+        overlayProps={{
+          blur: 1,
+        }}>
+        <form>
+          <SimpleGrid cols={2}>
+            <Textarea
+              withAsterisk
+              mb={16}
+              label="PO Number"
+              placeholder="PO..."
+              autosize
+              {...dieOrderForm.getInputProps('po')}
+            />
+            <Textarea
+              withAsterisk
+              mb={16}
+              label="Vendor"
+              placeholder="Vendor..."
+              autosize
+              {...dieOrderForm.getInputProps('vendor')}
+            />
+            <Select
+              withAsterisk
+              mb={16}
+              label="Select Tool Type"
+              placeholder="Tool Type"
+              data={toolTypes}
+              autosize
+              {...dieOrderForm.getInputProps('tool_type')}
+            />
+            <Textarea
+              withAsterisk
+              mb={16}
+              label="Tool Shape"
+              placeholder="Tool Shape..."
+              autosize
+              {...dieOrderForm.getInputProps('tool_shape')}
+            />
+            <Textarea
+              withAsterisk
+              mb={16}
+              label="Tool Description"
+              placeholder="Tool Description..."
+              autosize
+              {...dieOrderForm.getInputProps('tool_description')}
+            />
+            <Textarea
+              withAsterisk
+              mb={16}
+              label="Radius"
+              placeholder="Radius..."
+              autosize
+              {...dieOrderForm.getInputProps('radius')}
+            />
+            <Textarea
+              withAsterisk
+              mb={16}
+              label="Cavity Width"
+              placeholder="Cavity Width..."
+              autosize
+              {...dieOrderForm.getInputProps('cavity_width')}
+            />
+            <Textarea
+              withAsterisk
+              mb={16}
+              label="Cavity Height"
+              placeholder="Cavity Height..."
+              autosize
+              {...dieOrderForm.getInputProps('cavity_height')}
+            />
+            <Textarea
+              withAsterisk
+              mb={16}
+              label="Cavities Across"
+              placeholder="Number Across..."
+              autosize
+              {...dieOrderForm.getInputProps('across')}
+            />
+            <Textarea
+              withAsterisk
+              mb={16}
+              label="Cavities Down"
+              placeholder="Number Down..."
+              autosize
+              {...dieOrderForm.getInputProps('down')}
+            />
+            <Textarea
+              withAsterisk
+              mb={16}
+              label="Space Across"
+              placeholder="Space Across..."
+              autosize
+              {...dieOrderForm.getInputProps('space_across')}
+            />
+            <Textarea
+              withAsterisk
+              mb={16}
+              label="Space Down"
+              placeholder="Space Down..."
+              autosize
+              {...dieOrderForm.getInputProps('space_down')}
+            />
+            <Textarea
+              withAsterisk
+              mb={16}
+              label="Total Cavities"
+              placeholder="Total..."
+              autosize
+              {...dieOrderForm.getInputProps('total')}
+            />
+            <Textarea
+              withAsterisk
+              mb={16}
+              label="Comment"
+              placeholder="Comment..."
+              autosize
+              {...dieOrderForm.getInputProps('comment')}
+            />
+          </SimpleGrid>
+            <Button 
+              type="submit"
+              disabled={!dieOrderForm.isValid()}
+              onClick={(event) => handleFormSubmit(event, dieOrderForm, "die")}
               color="red" 
               mb={8} >
                 Submit
@@ -732,6 +937,9 @@ function RequestSite({
             </Button>
             <Button onClick={openEcoRequest} variant="filled" size="xl">
               ECO Request Form
+            </Button>
+            <Button onClick={openDieOrder} variant="filled" size="xl">
+              Die Order Form
             </Button>
             <Button onClick={openSafetyReport} variant="filled" size="xl">
               Safety Report Form
