@@ -67,6 +67,13 @@ export const getTrainingColumns = (
 
   const columns = [
     {
+      accessorKey: "Training_ID",
+      header: "ID",
+      enableEditing: false,
+      size: 75,
+      filterVariant: "autocomplete",
+    },
+    {
       accessorKey: "Date",
       header: "Date Added",
       size: 100,
@@ -222,6 +229,13 @@ export const getLogColumns = (
   };
 
   const columns = [
+    {
+      accessorKey: "Training_ID",
+      header: "ID",
+      enableEditing: false,
+      size: 85,
+      filterVariant: "autocomplete",
+    },
     {
       accessorKey: "Date",
       header: "Date Completed",
