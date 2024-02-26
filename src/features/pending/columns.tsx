@@ -1,14 +1,14 @@
-import { format, addMinutes } from "date-fns";
-import { Box, Button, Text, Skeleton } from "@mantine/core";
+import { format, addMinutes } from 'date-fns';
+import { Box, Button, Text, Skeleton } from '@mantine/core';
 
-import { GLTextarea } from "../../components/ReactTableTextarea";
-import { CheckboxFilter } from "../../components/TableComponents";
+import { GLTextarea } from '../../components/ReactTableTextarea';
+import { CheckboxFilter } from '../../components/TableComponents';
 import {
   getDateColor,
   subBusDays,
   formatDateWithoutTZ,
   getShipByDateColumn,
-} from "../../utils";
+} from '../../utils';
 
 export const getColumns = (
   fetchPDF: any,
@@ -20,8 +20,8 @@ export const getColumns = (
   const onQtyClick = (job: any) => {
     window.open(
       `/delivery-queue-details/${job}`,
-      "_blank",
-      "rel=noopener noreferrer"
+      '_blank',
+      'rel=noopener noreferrer'
     );
   };
   const onFetchPDFClick = (partNumber: any) => {
@@ -35,9 +35,9 @@ export const getColumns = (
   function formatDate(date: any) {
     return date
       ? isValidDate(date)
-        ? format(addMinutes(date, date.getTimezoneOffset()), "MM/dd/yyyy")
-        : "-"
-      : "-";
+        ? format(addMinutes(date, date.getTimezoneOffset()), 'MM/dd/yyyy')
+        : '-'
+      : '-';
   }
 
   const onBlur = (event: any, cell: any, column: any) => {
@@ -65,7 +65,7 @@ export const getColumns = (
   const handleInventoryActionBtn = (row) => {
     window.open(
       `/delivery-queue-details/${row.original.Part_Number}`,
-      "_blank"
+      '_blank'
     );
   };
 
@@ -79,14 +79,14 @@ export const getColumns = (
     //   ),
     //   columns: [
     {
-      accessorKey: "Job",
-      header: "Job",
+      accessorKey: 'Job',
+      header: 'Job',
       enableEditing: false,
       // filterVariant: 'autocomplete',
     },
     {
-      accessorKey: "Part_Number",
-      header: "Part Number",
+      accessorKey: 'Part_Number',
+      header: 'Part Number',
       enableEditing: false,
       // filterVariant: 'autocomplete',
       mantineTableBodyCellProps: ({ cell }: { cell: any }) => ({
@@ -97,8 +97,8 @@ export const getColumns = (
       Cell: ({ cell, row }: { cell: any; row: any }) => (
         <p
           style={{
-            textDecoration: "underline",
-            cursor: "pointer",
+            textDecoration: 'underline',
+            cursor: 'pointer',
             margin: 0,
           }}
         >
@@ -108,18 +108,18 @@ export const getColumns = (
     },
     getShipByDateColumn(),
     {
-      accessorKey: "Type",
-      header: "Job Type",
+      accessorKey: 'Type',
+      header: 'Job Type',
       enableEditing: false,
     },
     {
-      accessorKey: "Sales_Code",
+      accessorKey: 'Sales_Code',
       accessorFn: (row: any) => {
-        return row.Sales_Code ? row.Sales_Code : "-";
+        return row.Sales_Code ? row.Sales_Code : '-';
       },
-      header: "Sales Code",
+      header: 'Sales Code',
       enableEditing: false,
-      filterVariant: "multi-select",
+      filterVariant: 'multi-select',
       // mantineFilterMultiSelectProps
       Filter: ({ column, table }) => (
         <CheckboxFilter
@@ -155,14 +155,14 @@ export const getColumns = (
     //   ),
     //   columns: [
     {
-      accessorKey: "Priority",
-      header: "Priority",
+      accessorKey: 'Priority',
+      header: 'Priority',
       enableEditing: true,
       Cell: ({ cell, row }: { cell: any; row: any }) => (
         <Text>{cell.getValue()}</Text>
       ),
       mantineEditTextInputProps: ({ cell, row }: { cell: any; row: any }) => ({
-        type: "test",
+        type: 'test',
         onBlur: (event: any) => {
           if (editedUsers[row.id]) {
             setEditedUsers({
@@ -185,8 +185,8 @@ export const getColumns = (
       }),
     },
     {
-      accessorKey: "Notes",
-      header: "Notes",
+      accessorKey: 'Notes',
+      header: 'Notes',
       enableEditing: true,
       size: 250,
       Cell: ({ cell, row }: { cell: any; row: any }) => (
@@ -237,8 +237,14 @@ export const getColumns = (
     //   ),
     // },
     {
-      accessorKey: "Promised_Quantity",
-      header: "Promised Quantity",
+      accessorKey: 'Promised_Quantity',
+      header: 'Promised Quantity',
+    },
+    {
+      accessorKey: 'Make_Quantity',
+      header: 'Make Quantity',
+      enableEditing: false,
+      enableMultiSort: true,
     },
     // {
     //   accessorKey: "On_Hand_Qty",
@@ -306,53 +312,53 @@ export const getColumns = (
     //   },
     // },
     {
-      accessorKey: "Rev",
-      header: "Rev",
+      accessorKey: 'Rev',
+      header: 'Rev',
     },
     {
-      accessorKey: "Customer",
-      header: "Customer",
+      accessorKey: 'Customer',
+      header: 'Customer',
       enableEditing: false,
       // filterVariant: 'autocomplete',
     },
     {
-      accessorKey: "Status",
-      header: "Status",
+      accessorKey: 'Status',
+      header: 'Status',
       enableEditing: false,
     },
     {
-      accessorKey: "Description",
-      header: "Description",
+      accessorKey: 'Description',
+      header: 'Description',
       enableEditing: false,
     },
     {
-      accessorKey: "Quote",
-      header: "Quote",
+      accessorKey: 'Quote',
+      header: 'Quote',
       enableEditing: false,
     },
     {
-      accessorKey: "Customer_PO",
-      header: "Customer PO",
+      accessorKey: 'Customer_PO',
+      header: 'Customer PO',
       enableEditing: false,
-      filterVariant: "multi-select",
+      filterVariant: 'multi-select',
       accessorFn: (row: any) => {
-        const Customer_PO = row["Customer_PO"] || "";
+        const Customer_PO = row['Customer_PO'] || '';
         return Customer_PO;
       },
     },
     {
-      accessorKey: "Order_Quantity",
-      header: "Order Quantity",
+      accessorKey: 'Order_Quantity',
+      header: 'Order Quantity',
       enableEditing: false,
     },
     {
-      accessorKey: "Completed_Quantity",
-      header: "Completed Quantity",
+      accessorKey: 'Completed_Quantity',
+      header: 'Completed Quantity',
       enableEditing: false,
     },
     {
-      accessorKey: "Lead_Days",
-      header: "Lead Days",
+      accessorKey: 'Lead_Days',
+      header: 'Lead Days',
       enableEditing: false,
     },
     {
@@ -361,23 +367,23 @@ export const getColumns = (
         return sDay;
       },
       enableEditing: false,
-      id: "promisedDate",
-      header: "Promised Date",
-      filterVariant: "date",
-      sortingFn: "datetime",
+      id: 'promisedDate',
+      header: 'Promised Date',
+      filterVariant: 'date',
+      sortingFn: 'datetime',
       enableColumnFilterModes: false,
       Cell: ({ cell }: { cell: any }) => formatDate(cell.getValue()),
     },
     {
-      id: "requestedDate",
+      id: 'requestedDate',
       enableEditing: false,
       accessorFn: (row: any) => {
         const sDay = new Date(row.Requested_Date);
         return sDay;
       },
-      header: "Requested Date",
-      filterVariant: "date",
-      sortingFn: "datetime",
+      header: 'Requested Date',
+      filterVariant: 'date',
+      sortingFn: 'datetime',
       enableColumnFilterModes: false,
       Cell: ({ cell }: { cell: any }) => formatDate(cell.getValue()),
     },
