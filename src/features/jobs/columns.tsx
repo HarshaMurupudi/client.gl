@@ -408,6 +408,12 @@ export const getColumns = (
       enableEditing: false,
     },
     {
+      accessorKey: 'Make_Quantity',
+      header: 'Make Quantity',
+      enableEditing: false,
+      enableMultiSort: true,
+    },
+    {
       accessorKey: 'Shipped_Quantity',
       header: 'Shipped Quantity',
       enableEditing: false,

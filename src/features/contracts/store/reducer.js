@@ -1,7 +1,7 @@
 const INITIAL_STATE = {
   contracts: [],
   contractsLoading: false,
-  contractsWithOnHandLaoding: false
+  contractsWithOnHandLaoding: false,
 };
 
 const jobsReducer = (state = INITIAL_STATE, action) => {

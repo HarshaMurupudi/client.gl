@@ -1,6 +1,6 @@
-import { Box, Button, Text, Textarea, Skeleton } from "@mantine/core";
-import { format, addMinutes } from "date-fns";
-import { CheckboxFilter } from "../../components/TableComponents";
+import { Box, Button, Text, Textarea, Skeleton } from '@mantine/core';
+import { format, addMinutes } from 'date-fns';
+import { CheckboxFilter } from '../../components/TableComponents';
 
 import {
   formatDate,
@@ -8,16 +8,20 @@ import {
   subBusDays,
   formatDateWithoutTZ,
   getShipByDateColumn,
-} from "../../utils";
+} from '../../utils';
 
 const handleInventoryActionBtn = (row) => {
   window.open(
     `/delivery-queue-details/${row.original.Part_Number}_${row.original.Job}`,
-    "_blank"
+    '_blank'
   );
 };
 
-export const getColumns = (fetchPDF: any, getTableData: any, contractsWithOnHandLaoding: any) => {
+export const getColumns = (
+  fetchPDF: any,
+  getTableData: any,
+  contractsWithOnHandLaoding: any
+) => {
   const onFetchPDFClick = (partNumber: any) => {
     fetchPDF(partNumber);
   };
@@ -32,19 +36,19 @@ export const getColumns = (fetchPDF: any, getTableData: any, contractsWithOnHand
     //   ),
     //   columns: [
     {
-      accessorKey: "Job",
-      header: "Job",
+      accessorKey: 'Job',
+      header: 'Job',
       enableEditing: false,
-      filterVariant: "autocomplete",
+      filterVariant: 'autocomplete',
     },
     {
-      id: "Part_Number",
-      accessorKey: "Part_Number",
-      header: "Part Number",
+      id: 'Part_Number',
+      accessorKey: 'Part_Number',
+      header: 'Part Number',
       enableEditing: false,
-      filterVariant: "autocomplete",
+      filterVariant: 'autocomplete',
       accessorFn: (row: any) => {
-        const Part_Number = row.Part_Number || "";
+        const Part_Number = row.Part_Number || '';
         return Part_Number;
       },
       mantineTableBodyCellProps: ({ cell }: { cell: any }) => ({
@@ -55,8 +59,8 @@ export const getColumns = (fetchPDF: any, getTableData: any, contractsWithOnHand
       Cell: ({ cell, row }: { cell: any; row: any }) => (
         <p
           style={{
-            textDecoration: "underline",
-            cursor: "pointer",
+            textDecoration: 'underline',
+            cursor: 'pointer',
             margin: 0,
           }}
         >
@@ -64,10 +68,27 @@ export const getColumns = (fetchPDF: any, getTableData: any, contractsWithOnHand
         </p>
       ),
     },
-    getShipByDateColumn("model"),
+    getShipByDateColumn('model'),
     {
-      accessorKey: "On_Hand_Qty",
-      header: "On Hand Qty",
+      accessorKey: 'Now At',
+      header: 'Now At',
+      enableEditing: false,
+      filterVariant: 'multi-select',
+      accessorFn: (row: any) => {
+        const Job = row['Now At'] || '';
+        return Job;
+      },
+      Cell: ({ cell, row }: { cell: any; row: any }) => {
+        if (contractsWithOnHandLaoding) {
+          return <Skeleton height={8} mt={6} width='70%' radius='xl' />;
+        } else {
+          return cell.getValue();
+        }
+      },
+    },
+    {
+      accessorKey: 'On_Hand_Qty',
+      header: 'On Hand Qty',
       enableEditing: false,
       // accessorFn: (row: any) => {
       //   const Job = row["Now At"] || "";
@@ -80,15 +101,15 @@ export const getColumns = (fetchPDF: any, getTableData: any, contractsWithOnHand
       }),
       Cell: ({ cell, row }: { cell: any; row: any }) => {
         if (contractsWithOnHandLaoding) {
-          return <Skeleton height={8} mt={6} width="70%" radius="xl" />;
+          return <Skeleton height={8} mt={6} width='70%' radius='xl' />;
         } else if (cell.getValue() === undefined) {
-          return "-";
+          return '-';
         } else {
           return (
             <p
               style={{
-                textDecoration: "underline",
-                cursor: "pointer",
+                textDecoration: 'underline',
+                cursor: 'pointer',
                 margin: 0,
               }}
             >
@@ -110,65 +131,65 @@ export const getColumns = (fetchPDF: any, getTableData: any, contractsWithOnHand
     //   ),
     //   columns: [
     {
-      accessorKey: "Sales_Rep",
-      header: "Sales Rep",
+      accessorKey: 'Sales_Rep',
+      header: 'Sales Rep',
       enableEditing: false,
     },
     {
-      accessorKey: "Customer",
-      header: "Customer",
-      enableEditing: false,
-      // filterVariant: 'autocomplete',
-    },
-    {
-      accessorKey: "Quote",
-      header: "Quote",
-      enableEditing: false,
-    },
-    {
-      accessorKey: "Ship_Via",
-      header: "Ship Via",
+      accessorKey: 'Customer',
+      header: 'Customer',
       enableEditing: false,
       // filterVariant: 'autocomplete',
     },
     {
-      accessorKey: "Rev",
-      header: "Rev",
+      accessorKey: 'Quote',
+      header: 'Quote',
       enableEditing: false,
     },
     {
-      accessorKey: "Description",
-      header: "Description",
+      accessorKey: 'Ship_Via',
+      header: 'Ship Via',
+      enableEditing: false,
+      // filterVariant: 'autocomplete',
+    },
+    {
+      accessorKey: 'Rev',
+      header: 'Rev',
       enableEditing: false,
     },
     {
-      accessorKey: "Order_Quantity",
-      header: "Order Quantity",
+      accessorKey: 'Description',
+      header: 'Description',
       enableEditing: false,
     },
     {
-      accessorKey: "Make_Quantity",
-      header: "Make Quantity",
+      accessorKey: 'Order_Quantity',
+      header: 'Order Quantity',
       enableEditing: false,
     },
     {
-      accessorKey: "Shipped_Quantity",
-      header: "Shipped Quantity",
+      accessorKey: 'Make_Quantity',
+      header: 'Make Quantity',
       enableEditing: false,
     },
     {
-      accessorKey: "Customer_PO",
-      header: "Customer PO",
+      accessorKey: 'Shipped_Quantity',
+      header: 'Shipped Quantity',
       enableEditing: false,
     },
     {
-      accessorKey: "Sales_Code",
+      accessorKey: 'Customer_PO',
+      header: 'Customer PO',
+      enableEditing: false,
+    },
+    {
+      accessorKey: 'Sales_Code',
       accessorFn: (row: any) => {
-        return row.Sales_Code ? row.Sales_Code : "-";
+        return row.Sales_Code ? row.Sales_Code : '-';
       },
-      header: "Sales Code",
+      header: 'Sales Code',
       enableEditing: false,
-      filterVariant: "multi-select",
+      filterVariant: 'multi-select',
       // mantineFilterMultiSelectProps
       Filter: ({ column, table }) => (
         <CheckboxFilter
@@ -193,8 +214,8 @@ export const getColumns = (fetchPDF: any, getTableData: any, contractsWithOnHand
       },
     },
     {
-      accessorKey: "Unit_Price",
-      header: "Unit Price",
+      accessorKey: 'Unit_Price',
+      header: 'Unit Price',
       enableEditing: false,
     },
     {
@@ -204,7 +225,7 @@ export const getColumns = (fetchPDF: any, getTableData: any, contractsWithOnHand
         const Part_Number = (Unit_Price * Order_Quantity).toFixed(2);
         return Part_Number;
       },
-      header: "Order Amount",
+      header: 'Order Amount',
       enableEditing: false,
       Cell: ({ cell, row }: { cell: any; row: any }) => (
         <p
@@ -221,17 +242,17 @@ export const getColumns = (fetchPDF: any, getTableData: any, contractsWithOnHand
         const oDay = new Date(row.Order_Date);
         return oDay;
       },
-      accessorKey: "Order_Date",
-      header: "Order Date",
-      id: "orderDate",
+      accessorKey: 'Order_Date',
+      header: 'Order Date',
+      id: 'orderDate',
       enableEditing: false,
-      filterVariant: "date",
-      sortingFn: "datetime",
+      filterVariant: 'date',
+      sortingFn: 'datetime',
       Cell: ({ cell }: { cell: any }) => formatDate(cell.getValue()),
     },
     {
-      accessorKey: "Status",
-      header: "Status",
+      accessorKey: 'Status',
+      header: 'Status',
       enableEditing: false,
     },
     //   ],
