@@ -49,9 +49,9 @@ function RequestSite({
     event.preventDefault();
     closeForms = closeForms[formName];
     const newData = form.getTransformedValues();
-    // closeForms();
+    closeForms();
     await saveNotes(newData, formName);
-    // form.reset()
+    form.reset()
   };
 
   const priorities = ["Low", "Medium", "High"];
@@ -66,13 +66,13 @@ function RequestSite({
   ];
 
   const toolTypes = [
-    "Flexibe Rotary",
+    "Flexible Rotary",
     "Flexible Flat",
     "Steel Rule",
     "Solid Die",
     "Emboss",
-    "Thermal",
     "Deboss",
+    "Thermal",
     "Thin Plate"
   ]
 
@@ -123,6 +123,7 @@ function RequestSite({
       down: null,
       total: null,
       space_across: null,
+      space_down: null,
       vendor: null,
       comment: null,
     },
@@ -136,7 +137,7 @@ function RequestSite({
       "Request_Type": "die",
       "Submission_Date": new Date(),
       "Status": "Active",
-      "PO Number": values.po,
+      "PO_Number": values.po,
       "Tool_Type": values.tool_type,
       "Tool_ID": null,
       "Tool_Shape": values.tool_shape,
@@ -148,6 +149,7 @@ function RequestSite({
       "Cavities_Down": values.down,
       "Cavities_Total": values.total,
       "Space_Across": values.space_across,
+      "Space_Down": values.space_down,
       "Vendor": values.vendor,
       "Comment": values.comment,
       "Inspection_Status": null,
@@ -405,7 +407,7 @@ function RequestSite({
         closeOnClickOutside={false}
         closeOnEscape={false}
         opened={dieOrderOpened} 
-        // onClose={closeDieOrder} 
+        onClose={closeDieOrder} 
         title="Die Order Form"
         centered
         size={750}

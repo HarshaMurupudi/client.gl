@@ -63,16 +63,16 @@ export const getColumns = (
   
     let updatedRowData;
   
-    if (e === "Completed") {
+    if (e === "Approved" || e === "Rejected") {
       updatedRowData = {
         ...row.original,
-        Status: e,
+        Inspection_Status: e,
         Approver: user,
       };
     } else {
       updatedRowData = {
         ...row.original,
-        Status: e,
+        Inspection_Status: e,
       };
     }
   
@@ -110,15 +110,6 @@ export const getColumns = (
       });
     }
   };
-
-  const names = [
-    "Thy Suon",
-    "Lyn Erie",
-    "Dalton Breitzman",
-    "Tracey Trudeau",
-    "Sumit Mahajan",
-    "Jon Erie",
-  ];
 
   const columns = [
     {
@@ -181,7 +172,7 @@ export const getColumns = (
       size: 145,
       // filterVariant: "multi-select",
       mantineFilterSelectProps: {
-        data: states as any,
+        data: inspection_states as any,
       },
       Edit: ({
         cell,
@@ -209,8 +200,8 @@ export const getColumns = (
       enableEditing: false,
       filterVariant: "multi-select",
       accessorFn: (row: any) => {
-        const Part_Number = row.Part_Number || "-";
-        return Part_Number;
+        const PO_Number = row.PO_Number || "-";
+        return PO_Number;
       },
     },
     {
@@ -219,8 +210,8 @@ export const getColumns = (
       enableEditing: false,
       filterVariant: "multi-select",
       accessorFn: (row: any) => {
-        const Part_Number = row.Part_Number || "-";
-        return Part_Number;
+        const Tool_Shape = row.Tool_Shape || "-";
+        return Tool_Shape;
       },
     },
     {
@@ -229,8 +220,8 @@ export const getColumns = (
       enableEditing: false,
       filterVariant: "multi-select",
       accessorFn: (row: any) => {
-        const Part_Number = row.Part_Number || "-";
-        return Part_Number;
+        const Tool_Description = row.Tool_Description || "-";
+        return Tool_Description;
       },
     },
     {
@@ -239,8 +230,8 @@ export const getColumns = (
       enableEditing: false,
       filterVariant: "multi-select",
       accessorFn: (row: any) => {
-        const Part_Number = row.Part_Number || "-";
-        return Part_Number;
+        const Cavity_Width = row.Cavity_Width || "-";
+        return Cavity_Width;
       },
     },
     {
@@ -250,8 +241,8 @@ export const getColumns = (
       size: 200,
       filterVariant: "multi-select",
       accessorFn: (row: any) => {
-        const Part_Number = row.Part_Number || "-";
-        return Part_Number;
+        const Cavity_Height = row.Cavity_Height || "-";
+        return Cavity_Height;
       },
     },
     {
@@ -261,8 +252,8 @@ export const getColumns = (
       size: 200,
       filterVariant: "multi-select",
       accessorFn: (row: any) => {
-        const Part_Number = row.Part_Number || "-";
-        return Part_Number;
+        const Cavities_Across = row.Cavities_Across || "-";
+        return Cavities_Across;
       },
     },
     {
@@ -272,8 +263,8 @@ export const getColumns = (
       size: 200,
       filterVariant: "multi-select",
       accessorFn: (row: any) => {
-        const Part_Number = row.Part_Number || "-";
-        return Part_Number;
+        const Cavities_Down = row.Cavities_Down || "-";
+        return Cavities_Down;
       },
     },
     {
@@ -283,8 +274,8 @@ export const getColumns = (
       size: 200,
       filterVariant: "multi-select",
       accessorFn: (row: any) => {
-        const Part_Number = row.Part_Number || "-";
-        return Part_Number;
+        const Cavities_Total = row.Cavities_Total || "-";
+        return Cavities_Total;
       },
     },
     {
@@ -294,8 +285,8 @@ export const getColumns = (
       size: 200,
       filterVariant: "multi-select",
       accessorFn: (row: any) => {
-        const Part_Number = row.Part_Number || "-";
-        return Part_Number;
+        const Space_Across = row.Space_Across || "-";
+        return Space_Across;
       },
     },
     {
@@ -305,8 +296,8 @@ export const getColumns = (
       size: 200,
       filterVariant: "multi-select",
       accessorFn: (row: any) => {
-        const Part_Number = row.Part_Number || "-";
-        return Part_Number;
+        const Space_Down = row.Space_Down || "-";
+        return Space_Down;
       },
     },
     {
@@ -315,8 +306,8 @@ export const getColumns = (
       enableEditing: false,
       filterVariant: "multi-select",
       accessorFn: (row: any) => {
-        const Part_Number = row.Part_Number || "-";
-        return Part_Number;
+        const Radius = row.Radius || "-";
+        return Radius;
       },
     },
 
@@ -326,8 +317,8 @@ export const getColumns = (
       enableEditing: false,
       filterVariant: "multi-select",
       accessorFn: (row: any) => {
-        const Part_Number = row.Part_Number || "-";
-        return Part_Number;
+        const Vendor = row.Vendor || "-";
+        return Vendor;
       },
     },
     {

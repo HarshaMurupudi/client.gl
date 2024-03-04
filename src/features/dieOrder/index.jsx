@@ -15,33 +15,18 @@ function DieOrder({
   user
 }) {
   const [editedUsers, setEditedUsers] = useState({});
-  const [showApproved, setShowApproved] = useState(false);
+  const [showActive, setShowActive] = useState(false);
 
   const userName = `${user.First_Name} ${user.Last_Name}`;
 
-  const assignedApprovers = {
-    "Sumit Mahajan": ["shop", "improvement", "maintenance", "safety"],
-    "Jon Erie": ["shop", "improvement", "maintenance", "safety"],
-    "Jason Mezzenga": ["maintenance", "safety"],
-    "Nate Baskfield": ["improvement", "shop"],
-    "Susan Baskfield" : ["safety"],
-    "Lyn Erie" : ["safety"]
-  };
-  
-  const currentUserTypes = assignedApprovers[userName] || [];
-
-  const filteredRequests = useMemo(() => {
+  const filteredDies = useMemo(() => {
     if (die) {
       return die.filter(
-        (app) =>
-          currentUserTypes.includes(app.Request_Type) &&
-          app.Status !== "Reject" &&
-          (showApproved || app.Status !== "Completed")
+        (entry) =>
+          showActive && entry.Status !== "Obsolete" || !showActive
       );
-    } else {
-      return [];
     }
-  }, [die, currentUserTypes, showApproved]);
+  }, [die, showActive]);
 
 
   const fetchData = async () => {
@@ -50,7 +35,7 @@ function DieOrder({
 
   useEffect(() => {
     fetchData();
-  }, [showApproved]);
+  }, [showActive]);
 
   const columns = useMemo(
     () =>
@@ -59,7 +44,7 @@ function DieOrder({
         setEditedUsers,
         userName,
       ),
-    [editedUsers]
+    [editedUsers, user]
   );
 
   const handleSave = async () => {
@@ -70,14 +55,14 @@ function DieOrder({
   return (
     <Box>
       <MantineDataTable
-        title={"Request Approval"}
-        tableKey={`request-approval-data-table`}
+        title={"Die Orders"}
+        tableKey={`die-orders-data-table`}
         columns={columns}
-        data={die || []}
+        data={filteredDies || []}
         tableProps={{
           editDisplayMode: "table",
           enableEditing: true,
-          getRowId: (row, index) => `${row.Request_ID}_${index}`,
+          getRowId: (row, index) => `${row.Tool_ID}_${index}`,
         }}
         initialState={{
           sorting: [
@@ -94,8 +79,8 @@ function DieOrder({
         isEditable={true}
         isEdited={Object.keys(editedUsers).length === 0}
       >
-        <Button onClick={() => setShowApproved(!showApproved)}>
-          {showApproved ? "Open Requests" : "All Requests"}
+        <Button onClick={() => setShowActive(!showActive)}>
+          {showActive ? "All Dies" : "Active Dies"}
         </Button>
       </MantineDataTable>
     </Box>
