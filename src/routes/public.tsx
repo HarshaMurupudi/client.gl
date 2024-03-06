@@ -1,103 +1,105 @@
-import React, { lazy, Suspense } from "react";
+import React, { lazy, Suspense } from 'react';
 
-import AppLayout from "../components/layouts/AppLayout";
-import PrivateRoute from "../components/Utils/PrivateRoute";
+import AppLayout from '../components/layouts/AppLayout';
+import PrivateRoute from '../components/Utils/PrivateRoute';
 
-const Home = lazy(() => import("../pages/home"));
-const Login = lazy(() => import("../pages/login"));
-const Mission = lazy(() => import("../pages/mission"));
-const Contracts = lazy(() => import("../pages/contracts"));
-const Operations = lazy(() => import("../pages/operations"));
-const PO = lazy(() => import("../pages/po"));
-const Tracking = lazy(() => import("../pages/tracking"));
-const RequestPage = lazy(() => import("../pages/request"));
-const EmployeeAttendance = lazy(() => import("../pages/attendance"));
-const Meeting = lazy(() => import("../pages/meeting"));
-const Calendar = lazy(() => import("../pages/calendar"));
-const Training = lazy(() => import("../pages/training"));
-const Dashboard = lazy(() => import("../pages/dashboard"));
-const PendingJobs = lazy(() => import("../pages/pending"));
-const OnHold = lazy(() => import("../pages/onHold"));
+const Home = lazy(() => import('../pages/home'));
+const Login = lazy(() => import('../pages/login'));
+const Mission = lazy(() => import('../pages/mission'));
+const Contracts = lazy(() => import('../pages/contracts'));
+const Operations = lazy(() => import('../pages/operations'));
+const PO = lazy(() => import('../pages/po'));
+const Tracking = lazy(() => import('../pages/tracking'));
+const RequestPage = lazy(() => import('../pages/request'));
+const EmployeeAttendance = lazy(() => import('../pages/attendance'));
+const Meeting = lazy(() => import('../pages/meeting'));
+const Calendar = lazy(() => import('../pages/calendar'));
+const Training = lazy(() => import('../pages/training'));
+const Dashboard = lazy(() => import('../pages/dashboard'));
+const PendingJobs = lazy(() => import('../pages/pending'));
+const OnHold = lazy(() => import('../pages/onHold'));
 const DeliveryQueueDetails = lazy(
-  () => import("../features/delivery-queue-details")
+  () => import('../features/delivery-queue-details')
 );
 const MaterialRequirements = lazy(
-  () => import("../pages/material-requirement")
+  () => import('../pages/material-requirement')
 );
-const Shiplines = lazy(() => import("../features/shiplines/page"));
-const AutoCreateFolders = lazy(() => import("../pages/auto-create"));
-const Aart = lazy(() => import("../pages/a-art"));
-const Hytech = lazy(() => import("../pages/hytech"));
-const Qc = lazy(() => import("../pages/qc"));
-const Eco = lazy(() => import("../pages/eco"));
-const Fai = lazy(() => import("../pages/fai"));
-const DScreens = lazy(() => import("../pages/d-screen"));
-const ACustomer = lazy(() => import("../pages/a-customer"));
-const PoReviewPage = lazy(() => import("../pages/po-review"));
-const RequestApproval = lazy(() => import("../pages/requestApproval"));
-const EcoApproval = lazy(() => import("../pages/ecoApproval"))
-const VacationApproval = lazy(() => import("../pages/vacationApproval"))
+const Shiplines = lazy(() => import('../features/shiplines/page'));
+const AutoCreateFolders = lazy(() => import('../pages/auto-create'));
+const Aart = lazy(() => import('../pages/a-art'));
+const Hytech = lazy(() => import('../pages/hytech'));
+const Qc = lazy(() => import('../pages/qc'));
+const Eco = lazy(() => import('../pages/eco'));
+const Fai = lazy(() => import('../pages/fai'));
+const DScreens = lazy(() => import('../pages/d-screen'));
+const ACustomer = lazy(() => import('../pages/a-customer'));
+const PoReviewPage = lazy(() => import('../pages/po-review'));
+const RequestApproval = lazy(() => import('../pages/requestApproval'));
+const EcoApproval = lazy(() => import('../pages/ecoApproval'));
+const VacationApproval = lazy(() => import('../pages/vacationApproval'));
 
-const EInk = lazy(() => import("../pages/print/E-INK"));
-const HCylinder = lazy(() => import("../pages/print/H-CYLINDER"));
-const KDespatch = lazy(() => import("../pages/print/K-DESPATCH"));
-const HSSSemi = lazy(() => import("../pages/screen-print/H-SS-SEMI"));
+const EInk = lazy(() => import('../pages/print/E-INK'));
+const HCylinder = lazy(() => import('../pages/print/H-CYLINDER'));
+const KDespatch = lazy(() => import('../pages/print/K-DESPATCH'));
+const HSSSemi = lazy(() => import('../pages/screen-print/H-SS-SEMI'));
 
-const FMaterial = lazy(() => import("../pages/f-material/F-MATERIAL"));
+const FMaterial = lazy(() => import('../pages/f-material/F-MATERIAL'));
 
-const HJetrion = lazy(() => import("../pages/digital-print/H-JETRION"));
-const ICanon = lazy(() => import("../pages/digital-print/I-CANON"));
-const IIndigo = lazy(() => import("../pages/digital-print/I-INDIGO"));
+const HJetrion = lazy(() => import('../pages/digital-print/H-JETRION'));
+const ICanon = lazy(() => import('../pages/digital-print/I-CANON'));
+const IIndigo = lazy(() => import('../pages/digital-print/I-INDIGO'));
 
 // ROLT
-const HRolt = lazy(() => import("../pages/rolt/H-ROLT"));
-const Rockway = lazy(() => import("../pages/rolt/ROCKWAY"));
+const HRolt = lazy(() => import('../pages/rolt/H-ROLT'));
+const Rockway = lazy(() => import('../pages/rolt/ROCKWAY'));
 
 // CONV
-const LRewind = lazy(() => import("../pages/converting/L-REWIND"));
-const OZundplot = lazy(() => import("../pages/converting/O-ZUNDPLOT"));
-const PDiecut = lazy(() => import("../pages/converting/P-DIECUT"));
-const PDmod01 = lazy(() => import("../pages/converting/P-DMOD01"));
-const QEs400xy = lazy(() => import("../pages/converting/Q-WS400XY"));
+const LRewind = lazy(() => import('../pages/converting/L-REWIND'));
+const OZundplot = lazy(() => import('../pages/converting/O-ZUNDPLOT'));
+const PDiecut = lazy(() => import('../pages/converting/P-DIECUT'));
+const PDmod01 = lazy(() => import('../pages/converting/P-DMOD01'));
+const QEs400xy = lazy(() => import('../pages/converting/Q-WS400XY'));
 
 // CIRCUIT
-const SPARTANICS = lazy(() => import("../pages/circuit-department/SPARTANICS"));
-const VPickplac = lazy(() => import("../pages/circuit-department/V-PICKPLAC"));
-const VPickplc2 = lazy(() => import("../pages/circuit-department/V-PICKPLC2"));
-const WMembrane = lazy(() => import("../pages/circuit-department/W-MEMBRANE"));
-const WStage = lazy(() => import("../pages/circuit-department/W-STAGE"));
+const SPARTANICS = lazy(() => import('../pages/circuit-department/SPARTANICS'));
+const VPickplac = lazy(() => import('../pages/circuit-department/V-PICKPLAC'));
+const VPickplc2 = lazy(() => import('../pages/circuit-department/V-PICKPLC2'));
+const WMembrane = lazy(() => import('../pages/circuit-department/W-MEMBRANE'));
+const WStage = lazy(() => import('../pages/circuit-department/W-STAGE'));
 
 // SHIPPING
-const Shipping = lazy(() => import("../pages/shipping/Z-SHIP"));
+const Shipping = lazy(() => import('../pages/shipping/Z-SHIP'));
 
 // LAM
-const NLam = lazy(() => import("../pages/lam/N-LAM"));
-const NLamAuto = lazy(() => import("../pages/lam/N-LAM-AUTO"));
+const NLam = lazy(() => import('../pages/lam/N-LAM'));
+const NLamAuto = lazy(() => import('../pages/lam/N-LAM-AUTO'));
 
 // OBSOLETE
-const CirASMBLY = lazy(() => import("../pages/obsolete/Cir_ASMBLY"));
-const HSakurai2 = lazy(() => import("../pages/obsolete/H Sakurai 2"));
-const HRoltFin = lazy(() => import("../pages/obsolete/H-Rolt fin"));
-const HSvecia1 = lazy(() => import("../pages/obsolete/H-Svecia 1"));
-const HSvecia2 = lazy(() => import("../pages/obsolete/H-Svecia 2"));
-const HSvecia3 = lazy(() => import("../pages/obsolete/H-Svecia 3"));
-const HSakurai = lazy(() => import("../pages/obsolete/H_Sakurai"));
+const CirASMBLY = lazy(() => import('../pages/obsolete/Cir_ASMBLY'));
+const HSakurai2 = lazy(() => import('../pages/obsolete/H Sakurai 2'));
+const HRoltFin = lazy(() => import('../pages/obsolete/H-Rolt fin'));
+const HSvecia1 = lazy(() => import('../pages/obsolete/H-Svecia 1'));
+const HSvecia2 = lazy(() => import('../pages/obsolete/H-Svecia 2'));
+const HSvecia3 = lazy(() => import('../pages/obsolete/H-Svecia 3'));
+const HSakurai = lazy(() => import('../pages/obsolete/H_Sakurai'));
 const JOSOutsideService = lazy(
-  () => import("../pages/obsolete/J-OS -Outside service")
+  () => import('../pages/obsolete/J-OS -Outside service')
 );
-const LZebra = lazy(() => import("../pages/obsolete/L-Zebra"));
-const QLam = lazy(() => import("../pages/obsolete/Q-Lam"));
+const LZebra = lazy(() => import('../pages/obsolete/L-Zebra'));
+const QLam = lazy(() => import('../pages/obsolete/Q-Lam'));
 
 // FINISHING
-const V_ASSEMBLE = lazy(() => import("../pages/finishing/V-ASSEMBLE"));
-const V_FINISH = lazy(() => import("../pages/finishing/V-FINISH"));
+const V_ASSEMBLE = lazy(() => import('../pages/finishing/V-ASSEMBLE'));
+const V_FINISH = lazy(() => import('../pages/finishing/V-FINISH'));
 
 // INSPECTION
-const V_INSPECT = lazy(() => import("../pages/inspection/V-INSPECT"));
+const V_INSPECT = lazy(() => import('../pages/inspection/V-INSPECT'));
+
+const PDF = lazy(() => import('../components/pdfs/ cert'));
 
 export const publicRoutes = [
   {
-    path: "/",
+    path: '/',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         {/* <ErrorBoundary> */}
@@ -111,7 +113,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/dashboard",
+    path: '/dashboard',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -123,7 +125,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/delivery-queue",
+    path: '/delivery-queue',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -135,7 +137,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/contracts",
+    path: '/contracts',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         {/* <ErrorBoundary> */}
@@ -149,7 +151,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/operations",
+    path: '/operations',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -161,7 +163,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/operations/:jobID",
+    path: '/operations/:jobID',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -173,7 +175,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/po",
+    path: '/po',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -185,7 +187,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/tracking",
+    path: '/tracking',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -197,7 +199,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/training",
+    path: '/training',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -209,7 +211,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/productionMeeting",
+    path: '/productionMeeting',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -221,7 +223,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/request",
+    path: '/request',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -233,7 +235,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/request/approval",
+    path: '/request/approval',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -245,7 +247,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/request/approval/eco",
+    path: '/request/approval/eco',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -257,7 +259,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/request/vacation",
+    path: '/request/vacation',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -269,7 +271,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/calendar",
+    path: '/calendar',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -281,7 +283,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/pending-jobs",
+    path: '/pending-jobs',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -293,7 +295,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/onHold",
+    path: '/onHold',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -306,7 +308,7 @@ export const publicRoutes = [
   },
   // ENG
   {
-    path: "/a-art",
+    path: '/a-art',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -318,7 +320,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/hytech",
+    path: '/hytech',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -330,7 +332,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/qc",
+    path: '/qc',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -342,7 +344,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/eco",
+    path: '/eco',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -354,7 +356,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/fai",
+    path: '/fai',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -366,7 +368,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/a-customer",
+    path: '/a-customer',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -379,7 +381,7 @@ export const publicRoutes = [
   },
   // PRINT
   {
-    path: "/d-screens",
+    path: '/d-screens',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -391,7 +393,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/e-ink",
+    path: '/e-ink',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -403,7 +405,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/h-cylinder",
+    path: '/h-cylinder',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -415,7 +417,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/h-ss-semi",
+    path: '/h-ss-semi',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -427,7 +429,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/k-despatch",
+    path: '/k-despatch',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -440,7 +442,7 @@ export const publicRoutes = [
   },
   // MATERIAL
   {
-    path: "/f-material",
+    path: '/f-material',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -453,7 +455,7 @@ export const publicRoutes = [
   },
   // DIGIT
   {
-    path: "/h-jetrion",
+    path: '/h-jetrion',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -465,7 +467,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/i-canon",
+    path: '/i-canon',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -477,7 +479,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/i-indigo",
+    path: '/i-indigo',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -490,7 +492,7 @@ export const publicRoutes = [
   },
   // ROLT
   {
-    path: "/h-rolt",
+    path: '/h-rolt',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -502,7 +504,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/rockway",
+    path: '/rockway',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -515,7 +517,7 @@ export const publicRoutes = [
   },
   // CONV
   {
-    path: "/l-rewind",
+    path: '/l-rewind',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -527,7 +529,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/o-zundplot",
+    path: '/o-zundplot',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -539,7 +541,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/p-diecut",
+    path: '/p-diecut',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -551,7 +553,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/p-dmod01",
+    path: '/p-dmod01',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -563,7 +565,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/attendance",
+    path: '/attendance',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -575,7 +577,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/q-ws400xy",
+    path: '/q-ws400xy',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -588,7 +590,7 @@ export const publicRoutes = [
   },
   // CIRCUIT
   {
-    path: "/spartanics",
+    path: '/spartanics',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -600,7 +602,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/v-pickplac",
+    path: '/v-pickplac',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -612,7 +614,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/v-pickplc2",
+    path: '/v-pickplc2',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -624,7 +626,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/w-membrane",
+    path: '/w-membrane',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -636,7 +638,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/w-stage",
+    path: '/w-stage',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -649,7 +651,7 @@ export const publicRoutes = [
   },
   // LAM
   {
-    path: "/n-lam",
+    path: '/n-lam',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -661,7 +663,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/n-lam-auto",
+    path: '/n-lam-auto',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -674,7 +676,7 @@ export const publicRoutes = [
   },
   // SHIPPING
   {
-    path: "/z-ship",
+    path: '/z-ship',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -687,7 +689,7 @@ export const publicRoutes = [
   },
   // FINISHING
   {
-    path: "/v-assemble",
+    path: '/v-assemble',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -699,7 +701,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/v-finish",
+    path: '/v-finish',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -712,7 +714,7 @@ export const publicRoutes = [
   },
   // INSPECTION
   {
-    path: "/v-inspect",
+    path: '/v-inspect',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -725,7 +727,7 @@ export const publicRoutes = [
   },
   // OBSOLETE
   {
-    path: "/h-rolt-fin",
+    path: '/h-rolt-fin',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -737,7 +739,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/cir-asmbly",
+    path: '/cir-asmbly',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -749,7 +751,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/h-sakurai-2",
+    path: '/h-sakurai-2',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -761,7 +763,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/h-sakurai",
+    path: '/h-sakurai',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -773,7 +775,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/h-svecia-1",
+    path: '/h-svecia-1',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -785,7 +787,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/h-svecia-2",
+    path: '/h-svecia-2',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -797,7 +799,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/h-svecia-3",
+    path: '/h-svecia-3',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -809,7 +811,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/j-os-outside-service",
+    path: '/j-os-outside-service',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -821,7 +823,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/l-zebra",
+    path: '/l-zebra',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -833,7 +835,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/q-lam",
+    path: '/q-lam',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -846,11 +848,11 @@ export const publicRoutes = [
   },
   //
   {
-    path: "/login",
+    path: '/login',
     element: <Login />,
   },
   {
-    path: "/mission",
+    path: '/mission',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -862,7 +864,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/delivery-queue-details/:partID",
+    path: '/delivery-queue-details/:partID',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -874,7 +876,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/po-details/:jobID",
+    path: '/po-details/:jobID',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -886,7 +888,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/material-requirement/:jobID",
+    path: '/material-requirement/:jobID',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -898,7 +900,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/shiplines/:jobID",
+    path: '/shiplines/:jobID',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -910,7 +912,7 @@ export const publicRoutes = [
     ),
   },
   {
-    path: "/jobs/latest",
+    path: '/jobs/latest',
     element: (
       <Suspense fallback={<div>Loading</div>}>
         <PrivateRoute>
@@ -920,5 +922,9 @@ export const publicRoutes = [
         </PrivateRoute>
       </Suspense>
     ),
+  },
+  {
+    path: 'pdf-print/:jobID',
+    element: <PDF />,
   },
 ];

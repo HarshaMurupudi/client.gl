@@ -1,6 +1,7 @@
 import fileDownload from 'js-file-download';
 // import PDFDocument from 'pdfkit';
 // import blobStream from 'blob-stream';
+import ReactPDF from '@react-pdf/renderer';
 
 import baseAxios from '../../../apis/baseAxios';
 import { localAxios } from '../../../apis/baseAxios';
@@ -191,30 +192,33 @@ export const createPartFolders = (part) => async (dispatch) => {
 
 export const createCert = (job) => async (dispatch) => {
   try {
-    const res = await baseAxios.get(`/jobs/${job}/cert`, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      responseType: 'arraybuffer',
-    });
-    const { data } = res;
+    // const res = await baseAxios.get(`/jobs/${job}/cert`, {
+    //   headers: {
+    //     'Content-Type': 'multipart/form-data',
+    //   },
+    //   responseType: 'arraybuffer',
+    // });
+    // const { data } = res;
     // const doc = new PDFDocument();
     // const stream = doc.pipe(data);
-
     // doc.end();
     // stream.on('finish', async function () {
     //   const url = stream.toBlobURL('application/pdf');
     //   await window.open(url);
     // });
+    // const pdfBlob = new Blob([data], { type: 'application/pdf' });
+    // const fileUrl = URL.createObjectURL(pdfBlob);
+    // await window.open(fileUrl);
 
-    const pdfBlob = new Blob([data], { type: 'application/pdf' });
-    const fileUrl = URL.createObjectURL(pdfBlob);
-    await window.open(fileUrl);
+    await baseAxios.get(`/cert/${job}/status`);
+
+    window.open(`/pdf-print/${job}`, '_blank');
   } catch (error) {
+    console.log(error);
     if (error.response.data.code === 'ENOENT') {
       alert('no file');
     } else {
-      alert('Try after some time');
+      alert(error.response.data.message);
     }
   } finally {
     //
