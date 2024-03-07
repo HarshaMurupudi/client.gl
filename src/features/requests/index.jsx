@@ -27,6 +27,8 @@ function RequestSite({
 
   const [dieOrderOpened, { open: openDieOrder, close: closeDieOrder }] = useDisclosure(false);
 
+  const userName = `${user.First_Name} ${user.Last_Name}`;
+
   const fetchPageData = async () => {
     await fetchRequests(); // Employee Names and Work Centers
   };
@@ -44,7 +46,7 @@ function RequestSite({
     improvement: closeImprovementRequest,
     timeOff: closeTimeOffRequest,
   };
-
+  
   const handleFormSubmit = async (event, form, formName) => {
     event.preventDefault();
     closeForms = closeForms[formName];
@@ -130,10 +132,17 @@ function RequestSite({
 
     validate: {
       tool_type: (value) => (value === null ? 'Tool Type Required' : null),
+      po: (value) => (value === null ? 'PO Number Required' : null),
+      tool_shape: (value) => (value === null ? 'Tool Shape Required' : null),
+      cavity_width: (value) => (value === null ? 'Cavity Width Required' : null),
+      cavity_height: (value) => (value === null ? 'Cavity Height Required' : null),
+      radius: (value) => (value === null ? 'Radius Required' : null),
+      total: (value) => (value === null ? 'Cavities Total Required' : null),
     },
 
     transformValues: (values) => ({
       "Die_ID": null,
+      "User": userName,
       "Request_Type": "die",
       "Submission_Date": new Date(),
       "Status": "Active",
@@ -309,7 +318,6 @@ function RequestSite({
 
     onSubmit: () => handleFormSubmit(timeOffRequestForm, "time-off"), 
   });
-  const userName = `${user.First_Name} ${user.Last_Name}`;
   
   return (
     <Flex

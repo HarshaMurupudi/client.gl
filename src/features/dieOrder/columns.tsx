@@ -371,7 +371,7 @@ export const getColumns = (
     },
     {
       accessorKey: "Approval_Comment",
-      header: "Approval Comments",
+      header: "Inspection Comments",
       enableEditing: true,
       size: 300,
       filterVariant: "multi-select",
