@@ -4,6 +4,7 @@ import { Grid, Text, Table, Flex } from '@mantine/core';
 import { useParams } from 'react-router-dom';
 
 import baseAxios from '../../apis/baseAxios';
+import glAddImg from '../../assets/gl-address-logo.jpg';
 
 function AnotherExample() {
   const params = useParams();
@@ -90,10 +91,12 @@ function AnotherExample() {
         </button>
         <div style={{ padding: '1rem' }} ref={contentToPrint}>
           <div>
-            <h2 style={{ marginBottom: 0 }}>General Label, Inc</h2>
+            {/* <h2 style={{ marginBottom: 0 }}>General Label, Inc</h2>
             <p style={{ marginTop: 0 }}>
               675 Rhode Island Ave S, Minneapolis, MN 55426, USA
-            </p>
+            </p> */}
+
+            <img style={{ width: '30%' }} src={glAddImg} />
           </div>
           <h3 style={{ textAlign: 'center' }}>CERTIFICATE OF CONFORMANCE</h3>
           <hr />
@@ -151,7 +154,7 @@ function AnotherExample() {
           <hr />
 
           <Grid justify='space-between'>
-            <Grid.Col span={6}>
+            <Grid.Col span={7}>
               <table style={{ borderStyle: 'solid', fontSize: '12px' }}>
                 <thead>
                   <tr>
@@ -164,7 +167,7 @@ function AnotherExample() {
             </Grid.Col>
 
             {/* <Grid justify='right'> */}
-            <Grid.Col span={6}>
+            <Grid.Col span={5}>
               <p>
                 <Text fw={700} span>
                   Sign:
