@@ -72,7 +72,9 @@ function AnotherExample() {
     </tr>
   ));
 
-  const notes = certData.certText.split(/\r?\n/).filter((note) => note);
+  const notes = certData.certText
+    ? certData.certText.split(/\r?\n/).filter((note) => note)
+    : [];
 
   console.log(notes);
 
