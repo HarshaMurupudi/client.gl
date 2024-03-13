@@ -136,8 +136,9 @@ function AnotherExample() {
                     {key === 'Packlist_Date' || key === 'Shipped_Date' ? (
                       <Text span>
                         {' '}
-                        {formatDate(new Date(certData.jobData[key])) ||
-                          '-'}{' '}
+                        {certData.jobData[key]
+                          ? formatDate(new Date(certData.jobData[key]))
+                          : '-' || '-'}{' '}
                       </Text>
                     ) : (
                       <Text span> {certData.jobData[key] || '-'} </Text>
