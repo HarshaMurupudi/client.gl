@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 
 import baseAxios from '../../apis/baseAxios';
 import glAddImg from '../../assets/gl-address-logo.jpg';
+import { formatDate } from '../../utils';
 
 function AnotherExample() {
   const params = useParams();
@@ -38,7 +39,7 @@ function AnotherExample() {
 
   const contentToPrint = useRef(null);
   const handlePrint = useReactToPrint({
-    documentTitle: 'Print This Document',
+    documentTitle: `Cert - ${jobID}`,
     onBeforePrint: () => console.log('before printing...'),
     onAfterPrint: () => console.log('after printing...'),
     removeAfterPrint: true,
@@ -77,10 +78,24 @@ function AnotherExample() {
     ? certData.certText.split(/\r?\n/).filter((note) => note)
     : [];
 
-  console.log(notes);
+  const marginTop = '0.5cm';
+  const marginRight = '0.5cm';
+  const marginBottom = '0.5cm';
+  const marginLeft = '0.5cm';
+
+  const getPageMargins = () => {
+    return `@page { margin: ${marginTop} ${marginRight} ${marginBottom} ${marginLeft} !important; }`;
+  };
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center' }}>
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        fontFamily: 'century-gothic',
+        fontSize: '14.6px !important',
+      }}
+    >
       <div style={{ width: '60%' }}>
         <button
           onClick={() => {
@@ -89,7 +104,17 @@ function AnotherExample() {
         >
           PRINT
         </button>
-        <div style={{ padding: '1rem' }} ref={contentToPrint}>
+        <div
+          style={{
+            padding: '3rem',
+            // display: 'flex',
+            justifyContent: 'center',
+            fontFamily: 'century-gothic',
+            fontSize: '14.6px !important',
+          }}
+          ref={contentToPrint}
+        >
+          <style>{getPageMargins()}</style>
           <div>
             {/* <h2 style={{ marginBottom: 0 }}>General Label, Inc</h2>
             <p style={{ marginTop: 0 }}>
@@ -100,7 +125,7 @@ function AnotherExample() {
           </div>
           <h3 style={{ textAlign: 'center' }}>CERTIFICATE OF CONFORMANCE</h3>
           <hr />
-          <Grid style={{ fontSize: '12px' }}>
+          <Grid>
             {certEntires.map((row, i) => (
               <Grid.Col span={4} key={i}>
                 {row.map((key, j) => (
@@ -108,14 +133,22 @@ function AnotherExample() {
                     <Text fw={700} span>
                       {mapKeyToLabel[key]}:
                     </Text>
-                    <Text span> {certData.jobData[key] || '-'}</Text>
+                    {key === 'Packlist_Date' || key === 'Shipped_Date' ? (
+                      <Text span>
+                        {' '}
+                        {formatDate(new Date(certData.jobData[key])) ||
+                          '-'}{' '}
+                      </Text>
+                    ) : (
+                      <Text span> {certData.jobData[key] || '-'} </Text>
+                    )}
                   </Text>
                 ))}
               </Grid.Col>
             ))}
           </Grid>
           <hr />
-          <div style={{ fontSize: '12px' }}>
+          <div>
             <p>
               1.) General Label certifies that the products in this shipment
               were produced either from materials furnished by the // customer
@@ -172,7 +205,13 @@ function AnotherExample() {
                 <Text fw={700} span>
                   Sign:
                 </Text>
-                <Text span> {'Placeholder'}</Text>
+                <Text span> {'Jon Erie'}</Text>
+              </p>
+              <p>
+                <Text fw={700} span>
+                  Email:
+                </Text>
+                <Text span> {'jerie@general-label.com'}</Text>
               </p>
 
               <p>
