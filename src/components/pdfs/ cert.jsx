@@ -87,6 +87,14 @@ function AnotherExample() {
     return `@page { margin: ${marginTop} ${marginRight} ${marginBottom} ${marginLeft} !important; }`;
   };
 
+  const renderCertFields = (key, certData) => {
+    if (key === 'Text2') {
+      return <Text span> {certData.jobData[key] || 'NA'} </Text>;
+    } else {
+      return <Text span> {certData.jobData[key] || '-'} </Text>;
+    }
+  };
+
   return (
     <div
       style={{
@@ -141,7 +149,7 @@ function AnotherExample() {
                           : '-' || '-'}{' '}
                       </Text>
                     ) : (
-                      <Text span> {certData.jobData[key] || '-'} </Text>
+                      renderCertFields(key, certData)
                     )}
                   </Text>
                 ))}
