@@ -50,6 +50,8 @@ export const saveNotes = (form, formName) => async (dispatch) => {
         break;
       case "timeOff":
         await baseAxios.patch('requests/time-off', { data: { form }, headers });
+      case "die":
+        await baseAxios.patch('requests/dieOrder', { data: { form }, headers});
       default:
         break;
     }

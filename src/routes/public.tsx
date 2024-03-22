@@ -37,6 +37,8 @@ const PoReviewPage = lazy(() => import("../pages/po-review"));
 const RequestApproval = lazy(() => import("../pages/requestApproval"));
 const EcoApproval = lazy(() => import("../pages/ecoApproval"))
 const VacationApproval = lazy(() => import("../pages/vacationApproval"))
+const DieOrder = lazy(() => import("../pages/dieOrder"));
+
 
 const EInk = lazy(() => import("../pages/print/E-INK"));
 const HCylinder = lazy(() => import("../pages/print/H-CYLINDER"));
@@ -239,6 +241,18 @@ export const publicRoutes = [
         <PrivateRoute>
           <AppLayout>
             <RequestApproval />
+          </AppLayout>
+        </PrivateRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/die-order",
+    element: (
+      <Suspense fallback={<div>Loading</div>}>
+        <PrivateRoute>
+          <AppLayout>
+            <DieOrder />
           </AppLayout>
         </PrivateRoute>
       </Suspense>

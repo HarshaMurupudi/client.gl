@@ -31,6 +31,7 @@ import { reducer as approvalReducer } from "../features/requestApproval/store";
 import { reducer as ecoReducer } from "../features/ecoApproval/store";
 import { reducer as vacationReducer } from "../features/vacationApproval/store";
 import { reducer as onHoldReducer } from "../features/onHold/store";
+import { reducer as dieReducer } from "../features/dieOrder/store";
 import { reducer as dashboardReducer } from "../features/dashboard/store";
 
 export default combineReducers({
@@ -64,5 +65,6 @@ export default combineReducers({
   ecoApproval: ecoReducer,
   vacationApproval: vacationReducer,
   onHold: onHoldReducer,
+  dieOrder: dieReducer,
   dashboard: dashboardReducer,
 });

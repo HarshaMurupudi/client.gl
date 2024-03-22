@@ -167,6 +167,7 @@ function NavbarNestedBasic({ width, handleLogout, user }) {
         { label: "A-ART", link: "/a-art" },
         { label: "QC", link: "/qc" },
         { label: "A-CUSTOMER", link: "/a-customer" },
+        { label: "DIE ORDERS", link: "/die-order" },
         { label: "HYTECH", link: "/hytech" },
         { label: "ECO", link: "/eco" },
         { label: "FAI", link: "/fai" },
