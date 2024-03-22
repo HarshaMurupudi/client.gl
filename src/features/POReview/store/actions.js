@@ -1,4 +1,4 @@
-import baseAxios from "../../../apis/baseAxios";
+import baseAxios, { oldAxios } from "../../../apis/baseAxios";
 import { notifications } from "@mantine/notifications";
 
 import { delay } from "../../../utils";
@@ -67,24 +67,27 @@ export const fetchPOPDF = (jobID) => async (dispatch) => {
   }
 };
 
-export const updateJobStatus = (jobID, status) => async (dispatch) => {
-  try {
-    const response = await baseAxios.get(`/jobBoss/${jobID}/${status}`);
+export const updateJobStatus =
+  (jobID, status, employee) => async (dispatch) => {
+    try {
+      const response = await oldAxios.get(
+        `/jobBoss/${jobID}/${status}/${employee}`
+      );
 
-    notifications.show({
-      title: "Success",
-      message: response.data.message,
-      color: "green",
-    });
-  } catch (error) {
-    notifications.show({
-      title: "Error",
-      message: "Failed to update the status",
-      color: "red",
-    });
-  } finally {
-    dispatch(setPOLoading(true));
-    await delay(1000);
-    dispatch(fetchPODetails(jobID));
-  }
-};
+      notifications.show({
+        title: "Success",
+        message: response.data.message,
+        color: "green",
+      });
+    } catch (error) {
+      notifications.show({
+        title: "Error",
+        message: "Failed to update the status",
+        color: "red",
+      });
+    } finally {
+      dispatch(setPOLoading(true));
+      await delay(1000);
+      dispatch(fetchPODetails(jobID));
+    }
+  };

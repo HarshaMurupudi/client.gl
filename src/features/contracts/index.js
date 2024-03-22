@@ -1,18 +1,18 @@
-import React, { useRef, useState, useMemo } from "react";
-import { ContractForm } from "./module";
-import { Box } from "@mantine/core";
-import { connect } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import React, { useRef, useState, useMemo } from 'react';
+import { ContractForm } from './module';
+import { Box } from '@mantine/core';
+import { connect } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 import {
   fetchContracts,
   searchCustomers,
   fetchContractsWithOnHand,
-} from "./store/actions";
-import { searchJobs } from "../tracking/store/actions";
-import { fetchPDF, fetchPDFByJob } from "../jobs/store/actions";
-import { getColumns } from "./columns";
-import { MantineDataTable } from "../../components/mantine-data-table";
+} from './store/actions';
+import { searchJobs } from '../tracking/store/actions';
+import { fetchPDF, fetchPDFByJob } from '../jobs/store/actions';
+import { getColumns } from './columns';
+import { MantineDataTable } from '../../components/mantine-data-table';
 
 function Contracts({
   contracts,
@@ -28,13 +28,13 @@ function Contracts({
   const navigate = useNavigate();
   const columns = useMemo(
     () => getColumns(fetchPDF, contracts, contractsWithOnHandLaoding),
-    []
+    [contractsWithOnHandLaoding]
   );
   const timeoutRef = useRef(-1);
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState('');
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
-  const [currentAutofillSelection, setCurrentAutofillSelection] = useState("");
+  const [currentAutofillSelection, setCurrentAutofillSelection] = useState('');
 
   const handleChange = async (val, key) => {
     if (key) {
@@ -44,19 +44,19 @@ function Contracts({
       setData([]);
       let jobs = [];
 
-      if (val.trim().length === 0 || val.includes("@")) {
+      if (val.trim().length === 0 || val.includes('@')) {
         setLoading(false);
       } else {
         setLoading(true);
 
-        if (key === "Customer") {
+        if (key === 'Customer') {
           jobs = await searchCustomers(val);
-        } else if (key === "Job") {
-          jobs = await searchJobs("Job", val);
-        } else if (key === "Part_Number") {
-          jobs = await searchJobs("Part_Number", val);
-        } else if (key === "Customer_PO") {
-          jobs = await searchJobs("Customer_PO", val);
+        } else if (key === 'Job') {
+          jobs = await searchJobs('Job', val);
+        } else if (key === 'Part_Number') {
+          jobs = await searchJobs('Part_Number', val);
+        } else if (key === 'Customer_PO') {
+          jobs = await searchJobs('Customer_PO', val);
         }
 
         setData(jobs);
@@ -69,8 +69,8 @@ function Contracts({
     if (currentAutofillSelection) {
       await fetchContracts({ [currentAutofillSelection]: data.value });
       fetchContractsWithOnHand({ [currentAutofillSelection]: data.value });
-      setCurrentAutofillSelection("");
-      setValue("");
+      setCurrentAutofillSelection('');
+      setValue('');
       setData([]);
     }
   };
@@ -78,7 +78,7 @@ function Contracts({
   return (
     <Box>
       <MantineDataTable
-        title={"Job Review"}
+        title={'Job Review'}
         tableKey={`contracts-queue-data-table`}
         columns={columns}
         data={contracts || []}
@@ -107,11 +107,11 @@ function Contracts({
 }
 
 const mapStateToProps = (state) => ({
-  contracts: state.getIn(["contract", "contracts"]),
-  contractsLoading: state.getIn(["contract", "contractsLoading"]),
+  contracts: state.getIn(['contract', 'contracts']),
+  contractsLoading: state.getIn(['contract', 'contractsLoading']),
   contractsWithOnHandLaoding: state.getIn([
-    "contract",
-    "contractsWithOnHandLaoding",
+    'contract',
+    'contractsWithOnHandLaoding',
   ]),
 });
 

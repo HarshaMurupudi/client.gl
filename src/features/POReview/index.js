@@ -90,7 +90,7 @@ function POReviewComponent({
   }
 
   const onApprove = () => {
-    updateJobStatus(params.jobID, "Active");
+    updateJobStatus(params.jobID, "Active", user.Employee);
   };
 
   const poKeyToLabelMapper = {
