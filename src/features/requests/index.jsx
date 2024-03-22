@@ -133,11 +133,6 @@ function RequestSite({
     validate: {
       tool_type: (value) => (value === null ? 'Tool Type Required' : null),
       po: (value) => (value === null ? 'PO Number Required' : null),
-      tool_shape: (value) => (value === null ? 'Tool Shape Required' : null),
-      cavity_width: (value) => (value === null ? 'Cavity Width Required' : null),
-      cavity_height: (value) => (value === null ? 'Cavity Height Required' : null),
-      radius: (value) => (value === null ? 'Radius Required' : null),
-      total: (value) => (value === null ? 'Cavities Total Required' : null),
     },
 
     transformValues: (values) => ({

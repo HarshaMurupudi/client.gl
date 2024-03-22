@@ -4,6 +4,7 @@ import { Box, Button, Text, Textarea, Checkbox } from "@mantine/core";
 
 import { GLTextarea } from "../../components/ReactTableTextarea";
 import { GLSelect } from "../../components/select";
+import { update } from "immutable";
 
 export const getColumns = (
   editedUsers: any,
@@ -69,11 +70,11 @@ export const getColumns = (
         Inspection_Status: e,
         Approver: user,
       };
-    } else {
+    } else if (e === "Active" || e === "Obsolete") {
       updatedRowData = {
         ...row.original,
-        Inspection_Status: e,
-      };
+        Status: e
+      }
     }
   
     if (editedUsers[row.id]) {
