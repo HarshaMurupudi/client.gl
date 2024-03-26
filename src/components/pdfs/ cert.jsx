@@ -255,7 +255,17 @@ function AnotherExample() {
                           <Text fw={700} span>
                             Date:
                           </Text>
-                          <Text span> {new Date().toLocaleDateString()}</Text>
+                          <Text span>
+                            {' '}
+                            {certData[cIndex].jobData['Packlist_Date']
+                              ? formatDate(
+                                  new Date(
+                                    certData[cIndex].jobData['Packlist_Date']
+                                  )
+                                )
+                              : '-'}
+                          </Text>
+                          {/* <Text span> {new Date().toLocaleDateString()}</Text> */}
                         </p>
                       </Grid.Col>
                     </Grid>
